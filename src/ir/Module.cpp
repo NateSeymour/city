@@ -1,6 +1,10 @@
-
 #include "Module.h"
 
-namespace city
+using namespace city;
+
+Builder Module::CreateBuilder() noexcept
 {
-} // city
+    return Builder(*this);
+}
+
+Module::Module(std::string name) : name_(std::move(name)) {}
