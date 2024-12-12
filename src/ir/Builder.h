@@ -5,9 +5,11 @@
 #include <type_traits>
 #include "Block.h"
 #include "Function.h"
+
+#include "type/Type.h"
+
 #include "value/Value.h"
 #include "value/ConstantValue.h"
-#include "type/Type.h"
 
 #include "instruction/arithmetic/AddInst.h"
 #include "instruction/control/RetInst.h"
@@ -37,7 +39,7 @@ namespace city
 
         // Types
         template<typename T>
-        Type GetBuiltinType()
+        Type GetType()
         {
             Type type;
 
@@ -70,12 +72,13 @@ namespace city
         [[nodiscard]] Function *CreateFunction(std::string name, Type ret, std::vector<Type> const &args);
 
         // Values
+        [[nodiscard]] Value *CreateStackAlloc(Type type);
         [[nodiscard]] ConstantValue *CreateConstant(Type type, std::vector<std::byte> const &data);
 
         template<typename T>
         [[nodiscard]] ConstantValue *CreateConstant(T value)
         {
-            auto type = this->GetBuiltinType<T>();
+            auto type = this->GetType<T>();
 
             std::vector<std::byte> data;
             data.reserve(type.size_);
@@ -84,6 +87,8 @@ namespace city
 
             return this->CreateConstant(type, data);
         }
+
+        // Instructions - Memory
 
         // Instructions - Arithmetic
         AddInst *InsertAddInst(Value *lhs, Value *rhs, Value *dst = nullptr);

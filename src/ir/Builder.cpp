@@ -13,7 +13,7 @@ Block *Builder::CreateBlock()
 
 Function *Builder::CreateFunction(std::string name)
 {
-    return this->CreateFunction(std::move(name), this->GetBuiltinType<void>(), {});
+    return this->CreateFunction(std::move(name), this->GetType<void>(), {});
 }
 
 Function *Builder::CreateFunction(std::string name, Type ret)

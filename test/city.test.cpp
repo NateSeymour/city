@@ -7,7 +7,7 @@ TEST(City, Module)
     city::Module module("test");
     auto builder = module.CreateBuilder();
 
-    auto ret_type = builder.GetBuiltinType<int>();
+    auto ret_type = builder.GetType<int>();
     auto function = builder.CreateFunction("foo", ret_type);
     builder.SetInsertPoint(function);
 
