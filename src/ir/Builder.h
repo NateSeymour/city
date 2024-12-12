@@ -1,6 +1,7 @@
 #ifndef CITY_BUILDER_H
 #define CITY_BUILDER_H
 
+#include <cstdlib>
 #include <type_traits>
 #include "Block.h"
 #include "Function.h"
@@ -69,10 +70,19 @@ namespace city
         [[nodiscard]] Function *CreateFunction(std::string name, Type ret, std::vector<Type> const &args);
 
         // Values
+        [[nodiscard]] ConstantValue *CreateConstant(Type type, std::vector<std::byte> const &data);
+
         template<typename T>
         [[nodiscard]] ConstantValue *CreateConstant(T value)
         {
+            auto type = this->GetBuiltinType<T>();
 
+            std::vector<std::byte> data;
+            data.reserve(type.size_);
+
+            memcpy(data.data(), &value, data.size());
+
+            return this->CreateConstant(type, data);
         }
 
         // Instructions - Arithmetic

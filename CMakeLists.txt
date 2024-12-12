@@ -42,6 +42,14 @@ add_library(city
         src/ir/instruction/arithmetic/AddInst.h
         src/ir/instruction/control/RetInst.h
         src/ir/instruction/control/BranchInst.h
+        src/backend/Backend.cpp
+        src/backend/Backend.h
+        src/runtime/Runtime.h
+        src/runtime/MacOS.cpp
+        src/backend/aarch64/instruction/AArch64Instruction.cpp
+        src/backend/aarch64/instruction/AArch64Instruction.h
+        src/backend/aarch64/AArch64.cpp
+        src/backend/aarch64/AArch64.h
 )
 target_include_directories(city PUBLIC src)
 

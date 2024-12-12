@@ -1,6 +1,5 @@
-
 #include "ConstantValue.h"
 
-namespace city
-{
-} // city
+using namespace city;
+
+ConstantValue::ConstantValue(Type type, std::vector<std::byte> const &data) : Value(type), data_(data) {}

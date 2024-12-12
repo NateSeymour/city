@@ -1,6 +1,6 @@
 
 #include "Value.h"
 
-namespace city
-{
-} // city
+using namespace city;
+
+Value::Value(Type type) : type_(type) {}

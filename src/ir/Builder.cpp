@@ -43,3 +43,13 @@ Block *Builder::GetInsertPoint() const noexcept
 {
     return this->insert_point_;
 }
+
+ConstantValue *Builder::CreateConstant(Type type, const std::vector<std::byte> &data)
+{
+    auto value = std::make_unique<ConstantValue>(type, data);
+    auto ret = value.get();
+
+    this->module_.global_values_.push_back(std::move(value));
+
+    return ret;
+}
