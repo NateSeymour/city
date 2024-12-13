@@ -7,7 +7,7 @@ namespace city
 {
     class PointerValue : public Value
     {
-
+        PointerValue() : Value(Type()) {}
     };
 } // city
 

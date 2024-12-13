@@ -50,6 +50,12 @@ add_library(city
         src/backend/aarch64/instruction/AArch64Instruction.h
         src/backend/aarch64/AArch64.cpp
         src/backend/aarch64/AArch64.h
+        src/ir/Container.cpp
+        src/ir/Container.h
+        src/runtime/ExecutableMemoryHandle.cpp
+        src/runtime/ExecutableMemoryHandle.h
+        src/runtime/MacOS.h
+        src/ir/instruction/memory/StoreInst.h
 )
 target_include_directories(city PUBLIC src)
 

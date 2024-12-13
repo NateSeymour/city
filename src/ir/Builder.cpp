@@ -47,9 +47,29 @@ Block *Builder::GetInsertPoint() const noexcept
 ConstantValue *Builder::CreateConstant(Type type, const std::vector<std::byte> &data)
 {
     auto value = std::make_unique<ConstantValue>(type, data);
-    auto ret = value.get();
+    auto value_ptr = value.get();
 
     this->module_.global_values_.push_back(std::move(value));
 
-    return ret;
+    return value_ptr;
+}
+
+Value *Builder::CreateStackAlloc(Type type)
+{
+    auto value = std::make_unique<Value>(type, StorageClass::StackPreferred);
+    auto value_ptr = value.get();
+
+    this->insert_point_->local_values_.push_back(std::move(value));
+
+    return value_ptr;
+}
+
+Value *Builder::CreateHeapAlloc(Type type)
+{
+    auto value = std::make_unique<Value>(type, StorageClass::HeapPreferred);
+    auto value_ptr = value.get();
+
+    this->insert_point_->local_values_.push_back(std::move(value));
+
+    return value_ptr;
 }

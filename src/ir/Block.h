@@ -8,8 +8,13 @@
 
 namespace city
 {
+    class Builder;
+
     class Block
     {
+        friend class Builder;
+
+    protected:
         std::vector<std::unique_ptr<Instruction>> instructions_;
         std::vector<std::unique_ptr<Value>> local_values_;
     };

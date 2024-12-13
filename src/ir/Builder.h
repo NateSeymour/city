@@ -5,15 +5,13 @@
 #include <type_traits>
 #include "Block.h"
 #include "Function.h"
-
 #include "type/Type.h"
-
 #include "value/Value.h"
 #include "value/ConstantValue.h"
-
 #include "instruction/arithmetic/AddInst.h"
 #include "instruction/control/RetInst.h"
 #include "instruction/control/BranchInst.h"
+#include "instruction/memory/StoreInst.h"
 
 namespace city
 {
@@ -73,6 +71,7 @@ namespace city
 
         // Values
         [[nodiscard]] Value *CreateStackAlloc(Type type);
+        [[nodiscard]] Value *CreateHeapAlloc(Type type);
         [[nodiscard]] ConstantValue *CreateConstant(Type type, std::vector<std::byte> const &data);
 
         template<typename T>
@@ -88,10 +87,11 @@ namespace city
             return this->CreateConstant(type, data);
         }
 
-        // Instructions - Memory
-
         // Instructions - Arithmetic
-        AddInst *InsertAddInst(Value *lhs, Value *rhs, Value *dst = nullptr);
+        [[nodiscard]] std::pair<AddInst*, Value*> InsertAddInst(Value *lhs, Value *rhs);
+
+        // Instructions - Memory
+        StoreInst *InsertStoreInst(Value *dst, Value *src);
 
         // Instructions - Control
         Instruction *CreateLabel();
