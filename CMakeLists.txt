@@ -56,6 +56,10 @@ add_library(city
         src/runtime/ExecutableMemoryHandle.h
         src/runtime/MacOS.h
         src/ir/instruction/memory/StoreInst.h
+        src/ir/instruction/arithmetic/AddInst.cpp
+        src/ir/instruction/control/RetInst.cpp
+        src/ir/instruction/control/BranchInst.cpp
+        src/ir/instruction/memory/StoreInst.cpp
 )
 target_include_directories(city PUBLIC src)
 

@@ -7,7 +7,13 @@ namespace city
 {
     class AddInst : public Instruction
     {
+        Value *lhs_;
+        Value *rhs_;
 
+    public:
+        [[nodiscard]] bool HasReturnValue() const noexcept override;
+
+        AddInst(Value *lhs, Value *rhs);
     };
 } // city
 

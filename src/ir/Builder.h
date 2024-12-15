@@ -25,6 +25,24 @@ namespace city
         Block *insert_point_ = nullptr;
 
     protected:
+        template<typename T, typename ...Args>
+        requires std::derived_from<T, Value>
+        [[nodiscard]] T *ReserveLocalValue(Args... args)
+        {
+            auto &locals = this->insert_point_->local_values_;
+            auto &value = locals.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
+            return dynamic_cast<T*>(value.get());
+        }
+
+        template<typename T, typename ...Args>
+        requires std::derived_from<T, Instruction>
+        [[nodiscard]] T *ReserveInstruction(Args... args)
+        {
+            auto &instructions = this->insert_point_->instructions_;
+            auto &instruction = instructions.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
+            return dynamic_cast<T*>(instruction.get());
+        }
+
         explicit Builder(Module &module);
 
     public:
@@ -88,13 +106,12 @@ namespace city
         }
 
         // Instructions - Arithmetic
-        [[nodiscard]] std::pair<AddInst*, Value*> InsertAddInst(Value *lhs, Value *rhs);
+        [[nodiscard]] AddInst *InsertAddInst(Value *lhs, Value *rhs);
 
         // Instructions - Memory
         StoreInst *InsertStoreInst(Value *dst, Value *src);
 
         // Instructions - Control
-        Instruction *CreateLabel();
         BranchInst *InsertBranchInst(Instruction *target);
         RetInst *InsertRetInst(Value *ret);
 

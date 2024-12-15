@@ -46,30 +46,47 @@ Block *Builder::GetInsertPoint() const noexcept
 
 ConstantValue *Builder::CreateConstant(Type type, const std::vector<std::byte> &data)
 {
-    auto value = std::make_unique<ConstantValue>(type, data);
-    auto value_ptr = value.get();
-
-    this->module_.global_values_.push_back(std::move(value));
-
-    return value_ptr;
+    return this->ReserveLocalValue<ConstantValue>(type, data);
 }
 
 Value *Builder::CreateStackAlloc(Type type)
 {
-    auto value = std::make_unique<Value>(type, StorageClass::StackPreferred);
-    auto value_ptr = value.get();
-
-    this->insert_point_->local_values_.push_back(std::move(value));
-
-    return value_ptr;
+    return this->ReserveLocalValue<Value>(type, StorageClass::StackPreferred);
 }
 
 Value *Builder::CreateHeapAlloc(Type type)
 {
-    auto value = std::make_unique<Value>(type, StorageClass::HeapPreferred);
-    auto value_ptr = value.get();
+    return this->ReserveLocalValue<Value>(type, StorageClass::HeapPreferred);
+}
 
-    this->insert_point_->local_values_.push_back(std::move(value));
+AddInst *Builder::InsertAddInst(Value *lhs, Value *rhs)
+{
+    auto lhs_type = lhs->GetType();
+    auto rhs_type = rhs->GetType();
 
-    return value_ptr;
+    if(lhs_type != rhs_type)
+    {
+        throw std::runtime_error("incompatible types");
+    }
+
+    auto return_value = this->ReserveLocalValue<Value>(lhs_type, StorageClass::Temporary);
+    auto addtmp = this->ReserveInstruction<AddInst>(lhs, rhs);
+    addtmp->SetReturnValue(return_value);
+
+    return addtmp;
+}
+
+StoreInst *Builder::InsertStoreInst(Value *dst, Value *src)
+{
+    return this->ReserveInstruction<StoreInst>(dst, src);
+}
+
+BranchInst *Builder::InsertBranchInst(Instruction *target)
+{
+    return this->ReserveInstruction<BranchInst>(target);
+}
+
+RetInst *Builder::InsertRetInst(Value *ret)
+{
+    return this->ReserveInstruction<RetInst>(ret);
 }

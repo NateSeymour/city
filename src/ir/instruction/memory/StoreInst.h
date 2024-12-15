@@ -7,7 +7,11 @@ namespace city
 {
     class StoreInst : public Instruction
     {
+        Value *dst_;
+        Value *src_;
 
+    public:
+        StoreInst(Value *dst, Value *src);
     };
 }
 

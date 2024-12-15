@@ -19,10 +19,13 @@ namespace city
         void IncrementReadCount() noexcept;
         void IncrementWriteCount() noexcept;
 
+        [[nodiscard]] Type GetType() const noexcept;
+
         [[nodiscard]] bool IsConstant() const noexcept;
         [[nodiscard]] bool IsUsed() const noexcept;
 
         explicit Value(Type type, StorageClass storage_class = StorageClass::Temporary);
+        virtual ~Value() = default;
     };
 } // city
 

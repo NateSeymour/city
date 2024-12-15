@@ -8,6 +8,9 @@ namespace city
     class BranchInst : public Instruction
     {
         Instruction *target_;
+
+    public:
+        BranchInst(Instruction *target);
     };
 } // city
 

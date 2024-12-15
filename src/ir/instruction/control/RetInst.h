@@ -7,7 +7,10 @@ namespace city
 {
     class RetInst : public Instruction
     {
+        Value *value_;
 
+    public:
+        RetInst(Value *value);
     };
 } // city
 
