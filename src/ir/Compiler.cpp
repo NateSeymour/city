@@ -1,6 +1,13 @@
-
 #include "Compiler.h"
 
-namespace city
+using namespace city;
+
+void Compiler::AddModule(Module &module)
 {
-} // city
+    this->modules_.push_back(&module);
+}
+
+Assembly Compiler::CompileModules() const
+{
+    return {};
+}

@@ -12,7 +12,7 @@ namespace city
         std::unordered_map<std::string, Symbol> symbol_table_;
 
     public:
-        [[nodiscard]] Symbol Lookup(std::string_view symbol);
+        [[nodiscard]] Symbol Lookup(std::string const &symbol);
     };
 } // city
 

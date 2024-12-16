@@ -1,6 +1,9 @@
-
 #include "Assembly.h"
 
-namespace city
+using namespace city;
+
+Symbol Assembly::Lookup(std::string const &symbol)
+
 {
-} // city
+    return this->symbol_table_[symbol];
+}

@@ -7,7 +7,7 @@ Builder::Builder(Module &module) : module_(module) {}
 
 Block *Builder::CreateBlock()
 {
-    auto &block = this->module_.blocks_.emplace_back();
+    auto &block = this->module_.blocks_.emplace_back(std::make_unique<Block>());
     return block.get();
 }
 

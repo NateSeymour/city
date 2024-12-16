@@ -97,8 +97,7 @@ namespace city
         {
             auto type = this->GetType<T>();
 
-            std::vector<std::byte> data;
-            data.reserve(type.size_);
+            std::vector<std::byte> data(type.size_, static_cast<std::byte>(0));
 
             memcpy(data.data(), &value, data.size());
 
