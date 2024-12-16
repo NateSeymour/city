@@ -18,5 +18,5 @@ TEST(City, Module)
     compiler.AddModule(module);
 
     auto assembly = compiler.CompileModules();
-    auto foo = assembly.Lookup("foo");
+    // auto foo = assembly.Lookup("foo");
 }

@@ -7,7 +7,7 @@ void Compiler::AddModule(Module &module)
     this->modules_.push_back(&module);
 }
 
-Assembly Compiler::CompileModules() const
+Object  Compiler::CompileModules() const
 {
     return {};
 }

@@ -52,14 +52,26 @@ add_library(city
         src/backend/aarch64/AArch64.h
         src/ir/Container.cpp
         src/ir/Container.h
-        src/runtime/ExecutableMemoryHandle.cpp
-        src/runtime/ExecutableMemoryHandle.h
+        src/runtime/NativeMemoryHandle.cpp
+        src/runtime/NativeMemoryHandle.h
         src/runtime/MacOS.h
         src/ir/instruction/memory/StoreInst.h
         src/ir/instruction/arithmetic/AddInst.cpp
         src/ir/instruction/control/RetInst.cpp
         src/ir/instruction/control/BranchInst.cpp
         src/ir/instruction/memory/StoreInst.cpp
+        src/backend/x86/x86.cpp
+        src/backend/x86/x86.h
+        src/backend/IRTranslationInterface.h
+        src/backend/x86/x86TranslationInterface.cpp
+        src/backend/x86/x86TranslationInterface.h
+        src/backend/x86/instruction/x86Instruction.cpp
+        src/backend/x86/instruction/x86Instruction.h
+        src/backend/x86/instruction/arithmetic/x86AddRM32Inst.h
+        src/backend/x86/instruction/x86ModRM.cpp
+        src/backend/x86/instruction/x86ModRM.h
+        src/ByteBuffer.h
+        src/backend/x86/instruction/arithmetic/x86AddMI32Inst.h
 )
 target_include_directories(city PUBLIC src)
 

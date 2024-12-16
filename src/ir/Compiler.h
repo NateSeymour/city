@@ -3,7 +3,7 @@
 
 #include <vector>
 #include "Module.h"
-#include "Assembly.h"
+#include "Object.h"
 
 namespace city
 {
@@ -14,7 +14,7 @@ namespace city
     public:
         void AddModule(Module &module);
 
-        [[nodiscard]] Assembly CompileModules() const;
+        [[nodiscard]] Object CompileModules() const;
     };
 } // city
 
