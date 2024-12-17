@@ -81,7 +81,7 @@ StoreInst *Builder::InsertStoreInst(Value *dst, Value *src)
     return this->ReserveInstruction<StoreInst>(dst, src);
 }
 
-BranchInst *Builder::InsertBranchInst(Instruction *target)
+BranchInst *Builder::InsertBranchInst(IRInstruction *target)
 {
     return this->ReserveInstruction<BranchInst>(target);
 }

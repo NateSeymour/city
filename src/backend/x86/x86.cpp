@@ -1,7 +1,7 @@
 #include "x86.h"
 #include "ir/Block.h"
 #include "ir/Function.h"
-#include "ir/instruction/Instruction.h"
+#include "ir/instruction/IRInstruction.h"
 #include "x86TranslationInterface.h"
 
 using namespace city;

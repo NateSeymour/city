@@ -2,18 +2,18 @@
 #define CITY_BRANCHINST_H
 
 #include "backend/IRTranslationInterface.h"
-#include "ir/instruction/Instruction.h"
+#include "ir/instruction/IRInstruction.h"
 
 namespace city
 {
-    class BranchInst : public Instruction
+    class BranchInst : public IRInstruction
     {
-        Instruction *target_;
+        IRInstruction *target_;
 
     public:
         void Apply(IRTranslationInterface *interface) override;
 
-        BranchInst(Instruction *target);
+        BranchInst(IRInstruction *target);
     };
 } // namespace city
 

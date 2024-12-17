@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 #include "Function.h"
-#include "instruction/Instruction.h"
+#include "instruction/IRInstruction.h"
 #include "value/Value.h"
 
 namespace city
@@ -22,7 +22,7 @@ namespace city
     protected:
         Function *parent_function_;
 
-        std::vector<std::unique_ptr<Instruction>> instructions_;
+        std::vector<std::unique_ptr<IRInstruction>> instructions_;
         std::vector<std::unique_ptr<Value>> local_values_;
     };
 } // namespace city

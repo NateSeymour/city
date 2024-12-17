@@ -35,7 +35,7 @@ namespace city
         }
 
         template<typename T, typename ...Args>
-        requires std::derived_from<T, Instruction>
+        requires std::derived_from<T, IRInstruction>
         [[nodiscard]] T *ReserveInstruction(Args... args)
         {
             auto &instructions = this->insert_point_->instructions_;
@@ -111,7 +111,7 @@ namespace city
         StoreInst *InsertStoreInst(Value *dst, Value *src);
 
         // Instructions - Control
-        BranchInst *InsertBranchInst(Instruction *target);
+        BranchInst *InsertBranchInst(IRInstruction *target);
         RetInst *InsertRetInst(Value *ret);
 
         // Constructors

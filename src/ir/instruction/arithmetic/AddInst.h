@@ -1,11 +1,11 @@
 #ifndef CITY_ADDINST_H
 #define CITY_ADDINST_H
 
-#include "ir/instruction/Instruction.h"
+#include "ir/instruction/IRInstruction.h"
 
 namespace city
 {
-    class AddInst : public Instruction
+    class AddInst : public IRInstruction
     {
         Value *lhs_;
         Value *rhs_;

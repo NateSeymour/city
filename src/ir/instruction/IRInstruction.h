@@ -1,14 +1,14 @@
 #ifndef CITY_INSTRUCTION_H
 #define CITY_INSTRUCTION_H
 
-#include "backend/IRTranslationInterface.h"
 #include "ir/value/Value.h"
 
 namespace city
 {
+    class IRTranslationInterface;
     class Builder;
 
-    class Instruction
+    class IRInstruction
     {
         friend class Builder;
 
@@ -23,7 +23,7 @@ namespace city
         [[nodiscard]] virtual bool HasReturnValue() const noexcept;
         [[nodiscard]] Value *GetReturnValue();
 
-        virtual ~Instruction() = default;
+        virtual ~IRInstruction() = default;
     };
 } // namespace city
 

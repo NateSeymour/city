@@ -23,8 +23,8 @@ add_library(city
         src/ir/Module.h
         src/ir/Builder.cpp
         src/ir/Builder.h
-        src/ir/instruction/Instruction.cpp
-        src/ir/instruction/Instruction.h
+        src/ir/instruction/IRInstruction.cpp
+        src/ir/instruction/IRInstruction.h
         src/ir/Object.cpp
         src/ir/Object.h
         src/ir/Assembly.cpp
@@ -73,6 +73,8 @@ add_library(city
         src/ByteBuffer.h
         src/backend/x86/instruction/arithmetic/x86AddMI32Inst.h
         src/ir/instruction/InstructionFunctor.h
+        src/backend/NativeInstruction.cpp
+        src/backend/NativeInstruction.h
 )
 target_include_directories(city PUBLIC src)
 

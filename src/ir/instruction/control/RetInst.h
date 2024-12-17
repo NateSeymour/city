@@ -2,11 +2,11 @@
 #define CITY_RETINST_H
 
 #include "backend/IRTranslationInterface.h"
-#include "ir/instruction/Instruction.h"
+#include "ir/instruction/IRInstruction.h"
 
 namespace city
 {
-    class RetInst : public Instruction
+    class RetInst : public IRInstruction
     {
         Value *value_;
 

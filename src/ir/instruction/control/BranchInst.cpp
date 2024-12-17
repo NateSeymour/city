@@ -7,4 +7,4 @@ void BranchInst::Apply(IRTranslationInterface *interface)
     interface->Translate(this);
 }
 
-BranchInst::BranchInst(Instruction *target) : target_(target) {}
+BranchInst::BranchInst(IRInstruction *target) : target_(target) {}
