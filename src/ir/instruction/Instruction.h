@@ -1,6 +1,7 @@
 #ifndef CITY_INSTRUCTION_H
 #define CITY_INSTRUCTION_H
 
+#include "backend/IRTranslationInterface.h"
 #include "ir/value/Value.h"
 
 namespace city
@@ -17,11 +18,13 @@ namespace city
         void SetReturnValue(Value *return_value);
 
     public:
+        virtual void Apply(IRTranslationInterface *interface) = 0;
+
         [[nodiscard]] virtual bool HasReturnValue() const noexcept;
         [[nodiscard]] Value *GetReturnValue();
 
         virtual ~Instruction() = default;
     };
-} // city
+} // namespace city
 
-#endif //CITY_INSTRUCTION_H
+#endif // CITY_INSTRUCTION_H

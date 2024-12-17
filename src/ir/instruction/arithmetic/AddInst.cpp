@@ -2,6 +2,11 @@
 
 using namespace city;
 
+void AddInst::Apply(IRTranslationInterface *interface)
+{
+    interface->Translate(this);
+}
+
 bool AddInst::HasReturnValue() const noexcept
 {
     return true;

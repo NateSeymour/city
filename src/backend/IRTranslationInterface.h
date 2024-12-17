@@ -2,35 +2,20 @@
 #define IRTRANSLATIONINTERFACE_H
 
 #include "ir/Object.h"
-#include "ir/instruction/arithmetic/AddInst.h"
-#include "ir/instruction/control/BranchInst.h"
-#include "ir/instruction/control/RetInst.h"
-#include "ir/instruction/memory/StoreInst.h"
+#include "ir/instruction/InstructionFunctor.h"
 
 namespace city
 {
-    struct IRTranslationResult {};
-
-    struct IRTranslationInterface
+    struct IRTranslationResult
     {
-        using Result = IRTranslationResult;
+    };
 
+    struct IRTranslationInterface : InstructionFunctor<IRTranslationResult>
+    {
         Object &object;
 
-        virtual Result Translate(AddInst &instruction) = 0;
-        virtual Result Translate(BranchInst &instruction) = 0;
-        virtual Result Translate(RetInst &instruction) = 0;
-        virtual Result Translate(StoreInst &instruction) = 0;
-
-        template<typename T>
-        Result Translate(T&)
-        {
-            static_assert(false, "unknown instruction type");
-        }
-
         explicit IRTranslationInterface(Object &object) : object(object) {}
-        virtual ~IRTranslationInterface() = default;
     };
-} // city
+} // namespace city
 
-#endif //IRTRANSLATIONINTERFACE_H
+#endif // IRTRANSLATIONINTERFACE_H

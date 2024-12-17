@@ -72,6 +72,7 @@ add_library(city
         src/backend/x86/instruction/x86ModRM.h
         src/ByteBuffer.h
         src/backend/x86/instruction/arithmetic/x86AddMI32Inst.h
+        src/ir/instruction/InstructionFunctor.h
 )
 target_include_directories(city PUBLIC src)
 

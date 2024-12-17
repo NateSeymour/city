@@ -1,23 +1,30 @@
 #ifndef CITY_BLOCK_H
 #define CITY_BLOCK_H
 
-#include <vector>
 #include <memory>
-#include "value/Value.h"
+#include <vector>
+#include "Function.h"
 #include "instruction/Instruction.h"
+#include "value/Value.h"
 
 namespace city
 {
     class Builder;
+    class AArch64;
+    class x86;
 
     class Block
     {
         friend class Builder;
+        friend class AArch64;
+        friend class x86;
 
     protected:
+        Function *parent_function_;
+
         std::vector<std::unique_ptr<Instruction>> instructions_;
         std::vector<std::unique_ptr<Value>> local_values_;
     };
-} // city
+} // namespace city
 
-#endif //CITY_BLOCK_H
+#endif // CITY_BLOCK_H

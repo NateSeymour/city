@@ -7,10 +7,10 @@ namespace city
 {
     struct x86TranslationInterface : IRTranslationInterface
     {
-        Result Translate(AddInst &instruction) override;
-        Result Translate(BranchInst &instruction) override;
-        Result Translate(RetInst &instruction) override;
-        Result Translate(StoreInst &instruction) override;
+        IRTranslationResult Translate(AddInst *instruction) override;
+        IRTranslationResult Translate(BranchInst *instruction) override;
+        IRTranslationResult Translate(RetInst *instruction) override;
+        IRTranslationResult Translate(StoreInst *instruction) override;
 
         explicit x86TranslationInterface(Object &object) : IRTranslationInterface(object) {}
     };

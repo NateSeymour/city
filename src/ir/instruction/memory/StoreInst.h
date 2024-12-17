@@ -1,6 +1,7 @@
 #ifndef CITY_STOREINST_H
 #define CITY_STOREINST_H
 
+#include "backend/IRTranslationInterface.h"
 #include "ir/instruction/Instruction.h"
 
 namespace city
@@ -11,8 +12,10 @@ namespace city
         Value *src_;
 
     public:
+        void Apply(IRTranslationInterface *interface) override;
+
         StoreInst(Value *dst, Value *src);
     };
-}
+} // namespace city
 
-#endif //CITY_STOREINST_H
+#endif // CITY_STOREINST_H

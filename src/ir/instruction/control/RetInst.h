@@ -1,6 +1,7 @@
 #ifndef CITY_RETINST_H
 #define CITY_RETINST_H
 
+#include "backend/IRTranslationInterface.h"
 #include "ir/instruction/Instruction.h"
 
 namespace city
@@ -10,8 +11,10 @@ namespace city
         Value *value_;
 
     public:
+        void Apply(IRTranslationInterface *interface) override;
+
         RetInst(Value *value);
     };
-} // city
+} // namespace city
 
-#endif //CITY_RETINST_H
+#endif // CITY_RETINST_H
