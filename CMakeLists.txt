@@ -17,8 +17,8 @@ add_library(city
         src/ir/value/Value.h
         src/ir/type/Type.cpp
         src/ir/type/Type.h
-        src/ir/Compiler.cpp
-        src/ir/Compiler.h
+        src/ir/JIT.cpp
+        src/ir/JIT.h
         src/ir/Module.cpp
         src/ir/Module.h
         src/ir/Builder.cpp

@@ -68,14 +68,7 @@ namespace city
     class x86 : public Backend
     {
     public:
-        /**
-         * Calculates ModR/M byte using formula from section 2.1.5 of architecture reference manual.
-         * @param reg Register (R)
-         * @param rem Register or Memory (R/M)
-         * @param mod Addressing Mode
-         * @return ModR/M
-         */
-        constexpr static std::uint8_t CalculateModRM(x86Register reg, x86Register rem, x86Mod mod);
+        [[nodiscard]] Object BuildModule(Module &module) override;
     };
 } // namespace city
 

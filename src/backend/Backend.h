@@ -1,7 +1,6 @@
 #ifndef CITY_BACKEND_H
 #define CITY_BACKEND_H
 
-#include <cstddef>
 #include "ir/Module.h"
 #include "ir/Object.h"
 
@@ -9,11 +8,17 @@ namespace city
 {
     class Backend
     {
-        std::size_t pointer_size_;
-
     public:
-        [[nodiscard]] virtual Object BuildModule(Module &module) const = 0;
-    };
-} // city
+        [[nodiscard]] virtual Object BuildModule(Module &module) = 0;
 
-#endif //CITY_BACKEND_H
+        /**
+         * Instantiates and returns a handle to the host-native compiler backend.
+         * @return Host Native Backend
+         */
+        [[nodiscard]] static std::unique_ptr<Backend> CreateHostNative();
+
+        virtual ~Backend() = default;
+    };
+} // namespace city
+
+#endif // CITY_BACKEND_H

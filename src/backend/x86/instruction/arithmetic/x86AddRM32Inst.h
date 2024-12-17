@@ -14,7 +14,7 @@ namespace city
     public:
         x86AddRM32Inst(Value *dst, Value *src)
         {
-            this->opcode = {0x03};
+            this->SetOpcode({0x03});
         }
     };
 } // namespace city

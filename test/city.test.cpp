@@ -1,22 +1,17 @@
 #include <gtest/gtest.h>
-#include <ir/Compiler.h>
+#include <ir/JIT.h>
 #include <ir/Module.h>
 
 TEST(City, Module)
 {
-    city::Module module("test");
-    auto builder = module.CreateBuilder();
+    auto module = city::Module::Create("my_test");
+    auto builder = module->CreateBuilder();
 
-    auto ret_type = builder.GetType<int>();
-    auto function = builder.CreateFunction("foo", ret_type);
-    builder.SetInsertPoint(function);
+    /*
+     * Add some IR
+     */
 
-    auto ret = builder.CreateConstant<int>(0);
-    builder.InsertRetInst(ret);
-
-    city::Compiler compiler;
-    compiler.AddModule(module);
-
+    city::JIT compiler;
+    compiler.AddModule(std::move(module));
     auto assembly = compiler.CompileModules();
-    // auto foo = assembly.Lookup("foo");
 }

@@ -1,19 +1,22 @@
 #ifndef CITY_MODULE_H
 #define CITY_MODULE_H
 
-#include <vector>
 #include <memory>
-#include <unordered_map>
 #include <string>
-#include "Symbol.h"
-#include "Builder.h"
+#include <vector>
 #include "Block.h"
+#include "Builder.h"
 
 namespace city
 {
+    class AArch64;
+    class x86;
+
     class Module
     {
         friend class Builder;
+        friend class AArch64;
+        friend class x86;
 
         std::string name_;
 
@@ -24,10 +27,11 @@ namespace city
 
     public:
         [[nodiscard]] Builder CreateBuilder() noexcept;
+        [[nodiscard]] static std::unique_ptr<Module> Create(std::string name);
 
         Module() = delete;
         Module(std::string name);
     };
-} // city
+} // namespace city
 
-#endif //CITY_MODULE_H
+#endif // CITY_MODULE_H

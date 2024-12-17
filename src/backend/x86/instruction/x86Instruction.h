@@ -4,6 +4,7 @@
 #include <array>
 #include <cstdint>
 #include "ByteBuffer.h"
+#include "backend/x86/x86.h"
 #include "ir/instruction/Instruction.h"
 
 namespace city
@@ -20,11 +21,26 @@ namespace city
 
     class x86Instruction : public Instruction
     {
+        x86Opcode opcode_ = {};
+
+        bool has_mod_rm_ = false;
+        std::uint8_t mod_rm_ = 0x0;
+        std::uint8_t sib_ = 0x0;
+
+        x86Immediate immediate_ = {};
+
     public:
-        x86Opcode opcode = {};
-        std::uint8_t mod_rm = 0x0;
-        std::uint8_t sib = 0x0;
-        x86Immediate immediate = {};
+        void SetOpcode(std::initializer_list<std::uint8_t> bytes);
+        void SetImmediate(std::initializer_list<std::uint8_t> bytes);
+
+        /**
+         * Calculates ModR/M byte using formula from section 2.1.5 of architecture reference manual.
+         * @param reg Register (R)
+         * @param r_m Register or Memory (R/M)
+         * @param mod Addressing Mode
+         * @return ModR/M
+         */
+        void SetModRM(x86Register reg, x86Register r_m, x86Mod mod);
     };
 } // namespace city
 

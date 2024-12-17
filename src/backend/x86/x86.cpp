@@ -1,12 +1,11 @@
 #include "x86.h"
+#include "x86TranslationInterface.h"
 
 using namespace city;
 
-constexpr std::uint8_t x86::CalculateModRM(x86Register reg, x86Register rem, x86Mod mod)
+Object x86::BuildModule(Module &module)
 {
-    auto breg = static_cast<std::uint8_t>(reg);
-    auto brem = static_cast<std::uint8_t>(rem);
-    auto bmod = static_cast<std::uint8_t>(mod);
+    Object object;
 
-    return (0 | (bmod << 6) | (breg << 3) | brem);
+    x86TranslationInterface translator{object};
 }
