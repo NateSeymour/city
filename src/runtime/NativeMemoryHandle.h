@@ -8,9 +8,9 @@ namespace city
 {
     enum class MemoryProtection : std::uint8_t
     {
-        Read = (1<<0),
-        Write = (1<<1),
-        Execute = (1<<2),
+        Read = (1 << 0),
+        Write = (1 << 1),
+        Execute = (1 << 2),
     };
 
     inline MemoryProtection operator|(MemoryProtection a, MemoryProtection b)
@@ -32,9 +32,11 @@ namespace city
         NativeMemoryHandle(std::size_t size, void *address, MemoryProtection protection);
 
     public:
+        void DebugDump() const;
+
         [[nodiscard]] static NativeMemoryHandle Allocate(std::size_t size);
 
-        [[nodiscard]] void *GetAddressAtOffset(std::size_t offset) const;
+        [[nodiscard]] std::byte *GetAddressAtOffset(std::size_t offset) const;
         void SetProtection(MemoryProtection protection);
 
         [[nodiscard]] bool IsReadable() const noexcept;
@@ -43,8 +45,9 @@ namespace city
 
         NativeMemoryHandle() = delete;
         NativeMemoryHandle(NativeMemoryHandle const &) = delete;
+        NativeMemoryHandle(NativeMemoryHandle &&) = default;
         ~NativeMemoryHandle();
     };
-} // city
+} // namespace city
 
-#endif //CITY_EXECUTABLEMEMORYHANDLE_H
+#endif // CITY_EXECUTABLEMEMORYHANDLE_H

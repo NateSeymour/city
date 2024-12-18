@@ -35,8 +35,8 @@ add_library(city
         src/ir/value/PointerValue.h
         src/ir/Block.cpp
         src/ir/Block.h
-        src/ir/Symbol.cpp
-        src/ir/Symbol.h
+        src/Symbol.cpp
+        src/Symbol.h
         src/ir/Function.cpp
         src/ir/Function.h
         src/ir/instruction/arithmetic/AddInst.h

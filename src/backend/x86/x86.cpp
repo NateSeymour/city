@@ -22,13 +22,15 @@ std::array<x86Register, 8> const x86_register_definitions = {
 
 Object x86::BuildModule(Module &module)
 {
-    Object object;
+    Object object{};
 
     x86TranslationInterface translator{object};
     for (auto &function : module.functions_)
     {
         // Function Prolog
-        object.EmplaceInstruction<Amd64PushO64>(x86RegisterCode::RBP);
+        auto entry = object.EmplaceInstruction<Amd64PushO64>(x86RegisterCode::RBP);
+        object.RegisterSymbol(function->name_, entry);
+
         object.EmplaceInstruction<Amd64MovMR64>(x86RegisterCode::RBP, x86RegisterCode::RSP);
 
         // Function Body

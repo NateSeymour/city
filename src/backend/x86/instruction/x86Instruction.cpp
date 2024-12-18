@@ -1,6 +1,48 @@
 #include "x86Instruction.h"
+#include <cstring>
 
 using namespace city;
+
+size_t x86Instruction::GetBinarySize() const noexcept
+{
+    std::size_t size = 0;
+
+    size += this->prefix_.GetSize();
+    size += this->opcode_.GetSize();
+    size += this->has_mod_rm_ ? 1 : 0;
+    size += this->has_sib_ ? 1 : 0;
+    size += this->immediate_.GetSize();
+
+    return size;
+}
+
+size_t x86Instruction::WriteToBuffer(std::byte *buffer) const
+{
+    std::byte *buffer_it = buffer;
+
+    std::memcpy(buffer_it, this->prefix_.GetBuffer(), this->prefix_.GetSize());
+    buffer_it += this->prefix_.GetSize();
+
+    std::memcpy(buffer_it, this->opcode_.GetBuffer(), this->opcode_.GetSize());
+    buffer_it += this->opcode_.GetSize();
+
+    if (this->has_mod_rm_)
+    {
+        std::memcpy(buffer_it, &this->mod_rm_, 1);
+        buffer_it++;
+    }
+
+    if (this->has_sib_)
+    {
+        std::memcpy(buffer_it, &this->sib_, 1);
+        buffer_it++;
+    }
+
+    std::memcpy(buffer_it, this->immediate_.GetBuffer(), this->immediate_.GetSize());
+    buffer_it += this->immediate_.GetSize();
+
+    return buffer_it - buffer;
+}
 
 void x86Instruction::SetPrefix(std::initializer_list<std::uint8_t> bytes)
 {

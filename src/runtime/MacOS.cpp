@@ -11,7 +11,7 @@ NativeMemoryHandle NativeMemoryHandle::Allocate(std::size_t size)
 {
     MemoryProtection protection = MemoryProtection::Read | MemoryProtection::Write;
 
-    void *addr = mmap(nullptr, size, memory_protection_to_native(protection), MAP_JIT, 0, 0);
+    void *addr = mmap(nullptr, size, memory_protection_to_native(protection), MAP_PRIVATE | MAP_ANON | MAP_JIT, -1, 0);
 
     if (addr == MAP_FAILED)
     {

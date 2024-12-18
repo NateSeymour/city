@@ -36,11 +36,16 @@ namespace city
 
         bool has_mod_rm_ = false;
         std::uint8_t mod_rm_ = 0x0;
+
+        bool has_sib_ = false;
         std::uint8_t sib_ = 0x0;
 
         x86Immediate immediate_ = {};
 
     public:
+        [[nodiscard]] size_t GetBinarySize() const noexcept override;
+        [[nodiscard]] size_t WriteToBuffer(std::byte *buffer) const override;
+
         void SetPrefix(std::initializer_list<std::uint8_t> bytes);
         void SetOpcode(std::initializer_list<std::uint8_t> bytes);
         void SetImmediate(std::initializer_list<std::uint8_t> bytes);

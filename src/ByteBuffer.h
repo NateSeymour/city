@@ -15,6 +15,11 @@ namespace city
         std::array<std::uint8_t, MaxSize> buffer_;
 
     public:
+        [[nodiscard]] std::uint8_t const *GetBuffer() const noexcept
+        {
+            return static_cast<std::uint8_t const *>(this->buffer_.data());
+        }
+
         [[nodiscard]] std::size_t GetSize() const noexcept
         {
             return this->size_;
