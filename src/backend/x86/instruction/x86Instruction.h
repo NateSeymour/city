@@ -4,8 +4,8 @@
 #include <array>
 #include <cstdint>
 #include "ByteBuffer.h"
+#include "backend/NativeInstruction.h"
 #include "backend/x86/x86.h"
-#include "ir/instruction/IRInstruction.h"
 
 namespace city
 {
@@ -19,7 +19,7 @@ namespace city
      */
     using x86Immediate = ByteBuffer<8>;
 
-    class x86Instruction : public IRInstruction
+    class x86Instruction : public NativeInstruction
     {
         x86Opcode opcode_ = {};
 

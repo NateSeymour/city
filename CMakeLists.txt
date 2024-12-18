@@ -68,8 +68,6 @@ add_library(city
         src/backend/x86/instruction/x86Instruction.cpp
         src/backend/x86/instruction/x86Instruction.h
         src/backend/x86/instruction/arithmetic/x86AddRM32Inst.h
-        src/backend/x86/instruction/x86ModRM.cpp
-        src/backend/x86/instruction/x86ModRM.h
         src/ByteBuffer.h
         src/backend/x86/instruction/arithmetic/x86AddMI32Inst.h
         src/ir/instruction/InstructionFunctor.h

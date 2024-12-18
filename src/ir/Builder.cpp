@@ -36,7 +36,7 @@ void Builder::SetInsertPoint(Block *block) noexcept
 
 void Builder::SetInsertPoint(Function *function) noexcept
 {
-    this->SetInsertPoint(function->body_);
+    // this->SetInsertPoint(function->body_);
 }
 
 Block *Builder::GetInsertPoint() const noexcept
@@ -44,7 +44,7 @@ Block *Builder::GetInsertPoint() const noexcept
     return this->insert_point_;
 }
 
-ConstantValue *Builder::CreateConstant(Type type, const std::vector<std::byte> &data)
+ConstantValue *Builder::CreateConstant(Type type, std::vector<std::byte> const &data)
 {
     return this->ReserveLocalValue<ConstantValue>(type, data);
 }
@@ -64,7 +64,7 @@ AddInst *Builder::InsertAddInst(Value *lhs, Value *rhs)
     auto lhs_type = lhs->GetType();
     auto rhs_type = rhs->GetType();
 
-    if(lhs_type != rhs_type)
+    if (lhs_type != rhs_type)
     {
         throw std::runtime_error("incompatible types");
     }

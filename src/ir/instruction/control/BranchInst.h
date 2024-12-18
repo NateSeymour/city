@@ -1,11 +1,12 @@
 #ifndef CITY_BRANCHINST_H
 #define CITY_BRANCHINST_H
 
-#include "backend/IRTranslationInterface.h"
 #include "ir/instruction/IRInstruction.h"
 
 namespace city
 {
+    class IRTranslationInterface;
+    
     class BranchInst : public IRInstruction
     {
         IRInstruction *target_;

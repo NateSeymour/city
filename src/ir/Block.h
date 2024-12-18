@@ -3,7 +3,6 @@
 
 #include <memory>
 #include <vector>
-#include "Function.h"
 #include "instruction/IRInstruction.h"
 #include "value/Value.h"
 
@@ -12,6 +11,7 @@ namespace city
     class Builder;
     class AArch64;
     class x86;
+    class Function;
 
     class Block
     {

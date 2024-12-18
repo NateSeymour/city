@@ -1,4 +1,5 @@
 #include "StoreInst.h"
+#include "backend/IRTranslationInterface.h"
 
 using namespace city;
 

@@ -1,11 +1,12 @@
 #ifndef CITY_STOREINST_H
 #define CITY_STOREINST_H
 
-#include "backend/IRTranslationInterface.h"
 #include "ir/instruction/IRInstruction.h"
 
 namespace city
 {
+    class IRTranslationInterface;
+    
     class StoreInst : public IRInstruction
     {
         Value *dst_;

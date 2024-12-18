@@ -19,7 +19,7 @@ namespace city
         template<typename T>
         ResultType Translate(T *)
         {
-            static_assert(false, "unknown instruction type");
+            static_assert("unknown instruction type");
         }
 
         virtual ~InstructionFunctor() = default;
