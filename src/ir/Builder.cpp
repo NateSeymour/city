@@ -36,7 +36,7 @@ void Builder::SetInsertPoint(Block *block) noexcept
 
 void Builder::SetInsertPoint(Function *function) noexcept
 {
-    // this->SetInsertPoint(function->body_);
+    this->SetInsertPoint(function->blocks_.back());
 }
 
 Block *Builder::GetInsertPoint() const noexcept

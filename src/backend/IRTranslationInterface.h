@@ -1,7 +1,7 @@
 #ifndef IRTRANSLATIONINTERFACE_H
 #define IRTRANSLATIONINTERFACE_H
 
-#include "ir/Object.h"
+#include "Object.h"
 #include "ir/instruction/InstructionFunctor.h"
 
 namespace city

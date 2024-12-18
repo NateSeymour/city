@@ -10,6 +10,16 @@
 namespace city
 {
     /**
+     * Container to hold x86 maximum prefix size (3 bytes).
+     */
+    using x86Prefix = ByteBuffer<3>;
+
+    enum class Amd64PrefixCode : std::uint8_t
+    {
+        REXW = 0b0100'1000,
+    };
+
+    /**
      * Container to hold the x86 maximum opcode size (3 bytes).
      */
     using x86Opcode = ByteBuffer<3>;
@@ -21,6 +31,7 @@ namespace city
 
     class x86Instruction : public NativeInstruction
     {
+        x86Prefix prefix_ = {};
         x86Opcode opcode_ = {};
 
         bool has_mod_rm_ = false;
@@ -30,6 +41,7 @@ namespace city
         x86Immediate immediate_ = {};
 
     public:
+        void SetPrefix(std::initializer_list<std::uint8_t> bytes);
         void SetOpcode(std::initializer_list<std::uint8_t> bytes);
         void SetImmediate(std::initializer_list<std::uint8_t> bytes);
 

@@ -6,10 +6,14 @@
 namespace city
 {
     class IRTranslationInterface;
-    
+    class x86TranslationInterface;
+
     class RetInst : public IRInstruction
     {
-        Value *value_;
+        friend class x86TranslationInterface;
+        
+    protected:
+        Value *value_ = nullptr;
 
     public:
         void Apply(IRTranslationInterface *interface) override;

@@ -17,18 +17,18 @@ add_library(city
         src/ir/value/Value.h
         src/ir/type/Type.cpp
         src/ir/type/Type.h
-        src/ir/JIT.cpp
-        src/ir/JIT.h
+        src/JIT.cpp
+        src/JIT.h
         src/ir/Module.cpp
         src/ir/Module.h
         src/ir/Builder.cpp
         src/ir/Builder.h
         src/ir/instruction/IRInstruction.cpp
         src/ir/instruction/IRInstruction.h
-        src/ir/Object.cpp
-        src/ir/Object.h
-        src/ir/Assembly.cpp
-        src/ir/Assembly.h
+        src/Object.cpp
+        src/Object.h
+        src/Assembly.cpp
+        src/Assembly.h
         src/ir/value/ConstantValue.cpp
         src/ir/value/ConstantValue.h
         src/ir/value/PointerValue.cpp
@@ -76,10 +76,15 @@ add_library(city
         src/backend/x86/x86Register.cpp
         src/backend/x86/x86Register.h
         src/backend/x86/x86ModRM.h
+        src/backend/x86/instruction/memory/Amd64PushO64.h
+        src/backend/x86/instruction/memory/Amd64MovMR64.h
+        src/backend/x86/instruction/memory/Amd64PopO64.h
+        src/backend/x86/instruction/control/Amd64RetZONear.h
 )
 target_include_directories(city PUBLIC src)
 
 add_executable(city-test
-        test/city.test.cpp
+        test/module.test.cpp
+        test/amd64.test.cpp
 )
 target_link_libraries(city-test PRIVATE city GTest::gtest_main)

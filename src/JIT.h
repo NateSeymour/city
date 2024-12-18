@@ -4,9 +4,9 @@
 #include <memory>
 #include <vector>
 #include "Assembly.h"
-#include "Module.h"
 #include "Object.h"
 #include "backend/Backend.h"
+#include "ir/Module.h"
 
 namespace city
 {
@@ -22,6 +22,8 @@ namespace city
          * @param module Module to transfer to the compiler
          */
         void AddModule(std::unique_ptr<Module> module);
+
+        void RemoveModule(std::string const &name);
 
         /**
          * Compiles all IR modules to objects and links all objects to one Assembly.

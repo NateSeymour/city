@@ -3,7 +3,7 @@
 
 #include <string>
 #include <unordered_map>
-#include "Symbol.h"
+#include "ir/Symbol.h"
 
 namespace city
 {
@@ -14,6 +14,6 @@ namespace city
     public:
         [[nodiscard]] Symbol Lookup(std::string const &symbol);
     };
-} // city
+} // namespace city
 
-#endif //CITY_ASSEMBLY_H
+#endif // CITY_ASSEMBLY_H

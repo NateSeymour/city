@@ -2,6 +2,11 @@
 
 using namespace city;
 
+void x86Instruction::SetPrefix(std::initializer_list<std::uint8_t> bytes)
+{
+    this->prefix_ = bytes;
+}
+
 void x86Instruction::SetOpcode(std::initializer_list<std::uint8_t> bytes)
 {
     this->opcode_ = bytes;

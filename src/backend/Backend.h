@@ -1,8 +1,8 @@
 #ifndef CITY_BACKEND_H
 #define CITY_BACKEND_H
 
+#include "Object.h"
 #include "ir/Module.h"
-#include "ir/Object.h"
 
 namespace city
 {
