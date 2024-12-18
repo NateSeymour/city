@@ -12,10 +12,15 @@ namespace city
         StaticPreferred,
     };
 
+    class Value;
+
     class Container
     {
+        Value *value_ = nullptr;
 
+    public:
+        virtual ~Container() = default;
     };
-} // city
+} // namespace city
 
-#endif //CITY_CONTAINER_H
+#endif // CITY_CONTAINER_H

@@ -22,3 +22,17 @@ Object x86::BuildModule(Module &module)
         }
     }
 }
+
+x86::x86()
+{
+    this->registers_ = {
+            x86Register(x86RegisterCode::XMM0),
+            x86Register(x86RegisterCode::XMM1),
+            x86Register(x86RegisterCode::XMM2),
+            x86Register(x86RegisterCode::XMM3),
+            x86Register(x86RegisterCode::XMM4),
+            x86Register(x86RegisterCode::XMM5),
+            x86Register(x86RegisterCode::XMM6),
+            x86Register(x86RegisterCode::XMM7),
+    };
+}

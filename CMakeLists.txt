@@ -73,6 +73,9 @@ add_library(city
         src/ir/instruction/InstructionFunctor.h
         src/backend/NativeInstruction.cpp
         src/backend/NativeInstruction.h
+        src/backend/x86/x86Register.cpp
+        src/backend/x86/x86Register.h
+        src/backend/x86/x86ModRM.h
 )
 target_include_directories(city PUBLIC src)
 

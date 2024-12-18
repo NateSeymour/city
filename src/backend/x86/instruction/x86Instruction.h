@@ -40,7 +40,7 @@ namespace city
          * @param mod Addressing Mode
          * @return ModR/M
          */
-        void SetModRM(x86Register reg, x86Register r_m, x86Mod mod);
+        void SetModRM(x86RegisterCode reg, x86RegisterCode r_m, x86Mod mod);
     };
 } // namespace city
 
