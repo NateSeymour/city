@@ -80,6 +80,8 @@ add_library(city
         src/backend/x86/instruction/memory/Amd64MovMR64.h
         src/backend/x86/instruction/memory/Amd64PopO64.h
         src/backend/x86/instruction/control/Amd64RetZONear.h
+        src/runtime/Windows.cpp
+        src/runtime/Windows.h
 )
 target_include_directories(city PUBLIC src)
 

@@ -13,12 +13,12 @@ namespace city
         Execute = (1 << 2),
     };
 
-    inline MemoryProtection operator|(MemoryProtection a, MemoryProtection b)
+    constexpr MemoryProtection operator|(MemoryProtection a, MemoryProtection b)
     {
         return static_cast<MemoryProtection>(static_cast<std::uint8_t>(a) | static_cast<std::uint8_t>(b));
     }
 
-    inline std::uint8_t operator&(MemoryProtection a, MemoryProtection b)
+    constexpr std::uint8_t operator&(MemoryProtection a, MemoryProtection b)
     {
         return static_cast<std::uint8_t>(a) & static_cast<std::uint8_t>(b);
     }
@@ -35,9 +35,9 @@ namespace city
         void DebugDump() const;
 
         [[nodiscard]] static NativeMemoryHandle Allocate(std::size_t size);
+        void SetProtection(MemoryProtection protection);
 
         [[nodiscard]] std::byte *GetAddressAtOffset(std::size_t offset) const;
-        void SetProtection(MemoryProtection protection);
 
         [[nodiscard]] bool IsReadable() const noexcept;
         [[nodiscard]] bool IsWritable() const noexcept;

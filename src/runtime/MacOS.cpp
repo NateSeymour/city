@@ -9,7 +9,7 @@ using namespace city;
 
 NativeMemoryHandle NativeMemoryHandle::Allocate(std::size_t size)
 {
-    MemoryProtection protection = MemoryProtection::Read | MemoryProtection::Write;
+    auto protection = MemoryProtection::Read | MemoryProtection::Write;
 
     void *addr = mmap(nullptr, size, memory_protection_to_native(protection), MAP_PRIVATE | MAP_ANON | MAP_JIT, -1, 0);
 
@@ -23,12 +23,12 @@ NativeMemoryHandle NativeMemoryHandle::Allocate(std::size_t size)
 
 void NativeMemoryHandle::SetProtection(MemoryProtection protection)
 {
-    this->protection_ = protection;
-
-    if (mprotect(this->address_, this->size_, memory_protection_to_native(this->protection_)) != 0)
+    if (mprotect(this->address_, this->size_, memory_protection_to_native(protection)) != 0)
     {
         throw std::runtime_error("failed to set memory protection");
     }
+
+    this->protection_ = protection;
 }
 
 NativeMemoryHandle::~NativeMemoryHandle()

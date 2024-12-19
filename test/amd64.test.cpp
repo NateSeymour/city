@@ -24,5 +24,10 @@ TEST_F(Amd64TestRunner, ReturnOnlyFunction)
     this->jit.AddModule(std::move(module));
     auto assembly = this->jit.CompileModules();
 
+    auto test_symbol = assembly.Lookup("test");
+    auto test = test_symbol.ToPointer<void()>();
+
+    test();
+
     this->jit.RemoveModule("test_return_only");
 }

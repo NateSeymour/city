@@ -14,6 +14,12 @@ namespace city
     {
         std::byte *raw;
         SymbolFlags flags;
+
+        template<typename T>
+        T *ToPointer() const noexcept
+        {
+            return reinterpret_cast<T *>(this->raw);
+        }
     };
 } // namespace city
 
