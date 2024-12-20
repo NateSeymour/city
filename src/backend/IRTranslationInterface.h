@@ -1,7 +1,7 @@
 #ifndef IRTRANSLATIONINTERFACE_H
 #define IRTRANSLATIONINTERFACE_H
 
-#include "Object.h"
+#include "NativeModule.h"
 #include "ir/instruction/InstructionFunctor.h"
 
 namespace city
@@ -12,9 +12,9 @@ namespace city
 
     struct IRTranslationInterface : InstructionFunctor<IRTranslationResult>
     {
-        Object &object;
+        NativeModule &object;
 
-        explicit IRTranslationInterface(Object &object) : object(object) {}
+        explicit IRTranslationInterface(NativeModule &object) : object(object) {}
     };
 } // namespace city
 

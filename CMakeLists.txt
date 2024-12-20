@@ -19,14 +19,14 @@ add_library(city
         src/ir/type/Type.h
         src/JIT.cpp
         src/JIT.h
-        src/ir/Module.cpp
-        src/ir/Module.h
+        src/ir/IRModule.cpp
+        src/ir/IRModule.h
         src/ir/Builder.cpp
         src/ir/Builder.h
         src/ir/instruction/IRInstruction.cpp
         src/ir/instruction/IRInstruction.h
-        src/Object.cpp
-        src/Object.h
+        src/backend/NativeModule.cpp
+        src/backend/NativeModule.h
         src/Assembly.cpp
         src/Assembly.h
         src/ir/value/ConstantValue.cpp
@@ -82,6 +82,8 @@ add_library(city
         src/backend/x86/instruction/control/Amd64RetZONear.h
         src/runtime/Windows.cpp
         src/runtime/Windows.h
+        src/Object.cpp
+        src/Object.h
 )
 target_include_directories(city PUBLIC src)
 

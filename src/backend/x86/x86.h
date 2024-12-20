@@ -13,7 +13,7 @@ namespace city
         std::array<x86Register, 8> registers_;
 
     public:
-        [[nodiscard]] Object BuildModule(Module &module) override;
+        [[nodiscard]] NativeModule BuildModule(IRModule &module) override;
 
         x86();
     };

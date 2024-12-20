@@ -15,13 +15,13 @@
 
 namespace city
 {
-    class Module;
+    class IRModule;
 
     class Builder
     {
-        friend class Module;
+        friend class IRModule;
 
-        Module &module_;
+        IRModule &module_;
         Block *insert_point_ = nullptr;
 
     protected:
@@ -43,7 +43,7 @@ namespace city
             return dynamic_cast<T*>(instruction.get());
         }
 
-        explicit Builder(Module &module);
+        explicit Builder(IRModule &module);
 
     public:
         // Blocks

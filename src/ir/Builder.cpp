@@ -1,9 +1,9 @@
 #include "Builder.h"
-#include "Module.h"
+#include "IRModule.h"
 
 using namespace city;
 
-Builder::Builder(Module &module) : module_(module) {}
+Builder::Builder(IRModule &module) : module_(module) {}
 
 Block *Builder::CreateBlock()
 {

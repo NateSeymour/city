@@ -3,34 +3,38 @@
 
 using namespace city;
 
-void JIT::AddModule(std::unique_ptr<Module> module)
+void JIT::TranslateIRModules()
 {
-    this->modules_.push_back(std::move(module));
+    for (auto &module : this->ir_modules_)
+    {
+        auto object = this->backend_->BuildModule(module);
+        this->native_modules_.push_back(std::move(object));
+    }
+
+    this->ir_modules_.clear();
+}
+
+void JIT::AddIRModule(IRModule module)
+{
+    this->ir_modules_.push_back(std::move(module));
 }
 
 void JIT::RemoveModule(std::string const &name) {}
 
 Assembly JIT::CompileModules()
 {
-    // Build modules
-    for (auto &module : this->modules_)
-    {
-        auto object = this->backend_->BuildModule(*module);
-        this->objects_.push_back(std::move(object));
-    }
-
-    this->modules_.clear();
+    this->TranslateIRModules();
 
     // Generate Assembly
     std::size_t assembly_size = 0;
-    for (auto &object : this->objects_)
+    for (auto &object : this->native_modules_)
     {
         assembly_size += object.GetBinarySize();
     }
     auto memory_handle = NativeMemoryHandle::Allocate(assembly_size);
 
     std::size_t offset = 0;
-    for (auto &object : this->objects_)
+    for (auto &object : this->native_modules_)
     {
         offset += object.WriteToBuffer(memory_handle.GetAddressAtOffset(offset));
     }

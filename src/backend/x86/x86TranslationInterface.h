@@ -12,7 +12,7 @@ namespace city
         IRTranslationResult Translate(RetInst *instruction) override;
         IRTranslationResult Translate(StoreInst *instruction) override;
 
-        explicit x86TranslationInterface(Object &object) : IRTranslationInterface(object) {}
+        explicit x86TranslationInterface(NativeModule &object) : IRTranslationInterface(object) {}
     };
 } // namespace city
 

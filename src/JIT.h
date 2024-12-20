@@ -6,22 +6,30 @@
 #include "Assembly.h"
 #include "Object.h"
 #include "backend/Backend.h"
-#include "ir/Module.h"
+#include "backend/NativeModule.h"
+#include "ir/IRModule.h"
 
 namespace city
 {
     class JIT
     {
         std::unique_ptr<Backend> backend_;
-        std::vector<std::unique_ptr<Module>> modules_;
+
+        std::vector<IRModule> ir_modules_;
+        std::vector<NativeModule> native_modules_;
         std::vector<Object> objects_;
+
+        /**
+         * Translates all IR modules to native modules and deletes the IR modules.
+         */
+        void TranslateIRModules();
 
     public:
         /**
          * Adds a module to the compiler, transferring ownership to the compiler.
          * @param module Module to transfer to the compiler
          */
-        void AddModule(std::unique_ptr<Module> module);
+        void AddIRModule(IRModule module);
 
         void RemoveModule(std::string const &name);
 

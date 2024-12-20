@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
-#include <ir/Module.h>
+#include <ir/IRModule.h>
 
-TEST(Module, Create)
+TEST(IRModule, Create)
 {
-    auto module = city::Module::Create("my_test");
+    city::IRModule module{"test"};
 }

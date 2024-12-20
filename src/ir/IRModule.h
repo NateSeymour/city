@@ -12,7 +12,7 @@ namespace city
     class AArch64;
     class x86;
 
-    class Module
+    class IRModule
     {
         friend class Builder;
         friend class AArch64;
@@ -27,10 +27,9 @@ namespace city
 
     public:
         [[nodiscard]] Builder CreateBuilder() noexcept;
-        [[nodiscard]] static std::unique_ptr<Module> Create(std::string name);
 
-        Module() = delete;
-        Module(std::string name);
+        IRModule() = delete;
+        IRModule(std::string name);
     };
 } // namespace city
 
