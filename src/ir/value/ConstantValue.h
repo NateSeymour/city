@@ -16,8 +16,10 @@ namespace city
         std::vector<std::byte> data_;
 
     public:
+        [[nodiscard]] bool IsCompileTimeConstant() const noexcept override;
+
         ConstantValue(Type type, std::vector<std::byte> const &data);
     };
-} // city
+} // namespace city
 
-#endif //CITY_CONSTANTVALUE_H
+#endif // CITY_CONSTANTVALUE_H

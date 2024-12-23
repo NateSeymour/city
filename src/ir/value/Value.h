@@ -25,6 +25,7 @@ namespace city
 
         [[nodiscard]] bool IsConstant() const noexcept;
         [[nodiscard]] bool IsUsed() const noexcept;
+        [[nodiscard]] virtual bool IsCompileTimeConstant() const noexcept;
 
         explicit Value(Type type, StorageClass storage_class = StorageClass::Temporary);
         virtual ~Value() = default;

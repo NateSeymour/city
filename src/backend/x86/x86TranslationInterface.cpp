@@ -15,6 +15,9 @@ IRTranslationResult x86TranslationInterface::Translate(RetInst *instruction)
         this->object.EmplaceInstruction<Amd64PopO64>(x86RegisterCode::RBP);
         this->object.EmplaceInstruction<Amd46RetZONear>();
     }
+    else
+    {
+    }
 
     return {};
 }
