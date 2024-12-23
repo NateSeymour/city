@@ -2,6 +2,7 @@
 
 #include "Windows.h"
 #include <stdexcept>
+#include <utility>
 #include <windows.h>
 #include "NativeMemoryHandle.h"
 

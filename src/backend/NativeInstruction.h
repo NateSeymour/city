@@ -12,14 +12,14 @@ namespace city
         /**
          * Later it would be good for this to become a SymbolDef-like thing that holds type information as well.
          */
-        std::optional<std::string> assoc_symbol_ = std::nullopt;
+        std::optional<std::string> label_ = std::nullopt;
 
     public:
-        void SetAssociatedSymbolName(std::string name);
-        [[nodiscard]] char const *GetAssociatedSymbolName() const noexcept;
+        void SetLabel(std::string name);
+        [[nodiscard]] char const *GetLabel() const noexcept;
 
-        [[nodiscard]] virtual std::size_t GetBinarySize() const noexcept;
-        [[nodiscard]] virtual std::size_t WriteToBuffer(std::byte *buffer) const;
+        [[nodiscard]] virtual std::size_t GetBinarySize() const noexcept = 0;
+        [[nodiscard]] virtual std::size_t WriteToBuffer(std::byte *buffer) const = 0;
 
         virtual ~NativeInstruction() = default;
     };

@@ -22,7 +22,7 @@ TEST_F(Amd64TestRunner, ReturnOnlyFunction)
     builder.InsertRetInst(nullptr);
 
     this->jit.AddIRModule(std::move(module));
-    auto assembly = this->jit.CompileModules();
+    auto assembly = this->jit.CompileAndLink();
 
     auto test_symbol = assembly.Lookup("test");
     auto test = test_symbol.ToPointer<void()>();

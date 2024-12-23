@@ -29,7 +29,7 @@ NativeModule x86::BuildModule(IRModule &module)
     {
         // Function Prolog
         auto entry = object.EmplaceInstruction<Amd64PushO64>(x86RegisterCode::RBP);
-        entry->SetAssociatedSymbolName(function->name_);
+        entry->SetLabel(function->name_);
 
         object.EmplaceInstruction<Amd64MovMR64>(x86RegisterCode::RBP, x86RegisterCode::RSP);
 

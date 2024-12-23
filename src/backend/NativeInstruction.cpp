@@ -2,16 +2,16 @@
 
 using namespace city;
 
-void NativeInstruction::SetAssociatedSymbolName(std::string name)
+void NativeInstruction::SetLabel(std::string name)
 {
-    this->assoc_symbol_ = std::move(name);
+    this->label_ = std::move(name);
 }
 
-char const *NativeInstruction::GetAssociatedSymbolName() const noexcept
+char const *NativeInstruction::GetLabel() const noexcept
 {
-    if (this->assoc_symbol_)
+    if (this->label_)
     {
-        return this->assoc_symbol_->data();
+        return this->label_->data();
     }
 
     return nullptr;

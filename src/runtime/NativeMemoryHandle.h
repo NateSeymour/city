@@ -34,18 +34,21 @@ namespace city
     public:
         void DebugDump() const;
 
-        [[nodiscard]] static NativeMemoryHandle Allocate(std::size_t size);
         void SetProtection(MemoryProtection protection);
 
         [[nodiscard]] std::byte *GetAddressAtOffset(std::size_t offset) const;
+
+        [[nodiscard]] std::size_t GetAllocationSize() const noexcept;
 
         [[nodiscard]] bool IsReadable() const noexcept;
         [[nodiscard]] bool IsWritable() const noexcept;
         [[nodiscard]] bool IsExecutable() const noexcept;
 
+        [[nodiscard]] static NativeMemoryHandle Allocate(std::size_t size);
+
         NativeMemoryHandle() = delete;
         NativeMemoryHandle(NativeMemoryHandle const &) = delete;
-        NativeMemoryHandle(NativeMemoryHandle &&) = default;
+        NativeMemoryHandle(NativeMemoryHandle &&other) noexcept;
         ~NativeMemoryHandle();
     };
 } // namespace city

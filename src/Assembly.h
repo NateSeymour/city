@@ -8,8 +8,13 @@
 
 namespace city
 {
+    class JIT;
+
     class Assembly
     {
+        friend class JIT;
+
+    protected:
         NativeMemoryHandle native_memory_;
         std::unordered_map<std::string, Symbol> symbol_table_;
 

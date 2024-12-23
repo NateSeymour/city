@@ -3,22 +3,18 @@
 
 #include <memory>
 #include <string>
-#include <unordered_map>
 #include <vector>
 #include "NativeInstruction.h"
 
-/*
- * Options
- * 1. Store in NativeInstruction
- * 2. Store special marker instruction
- * 3. Store function information in NativeModule
- *
- */
-
 namespace city
 {
+    class Object;
+
     class NativeModule
     {
+        friend class Object;
+
+    protected:
         std::vector<std::unique_ptr<NativeInstruction>> instructions_;
 
     public:
@@ -29,9 +25,6 @@ namespace city
             auto &inst = this->instructions_.emplace_back(std::make_unique<InstructionType>(std::forward<Args>(args)...));
             return inst.get();
         }
-
-        [[nodiscard]] std::size_t GetBinarySize() const noexcept;
-        std::size_t WriteToBuffer(std::byte *buffer) const;
     };
 } // namespace city
 

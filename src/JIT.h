@@ -24,6 +24,17 @@ namespace city
          */
         void TranslateIRModules();
 
+        /**
+         * Translates all native modules into objects and deletes the native modules.
+         */
+        void CompileNativeModules();
+
+        /**
+         * Links all objects together (non-destructively) and returns the final linked Assembly.
+         * @return Linked Assembly of all stored Objects
+         */
+        [[nodiscard]] Assembly LinkObjects() const;
+
     public:
         /**
          * Adds a module to the compiler, transferring ownership to the compiler.
@@ -38,7 +49,7 @@ namespace city
          * Compiled modules are then released. Objects persist until removed (may cause linker errors).
          * @return Compiled Assembly
          */
-        [[nodiscard]] Assembly CompileModules();
+        [[nodiscard]] Assembly CompileAndLink();
 
         JIT();
     };
