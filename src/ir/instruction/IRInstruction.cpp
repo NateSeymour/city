@@ -1,4 +1,3 @@
-
 #include "IRInstruction.h"
 
 using namespace city;

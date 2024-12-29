@@ -2,8 +2,8 @@
 #define CITY_VALUE_H
 
 #include <cstddef>
-#include "ir/Container.h"
-#include "ir/type/Type.h"
+#include "Container.h"
+#include "type/Type.h"
 
 namespace city
 {

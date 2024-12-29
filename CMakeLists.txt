@@ -13,10 +13,10 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(googletest)
 
 add_library(city
-        src/ir/value/Value.cpp
-        src/ir/value/Value.h
-        src/ir/type/Type.cpp
-        src/ir/type/Type.h
+        src/value/Value.cpp
+        src/value/Value.h
+        src/type/Type.cpp
+        src/type/Type.h
         src/JIT.cpp
         src/JIT.h
         src/ir/IRModule.cpp
@@ -27,10 +27,6 @@ add_library(city
         src/ir/instruction/IRInstruction.h
         src/Assembly.cpp
         src/Assembly.h
-        src/ir/value/ConstantValue.cpp
-        src/ir/value/ConstantValue.h
-        src/ir/value/PointerValue.cpp
-        src/ir/value/PointerValue.h
         src/ir/Block.cpp
         src/ir/Block.h
         src/Symbol.cpp
@@ -48,8 +44,8 @@ add_library(city
         src/backend/aarch64/instruction/AArch64Instruction.h
         src/backend/aarch64/AArch64.cpp
         src/backend/aarch64/AArch64.h
-        src/ir/Container.cpp
-        src/ir/Container.h
+        src/Container.cpp
+        src/Container.h
         src/runtime/NativeMemoryHandle.cpp
         src/runtime/NativeMemoryHandle.h
         src/runtime/MacOS.h

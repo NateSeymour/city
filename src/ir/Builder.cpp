@@ -44,19 +44,9 @@ Block *Builder::GetInsertPoint() const noexcept
     return this->insert_point_;
 }
 
-ConstantValue *Builder::CreateConstant(Type type, std::vector<std::byte> const &data)
+Value *Builder::CreateConstant(Type type, std::vector<std::byte> const &data)
 {
-    return this->ReserveLocalValue<ConstantValue>(type, data);
-}
-
-Value *Builder::CreateStackAlloc(Type type)
-{
-    return this->ReserveLocalValue<Value>(type, StorageClass::StackPreferred);
-}
-
-Value *Builder::CreateHeapAlloc(Type type)
-{
-    return this->ReserveLocalValue<Value>(type, StorageClass::HeapPreferred);
+    return this->ReserveLocalValue<Value>(type, data);
 }
 
 AddInst *Builder::InsertAddInst(Value *lhs, Value *rhs)
