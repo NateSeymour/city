@@ -1,9 +1,7 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-#include <string>
-#include <unordered_map>
-#include "backend/NativeModule.h"
+#include "Symbol.h"
 #include "runtime/NativeMemoryHandle.h"
 
 namespace city
@@ -16,18 +14,12 @@ namespace city
 
     protected:
         NativeMemoryHandle native_memory_;
-
-        /**
-         * Holds instruction labels with their offsets into the binary.
-         */
-        std::unordered_map<std::string, std::size_t> symtab_;
+        SymbolTable symbol_table_;
 
     public:
         [[nodiscard]] std::size_t GetBinarySize() const noexcept;
 
-        static Object FromNativeModule(NativeModule const &module);
-
-        Object(NativeMemoryHandle native_memory);
+        Object(NativeMemoryHandle &&native_memory, SymbolTable &&symbol_table);
     };
 } // namespace city
 

@@ -1,6 +1,6 @@
 #include "Amd64Translator.h"
-#include "backend/amd64/instruction/control/Amd64RetZONear.h"
-#include "backend/amd64/instruction/memory/Amd64PopO64.h"
+#include "backend/amd64/instruction/control/Amd64Ret.h"
+#include "backend/amd64/instruction/memory/Amd64Pop.h"
 
 using namespace city;
 
@@ -15,8 +15,8 @@ IRTranslationResult Amd64Translator::Translate(RetInst *instruction)
         auto return_value = instruction->GetReturnValue();
     }
 
-    this->module.EmplaceInstruction<Amd64PopO64>(Amd64RegisterCode::RBP);
-    this->module.EmplaceInstruction<Amd46RetZONear>();
+    this->module.InsertInstruction(Amd64Pop::O64(Amd64RegisterCode::RBP));
+    this->module.InsertInstruction(Amd64Ret::ZONear());
 
     return {};
 }

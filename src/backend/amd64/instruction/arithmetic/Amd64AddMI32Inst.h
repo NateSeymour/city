@@ -5,7 +5,7 @@
 
 namespace city
 {
-    class x86AddMI32Inst : public Amd64Instruction
+    class Amd64AddMI32Inst : public Amd64Instruction
     {
     };
 } // namespace city

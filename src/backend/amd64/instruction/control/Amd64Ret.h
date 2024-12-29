@@ -5,12 +5,16 @@
 
 namespace city
 {
-    class Amd46RetZONear : public Amd64Instruction
+    class Amd64Ret : public Amd64Instruction
     {
     public:
-        Amd46RetZONear()
+        static constexpr Amd64Ret ZONear() noexcept
         {
-            this->SetOpcode({0xC3});
+            Amd64Ret inst;
+
+            inst.SetOpcode({0xC3});
+
+            return inst;
         }
     };
 } // namespace city

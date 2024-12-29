@@ -8,4 +8,7 @@ void RetInst::Apply(IRTranslator *interface)
     interface->Translate(this);
 }
 
-RetInst::RetInst(Value *value) : value_(value) {}
+RetInst::RetInst(Value *value)
+{
+    this->SetReturnValue(value);
+}

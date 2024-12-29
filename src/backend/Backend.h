@@ -1,7 +1,7 @@
 #ifndef CITY_BACKEND_H
 #define CITY_BACKEND_H
 
-#include "NativeModule.h"
+#include "Object.h"
 #include "ir/IRModule.h"
 
 namespace city
@@ -9,7 +9,7 @@ namespace city
     class Backend
     {
     public:
-        [[nodiscard]] virtual NativeModule BuildModule(IRModule &module) = 0;
+        [[nodiscard]] virtual Object BuildModule(IRModule &module) = 0;
 
         /**
          * Instantiates and returns a handle to the host-native compiler backend.

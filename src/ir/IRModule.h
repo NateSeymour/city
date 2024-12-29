@@ -26,6 +26,8 @@ namespace city
         std::vector<std::unique_ptr<Block>> blocks_;
 
     public:
+        [[nodiscard]] std::string const &GetName() const noexcept;
+
         [[nodiscard]] Builder CreateBuilder() noexcept;
 
         IRModule() = delete;

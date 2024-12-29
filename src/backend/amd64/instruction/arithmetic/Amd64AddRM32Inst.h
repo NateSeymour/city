@@ -9,10 +9,10 @@ namespace city
     /**
      * ADD r32, r/m32
      */
-    class x86AddRM32Inst : public Amd64Instruction
+    class Amd64AddRM32Inst : public Amd64Instruction
     {
     public:
-        x86AddRM32Inst(Value *dst, Value *src)
+        Amd64AddRM32Inst(Value *dst, Value *src)
         {
             this->SetOpcode({0x03});
         }

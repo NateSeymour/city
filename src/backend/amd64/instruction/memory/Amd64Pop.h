@@ -5,13 +5,17 @@
 
 namespace city
 {
-    class Amd64PopO64 : public Amd64Instruction
+    class Amd64Pop : public Amd64Instruction
     {
     public:
-        Amd64PopO64(Amd64RegisterCode reg)
+        static constexpr Amd64Pop O64(Amd64RegisterCode reg) noexcept
         {
+            Amd64Pop inst;
+
             std::uint8_t opcode = 0x58 + static_cast<std::uint8_t>(reg);
-            this->SetOpcode({opcode});
+            inst.SetOpcode({opcode});
+
+            return inst;
         }
     };
 } // namespace city

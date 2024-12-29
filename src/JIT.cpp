@@ -3,32 +3,20 @@
 
 using namespace city;
 
-void JIT::TranslateIRModules()
+void JIT::CompileIRModules()
 {
-    for (auto &module : this->ir_modules_)
+    for (auto &[name, module] : this->ir_modules_)
     {
-        auto native_module = this->backend_->BuildModule(module);
-        this->native_modules_.push_back(std::move(native_module));
+        this->objects_.insert({name, this->backend_->BuildModule(module)});
     }
 
     this->ir_modules_.clear();
 }
 
-void JIT::CompileNativeModules()
-{
-    for (auto &native_module : this->native_modules_)
-    {
-        auto object = Object::FromNativeModule(native_module);
-        this->objects_.push_back(std::move(object));
-    }
-
-    this->native_modules_.clear();
-}
-
 Assembly JIT::LinkObjects() const
 {
     std::size_t allocation_size = 0;
-    for (auto const &object : this->objects_)
+    for (auto const &[name, object] : this->objects_)
     {
         allocation_size += object.GetBinarySize();
     }
@@ -37,7 +25,7 @@ Assembly JIT::LinkObjects() const
     Assembly assembly{std::move(native_memory)};
 
     std::size_t object_insertion_offset = 0;
-    for (auto const &object : this->objects_)
+    for (auto const &[name, object] : this->objects_)
     {
         auto object_size = object.GetBinarySize();
 
@@ -47,10 +35,10 @@ Assembly JIT::LinkObjects() const
 
         object_insertion_offset += object_size;
 
-        for (auto &[name, offset] : object.symtab_)
+        for (auto &[name, offset] : object.symbol_table_)
         {
             assembly.symbol_table_[name] = {
-                    .raw = assembly_addr + offset,
+                    .location = assembly_addr + reinterpret_cast<std::size_t>(offset.location),
                     .flags = SymbolFlags::Exectuable,
             };
         }
@@ -61,17 +49,20 @@ Assembly JIT::LinkObjects() const
     return assembly;
 }
 
-void JIT::AddIRModule(IRModule module)
+void JIT::InsertIRModule(IRModule module)
 {
-    this->ir_modules_.push_back(std::move(module));
+    this->ir_modules_.insert({module.GetName(), std::move(module)});
 }
 
-void JIT::RemoveModule(std::string const &name) {}
+void JIT::RemoveModule(std::string const &name)
+{
+    this->ir_modules_.erase(name);
+    this->objects_.erase(name);
+}
 
 Assembly JIT::CompileAndLink()
 {
-    this->TranslateIRModules();
-    this->CompileNativeModules();
+    this->CompileIRModules();
 
     return this->LinkObjects();
 }

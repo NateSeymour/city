@@ -25,8 +25,6 @@ add_library(city
         src/ir/Builder.h
         src/ir/instruction/IRInstruction.cpp
         src/ir/instruction/IRInstruction.h
-        src/backend/NativeModule.cpp
-        src/backend/NativeModule.h
         src/Assembly.cpp
         src/Assembly.h
         src/ir/value/ConstantValue.cpp
@@ -62,28 +60,30 @@ add_library(city
         src/ir/instruction/memory/StoreInst.cpp
         src/backend/amd64/Amd64.cpp
         src/backend/amd64/Amd64.h
-        src/backend/IRTranslator.h
         src/backend/amd64/Amd64Translator.cpp
         src/backend/amd64/Amd64Translator.h
         src/backend/amd64/instruction/Amd64Instruction.cpp
         src/backend/amd64/instruction/Amd64Instruction.h
-        src/backend/amd64/instruction/arithmetic/x86AddRM32Inst.h
+        src/backend/amd64/instruction/arithmetic/Amd64AddRM32Inst.h
         src/ByteBuffer.h
-        src/backend/amd64/instruction/arithmetic/x86AddMI32Inst.h
+        src/backend/amd64/instruction/arithmetic/Amd64AddMI32Inst.h
         src/ir/instruction/InstructionFunctor.h
         src/backend/NativeInstruction.cpp
         src/backend/NativeInstruction.h
         src/backend/amd64/Amd64Register.cpp
         src/backend/amd64/Amd64Register.h
         src/backend/amd64/Amd64ModRM.h
-        src/backend/amd64/instruction/memory/Amd64PushO64.h
-        src/backend/amd64/instruction/memory/Amd64MovMR64.h
-        src/backend/amd64/instruction/memory/Amd64PopO64.h
-        src/backend/amd64/instruction/control/Amd64RetZONear.h
+        src/backend/amd64/instruction/memory/Amd64Push.h
+        src/backend/amd64/instruction/memory/Amd64Mov.h
+        src/backend/amd64/instruction/memory/Amd64Pop.h
+        src/backend/amd64/instruction/control/Amd64Ret.h
         src/runtime/Windows.cpp
         src/runtime/Windows.h
         src/Object.cpp
         src/Object.h
+        src/backend/amd64/Amd64Module.cpp
+        src/backend/amd64/Amd64Module.h
+        src/backend/IRTranslator.h
 )
 target_include_directories(city PUBLIC src)
 

@@ -1,15 +1,14 @@
 #include "Amd64.h"
 #include "Amd64Translator.h"
-#include "instruction/memory/Amd64MovMR64.h"
-#include "instruction/memory/Amd64PopO64.h"
-#include "instruction/memory/Amd64PushO64.h"
+#include "instruction/memory/Amd64Mov.h"
+#include "instruction/memory/Amd64Push.h"
 #include "ir/Block.h"
 #include "ir/Function.h"
 #include "ir/instruction/IRInstruction.h"
 
 using namespace city;
 
-std::array<Amd64Register, 8> const x86_register_definitions = {
+std::array<Amd64Register, 8> const city::amd64_register_definitions = {
         Amd64Register(Amd64RegisterCode::XMM0),
         Amd64Register(Amd64RegisterCode::XMM1),
         Amd64Register(Amd64RegisterCode::XMM2),
@@ -20,18 +19,19 @@ std::array<Amd64Register, 8> const x86_register_definitions = {
         Amd64Register(Amd64RegisterCode::XMM7),
 };
 
-NativeModule Amd64::BuildModule(IRModule &module)
+Object Amd64::BuildModule(IRModule &ir_module)
 {
-    NativeModule object{};
+    Amd64Module amd64_module{};
 
-    Amd64Translator translator{object};
-    for (auto &function : module.functions_)
+    Amd64Translator translator{amd64_module};
+    for (auto &function : ir_module.functions_)
     {
         // Function Prolog
-        auto entry = object.EmplaceInstruction<Amd64PushO64>(Amd64RegisterCode::RBP);
-        entry->SetLabel(function->name_);
+        auto entry = Amd64Push::O64(Amd64RegisterCode::RBP);
+        entry.SetLabel(function->name_);
+        amd64_module.InsertInstruction(std::move(entry));
 
-        object.EmplaceInstruction<Amd64MovMR64>(Amd64RegisterCode::RBP, Amd64RegisterCode::RSP);
+        amd64_module.InsertInstruction(Amd64Mov::MR64(Amd64RegisterCode::RBP, Amd64RegisterCode::RSP));
 
         // Function Body
         for (auto block : function->blocks_)
@@ -43,5 +43,34 @@ NativeModule Amd64::BuildModule(IRModule &module)
         }
     }
 
-    return std::move(object);
+    /* build module */
+    // Allocate memory
+    std::size_t allocation_size = 0;
+    for (auto &inst : amd64_module.instructions_)
+    {
+        allocation_size += inst.GetBinarySize();
+    }
+    auto native_memory = NativeMemoryHandle::Allocate(allocation_size);
+
+    // Symbol table
+    SymbolTable symbol_table;
+
+    // Write to buffer
+    std::size_t offset = 0;
+    for (auto &inst : amd64_module.instructions_)
+    {
+        auto label = inst.GetLabel();
+        if (label != nullptr)
+        {
+            symbol_table[label] = {
+                    .flags = SymbolFlags::Exectuable,
+                    .location = reinterpret_cast<std::byte *>(offset),
+            };
+        }
+
+        auto addr = native_memory.GetAddressAtOffset(offset);
+        offset += inst.WriteToBuffer(addr);
+    }
+
+    return {std::move(native_memory), std::move(symbol_table)};
 }
