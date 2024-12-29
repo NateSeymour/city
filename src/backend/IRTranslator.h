@@ -10,11 +10,11 @@ namespace city
     {
     };
 
-    struct IRTranslationInterface : InstructionFunctor<IRTranslationResult>
+    struct IRTranslator : InstructionFunctor<IRTranslationResult>
     {
-        NativeModule &object;
+        NativeModule &module;
 
-        explicit IRTranslationInterface(NativeModule &object) : object(object) {}
+        explicit IRTranslator(NativeModule &native_module) : module(native_module) {}
     };
 } // namespace city
 

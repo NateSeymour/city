@@ -5,7 +5,7 @@
 
 namespace city
 {
-    enum class x86Mod : std::uint8_t
+    enum class Amd64Mod : std::uint8_t
     {
         Memory = 0x0,
         MemoryD8 = 0x1,
@@ -13,7 +13,7 @@ namespace city
         Register = 0x3,
     };
 
-    enum class x86RegisterCode : std::uint8_t
+    enum class Amd64RegisterCode : std::uint8_t
     {
         AL = 0x0,
         AX = 0x0,

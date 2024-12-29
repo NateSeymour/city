@@ -1,17 +1,17 @@
 #ifndef CITY_X86REGISTER_H
 #define CITY_X86REGISTER_H
 
+#include "Amd64ModRM.h"
 #include "ir/Container.h"
-#include "x86ModRM.h"
 
 namespace city
 {
-    class x86Register : public Container
+    class Amd64Register : public Container
     {
-        x86RegisterCode code_;
+        Amd64RegisterCode code_;
 
     public:
-        x86Register(x86RegisterCode code);
+        Amd64Register(Amd64RegisterCode code);
     };
 } // namespace city
 

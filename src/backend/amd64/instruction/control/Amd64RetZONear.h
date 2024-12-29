@@ -1,11 +1,11 @@
 #ifndef CITY_AMD64RETZONEAR_H
 #define CITY_AMD64RETZONEAR_H
 
-#include "backend/x86/instruction/x86Instruction.h"
+#include "backend/amd64/instruction/Amd64Instruction.h"
 
 namespace city
 {
-    class Amd46RetZONear : public x86Instruction
+    class Amd46RetZONear : public Amd64Instruction
     {
     public:
         Amd46RetZONear()

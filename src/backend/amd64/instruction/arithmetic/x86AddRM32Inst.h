@@ -1,7 +1,7 @@
 #ifndef X86ADDRM32INST_H
 #define X86ADDRM32INST_H
 
-#include "backend/x86/instruction/x86Instruction.h"
+#include "backend/amd64/instruction/Amd64Instruction.h"
 #include "ir/value/Value.h"
 
 namespace city
@@ -9,7 +9,7 @@ namespace city
     /**
      * ADD r32, r/m32
      */
-    class x86AddRM32Inst : public x86Instruction
+    class x86AddRM32Inst : public Amd64Instruction
     {
     public:
         x86AddRM32Inst(Value *dst, Value *src)

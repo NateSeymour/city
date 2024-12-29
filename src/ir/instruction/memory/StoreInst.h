@@ -5,7 +5,7 @@
 
 namespace city
 {
-    class IRTranslationInterface;
+    class IRTranslator;
     
     class StoreInst : public IRInstruction
     {
@@ -13,7 +13,7 @@ namespace city
         Value *src_;
 
     public:
-        void Apply(IRTranslationInterface *interface) override;
+        void Apply(IRTranslator *interface) override;
 
         StoreInst(Value *dst, Value *src);
     };

@@ -11,7 +11,7 @@ namespace city
         Value *rhs_;
 
     public:
-        void Apply(IRTranslationInterface *interface) override;
+        void Apply(IRTranslator *interface) override;
 
         [[nodiscard]] bool HasReturnValue() const noexcept override;
 

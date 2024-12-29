@@ -5,7 +5,7 @@
 
 namespace city
 {
-    class IRTranslationInterface;
+    class IRTranslator;
     class Builder;
 
     class IRInstruction
@@ -18,7 +18,7 @@ namespace city
         void SetReturnValue(Value *return_value);
 
     public:
-        virtual void Apply(IRTranslationInterface *interface) = 0;
+        virtual void Apply(IRTranslator *interface) = 0;
 
         [[nodiscard]] virtual bool HasReturnValue() const noexcept;
         [[nodiscard]] Value *GetReturnValue();

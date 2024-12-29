@@ -1,9 +1,9 @@
-#include "x86Instruction.h"
+#include "Amd64Instruction.h"
 #include <cstring>
 
 using namespace city;
 
-size_t x86Instruction::GetBinarySize() const noexcept
+size_t Amd64Instruction::GetBinarySize() const noexcept
 {
     std::size_t size = 0;
 
@@ -16,7 +16,7 @@ size_t x86Instruction::GetBinarySize() const noexcept
     return size;
 }
 
-size_t x86Instruction::WriteToBuffer(std::byte *buffer) const
+size_t Amd64Instruction::WriteToBuffer(std::byte *buffer) const
 {
     std::byte *buffer_it = buffer;
 
@@ -44,22 +44,22 @@ size_t x86Instruction::WriteToBuffer(std::byte *buffer) const
     return buffer_it - buffer;
 }
 
-void x86Instruction::SetPrefix(std::initializer_list<std::uint8_t> bytes)
+void Amd64Instruction::SetPrefix(std::initializer_list<std::uint8_t> bytes)
 {
     this->prefix_ = bytes;
 }
 
-void x86Instruction::SetOpcode(std::initializer_list<std::uint8_t> bytes)
+void Amd64Instruction::SetOpcode(std::initializer_list<std::uint8_t> bytes)
 {
     this->opcode_ = bytes;
 }
 
-void x86Instruction::SetImmediate(std::initializer_list<std::uint8_t> bytes)
+void Amd64Instruction::SetImmediate(std::initializer_list<std::uint8_t> bytes)
 {
     this->immediate_ = bytes;
 }
 
-void x86Instruction::SetModRM(x86RegisterCode reg, x86RegisterCode r_m, x86Mod mod)
+void Amd64Instruction::SetModRM(Amd64RegisterCode reg, Amd64RegisterCode r_m, Amd64Mod mod)
 {
     auto breg = static_cast<std::uint8_t>(reg);
     auto br_m = static_cast<std::uint8_t>(r_m);

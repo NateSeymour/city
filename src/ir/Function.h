@@ -8,13 +8,13 @@ namespace city
 {
     class Builder;
     class AArch64;
-    class x86;
+    class Amd64;
 
     class Function
     {
         friend class Builder;
         friend class AArch64;
-        friend class x86;
+        friend class Amd64;
 
     protected:
         std::string name_;

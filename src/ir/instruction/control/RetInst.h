@@ -5,18 +5,12 @@
 
 namespace city
 {
-    class IRTranslationInterface;
-    class x86TranslationInterface;
+    class IRTranslator;
 
     class RetInst : public IRInstruction
     {
-        friend class x86TranslationInterface;
-        
-    protected:
-        Value *value_ = nullptr;
-
     public:
-        void Apply(IRTranslationInterface *interface) override;
+        void Apply(IRTranslator *interface) override;
 
         RetInst(Value *value);
     };

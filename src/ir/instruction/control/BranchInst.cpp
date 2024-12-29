@@ -1,9 +1,9 @@
 #include "BranchInst.h"
-#include "backend/IRTranslationInterface.h"
+#include "backend/IRTranslator.h"
 
 using namespace city;
 
-void BranchInst::Apply(IRTranslationInterface *interface)
+void BranchInst::Apply(IRTranslator *interface)
 {
     interface->Translate(this);
 }

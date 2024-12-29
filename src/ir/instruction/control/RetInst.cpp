@@ -1,9 +1,9 @@
 #include "RetInst.h"
-#include "backend/IRTranslationInterface.h"
+#include "backend/IRTranslator.h"
 
 using namespace city;
 
-void RetInst::Apply(IRTranslationInterface *interface)
+void RetInst::Apply(IRTranslator *interface)
 {
     interface->Translate(this);
 }

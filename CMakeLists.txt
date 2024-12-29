@@ -60,26 +60,26 @@ add_library(city
         src/ir/instruction/control/RetInst.cpp
         src/ir/instruction/control/BranchInst.cpp
         src/ir/instruction/memory/StoreInst.cpp
-        src/backend/x86/x86.cpp
-        src/backend/x86/x86.h
-        src/backend/IRTranslationInterface.h
-        src/backend/x86/x86TranslationInterface.cpp
-        src/backend/x86/x86TranslationInterface.h
-        src/backend/x86/instruction/x86Instruction.cpp
-        src/backend/x86/instruction/x86Instruction.h
-        src/backend/x86/instruction/arithmetic/x86AddRM32Inst.h
+        src/backend/amd64/Amd64.cpp
+        src/backend/amd64/Amd64.h
+        src/backend/IRTranslator.h
+        src/backend/amd64/Amd64Translator.cpp
+        src/backend/amd64/Amd64Translator.h
+        src/backend/amd64/instruction/Amd64Instruction.cpp
+        src/backend/amd64/instruction/Amd64Instruction.h
+        src/backend/amd64/instruction/arithmetic/x86AddRM32Inst.h
         src/ByteBuffer.h
-        src/backend/x86/instruction/arithmetic/x86AddMI32Inst.h
+        src/backend/amd64/instruction/arithmetic/x86AddMI32Inst.h
         src/ir/instruction/InstructionFunctor.h
         src/backend/NativeInstruction.cpp
         src/backend/NativeInstruction.h
-        src/backend/x86/x86Register.cpp
-        src/backend/x86/x86Register.h
-        src/backend/x86/x86ModRM.h
-        src/backend/x86/instruction/memory/Amd64PushO64.h
-        src/backend/x86/instruction/memory/Amd64MovMR64.h
-        src/backend/x86/instruction/memory/Amd64PopO64.h
-        src/backend/x86/instruction/control/Amd64RetZONear.h
+        src/backend/amd64/Amd64Register.cpp
+        src/backend/amd64/Amd64Register.h
+        src/backend/amd64/Amd64ModRM.h
+        src/backend/amd64/instruction/memory/Amd64PushO64.h
+        src/backend/amd64/instruction/memory/Amd64MovMR64.h
+        src/backend/amd64/instruction/memory/Amd64PopO64.h
+        src/backend/amd64/instruction/control/Amd64RetZONear.h
         src/runtime/Windows.cpp
         src/runtime/Windows.h
         src/Object.cpp

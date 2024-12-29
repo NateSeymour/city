@@ -1,9 +1,9 @@
 #include "StoreInst.h"
-#include "backend/IRTranslationInterface.h"
+#include "backend/IRTranslator.h"
 
 using namespace city;
 
-void StoreInst::Apply(IRTranslationInterface *interface)
+void StoreInst::Apply(IRTranslator *interface)
 {
     interface->Translate(this);
 }

@@ -5,14 +5,14 @@
 
 namespace city
 {
-    class IRTranslationInterface;
+    class IRTranslator;
     
     class BranchInst : public IRInstruction
     {
         IRInstruction *target_;
 
     public:
-        void Apply(IRTranslationInterface *interface) override;
+        void Apply(IRTranslator *interface) override;
 
         BranchInst(IRInstruction *target);
     };

@@ -5,14 +5,15 @@
 #include <cstdint>
 #include "ByteBuffer.h"
 #include "backend/NativeInstruction.h"
-#include "backend/x86/x86.h"
+#include "backend/amd64/Amd64.h"
+#include "backend/amd64/Amd64ModRM.h"
 
 namespace city
 {
     /**
      * Container to hold x86 maximum prefix size (3 bytes).
      */
-    using x86Prefix = ByteBuffer<3>;
+    using Amd64Prefix = ByteBuffer<3>;
 
     enum class Amd64PrefixCode : std::uint8_t
     {
@@ -22,17 +23,17 @@ namespace city
     /**
      * Container to hold the x86 maximum opcode size (3 bytes).
      */
-    using x86Opcode = ByteBuffer<3>;
+    using Amd64Opcode = ByteBuffer<3>;
 
     /**
      * Container to hold the x86 maximum immediate size (8 bytes == 1QW).
      */
-    using x86Immediate = ByteBuffer<8>;
+    using Amd64Immediate = ByteBuffer<8>;
 
-    class x86Instruction : public NativeInstruction
+    class Amd64Instruction : public NativeInstruction
     {
-        x86Prefix prefix_ = {};
-        x86Opcode opcode_ = {};
+        Amd64Prefix prefix_ = {};
+        Amd64Opcode opcode_ = {};
 
         bool has_mod_rm_ = false;
         std::uint8_t mod_rm_ = 0x0;
@@ -40,7 +41,7 @@ namespace city
         bool has_sib_ = false;
         std::uint8_t sib_ = 0x0;
 
-        x86Immediate immediate_ = {};
+        Amd64Immediate immediate_ = {};
 
     public:
         [[nodiscard]] size_t GetBinarySize() const noexcept override;
@@ -57,7 +58,7 @@ namespace city
          * @param mod Addressing Mode
          * @return ModR/M
          */
-        void SetModRM(x86RegisterCode reg, x86RegisterCode r_m, x86Mod mod);
+        void SetModRM(Amd64RegisterCode reg, Amd64RegisterCode r_m, Amd64Mod mod);
     };
 } // namespace city
 
