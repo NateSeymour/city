@@ -8,22 +8,24 @@
 
 namespace city
 {
-    class Builder;
+    class IRBuilder;
     class AArch64;
     class Amd64;
     class Function;
 
     class Block
     {
-        friend class Builder;
+        friend class IRBuilder;
         friend class AArch64;
         friend class Amd64;
 
     protected:
-        Function *parent_function_;
+        Function *parent_function_ = nullptr;
 
         std::vector<std::unique_ptr<IRInstruction>> instructions_;
-        std::vector<std::unique_ptr<Value>> local_values_;
+
+    public:
+        explicit Block(Function *parent_function);
     };
 } // namespace city
 

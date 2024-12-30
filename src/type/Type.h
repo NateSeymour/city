@@ -5,7 +5,7 @@
 
 namespace city
 {
-    class Builder;
+    class IRBuilder;
 
     enum class NativeType
     {
@@ -16,7 +16,7 @@ namespace city
 
     class Type
     {
-        friend class Builder;
+        friend class IRBuilder;
 
     protected:
         std::size_t size_ = 0;
@@ -28,6 +28,6 @@ namespace city
             return this->size_ == rhs.size_ && this->native_type_ == rhs.native_type_;
         }
     };
-} // city
+} // namespace city
 
-#endif //CITY_TYPE_H
+#endif // CITY_TYPE_H

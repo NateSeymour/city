@@ -7,22 +7,20 @@
 
 namespace city
 {
-    struct Amd64Translator;
+    class Amd64Builder;
 
     class Amd64Module
     {
         friend class Amd64;
-        friend class Amd64Translator;
+        friend class Amd64Builder;
 
-        // std::stack stack_;
         std::vector<Amd64Instruction> instructions_;
-        std::array<Amd64Register, 8> registers_ = amd64_register_definitions;
 
     protected:
         void InsertInstruction(Amd64Instruction &&inst);
 
-
     public:
+        [[nodiscard]] Amd64Builder CreateBuilder();
     };
 } // namespace city
 

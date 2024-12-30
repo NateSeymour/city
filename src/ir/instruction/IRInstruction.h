@@ -6,11 +6,11 @@
 namespace city
 {
     class IRTranslator;
-    class Builder;
+    class IRBuilder;
 
     class IRInstruction
     {
-        friend class Builder;
+        friend class IRBuilder;
 
         Value *return_value_ = nullptr;
 

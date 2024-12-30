@@ -7,9 +7,9 @@ std::string const &IRModule::GetName() const noexcept
     return this->name_;
 }
 
-Builder IRModule::CreateBuilder() noexcept
+IRBuilder IRModule::CreateBuilder() noexcept
 {
-    return Builder(*this);
+    return IRBuilder(*this);
 }
 
 IRModule::IRModule(std::string name) : name_(std::move(name)) {}

@@ -1,5 +1,5 @@
-#ifndef CITY_BUILDER_H
-#define CITY_BUILDER_H
+#ifndef CITY_IRBUILDER_H
+#define CITY_IRBUILDER_H
 
 #include <cstdlib>
 #include <type_traits>
@@ -16,7 +16,7 @@ namespace city
 {
     class IRModule;
 
-    class Builder
+    class IRBuilder
     {
         friend class IRModule;
 
@@ -42,7 +42,7 @@ namespace city
             return dynamic_cast<T *>(instruction.get());
         }
 
-        explicit Builder(IRModule &module);
+        explicit IRBuilder(IRModule &module);
 
     public:
         // Blocks
@@ -112,8 +112,8 @@ namespace city
         RetInst *InsertRetInst(Value *ret);
 
         // Constructors
-        Builder() = delete;
+        IRBuilder() = delete;
     };
 } // namespace city
 
-#endif // CITY_BUILDER_H
+#endif // CITY_IRBUILDER_H

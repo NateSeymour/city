@@ -6,18 +6,17 @@
 
 namespace city
 {
-    class Builder;
+    class IRBuilder;
     class AArch64;
     class Amd64;
 
     class Function
     {
-        friend class Builder;
+        friend class IRBuilder;
         friend class AArch64;
         friend class Amd64;
 
     protected:
-        std::string name_;
         Type ret_type_;
         std::vector<Type> arg_types_;
 
@@ -25,7 +24,7 @@ namespace city
         std::vector<Block *> blocks_;
 
     public:
-        Function(std::string name, Type ret, std::vector<Type> const &args, Block *first_block);
+        Function(Type ret, std::vector<Type> const &args, Block *first_block);
     };
 } // namespace city
 

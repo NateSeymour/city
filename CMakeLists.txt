@@ -22,7 +22,7 @@ add_library(city
         src/ir/IRModule.cpp
         src/ir/IRModule.h
         src/ir/Builder.cpp
-        src/ir/Builder.h
+        src/ir/IRBuilder.h
         src/ir/instruction/IRInstruction.cpp
         src/ir/instruction/IRInstruction.h
         src/Assembly.cpp
@@ -80,6 +80,10 @@ add_library(city
         src/backend/amd64/Amd64Module.cpp
         src/backend/amd64/Amd64Module.h
         src/backend/IRTranslator.h
+        src/value/ConstantValue.cpp
+        src/value/ConstantValue.h
+        src/backend/amd64/Amd64Builder.cpp
+        src/backend/amd64/Amd64Builder.h
 )
 target_include_directories(city PUBLIC src)
 

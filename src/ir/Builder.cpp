@@ -1,27 +1,27 @@
-#include "Builder.h"
+#include "IRBuilder.h"
 #include "IRModule.h"
 
 using namespace city;
 
-Builder::Builder(IRModule &module) : module_(module) {}
+IRBuilder::IRBuilder(IRModule &module) : module_(module) {}
 
-Block *Builder::CreateBlock()
+Block *IRBuilder::CreateBlock()
 {
     auto &block = this->module_.blocks_.emplace_back(std::make_unique<Block>());
     return block.get();
 }
 
-Function *Builder::CreateFunction(std::string name)
+Function *IRBuilder::CreateFunction(std::string name)
 {
     return this->CreateFunction(std::move(name), this->GetType<void>(), {});
 }
 
-Function *Builder::CreateFunction(std::string name, Type ret)
+Function *IRBuilder::CreateFunction(std::string name, Type ret)
 {
     return this->CreateFunction(std::move(name), ret, {});
 }
 
-Function *Builder::CreateFunction(std::string name, Type ret, std::vector<Type> const &args)
+Function *IRBuilder::CreateFunction(std::string name, Type ret, std::vector<Type> const &args)
 {
     auto block = this->CreateBlock();
     auto &function = this->module_.functions_.emplace_back(std::make_unique<Function>(std::move(name), ret, args, block));
@@ -29,27 +29,27 @@ Function *Builder::CreateFunction(std::string name, Type ret, std::vector<Type> 
     return function.get();
 }
 
-void Builder::SetInsertPoint(Block *block) noexcept
+void IRBuilder::SetInsertPoint(Block *block) noexcept
 {
     this->insert_point_ = block;
 }
 
-void Builder::SetInsertPoint(Function *function) noexcept
+void IRBuilder::SetInsertPoint(Function *function) noexcept
 {
     this->SetInsertPoint(function->blocks_.back());
 }
 
-Block *Builder::GetInsertPoint() const noexcept
+Block *IRBuilder::GetInsertPoint() const noexcept
 {
     return this->insert_point_;
 }
 
-Value *Builder::CreateConstant(Type type, std::vector<std::byte> const &data)
+Value *IRBuilder::CreateConstant(Type type, std::vector<std::byte> const &data)
 {
     return this->ReserveLocalValue<Value>(type, data);
 }
 
-AddInst *Builder::InsertAddInst(Value *lhs, Value *rhs)
+AddInst *IRBuilder::InsertAddInst(Value *lhs, Value *rhs)
 {
     auto lhs_type = lhs->GetType();
     auto rhs_type = rhs->GetType();
@@ -66,17 +66,17 @@ AddInst *Builder::InsertAddInst(Value *lhs, Value *rhs)
     return addtmp;
 }
 
-StoreInst *Builder::InsertStoreInst(Value *dst, Value *src)
+StoreInst *IRBuilder::InsertStoreInst(Value *dst, Value *src)
 {
     return this->ReserveInstruction<StoreInst>(dst, src);
 }
 
-BranchInst *Builder::InsertBranchInst(IRInstruction *target)
+BranchInst *IRBuilder::InsertBranchInst(IRInstruction *target)
 {
     return this->ReserveInstruction<BranchInst>(target);
 }
 
-RetInst *Builder::InsertRetInst(Value *ret)
+RetInst *IRBuilder::InsertRetInst(Value *ret)
 {
     return this->ReserveInstruction<RetInst>(ret);
 }

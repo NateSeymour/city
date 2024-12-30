@@ -3,9 +3,10 @@
 
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 #include "Block.h"
-#include "Builder.h"
+#include "IRBuilder.h"
 
 namespace city
 {
@@ -14,21 +15,21 @@ namespace city
 
     class IRModule
     {
-        friend class Builder;
+        friend class IRBuilder;
         friend class AArch64;
         friend class Amd64;
 
         std::string name_;
 
     protected:
-        std::vector<std::unique_ptr<Function>> functions_;
-        std::vector<std::unique_ptr<Value>> global_values_;
+        std::unordered_map<std::string, std::unique_ptr<Function>> functions_;
+        std::unordered_map<std::string, std::unique_ptr<Value>> global_values_;
         std::vector<std::unique_ptr<Block>> blocks_;
 
     public:
         [[nodiscard]] std::string const &GetName() const noexcept;
 
-        [[nodiscard]] Builder CreateBuilder() noexcept;
+        [[nodiscard]] IRBuilder CreateBuilder() noexcept;
 
         IRModule() = delete;
         IRModule(std::string name);
