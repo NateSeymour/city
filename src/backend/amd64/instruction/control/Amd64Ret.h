@@ -16,6 +16,15 @@ namespace city
 
             return inst;
         }
+
+        static constexpr Amd64Ret ZOFar() noexcept
+        {
+            Amd64Ret inst;
+
+            inst.SetOpcode({0xCB});
+
+            return inst;
+        }
     };
 } // namespace city
 

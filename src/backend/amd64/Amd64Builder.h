@@ -26,7 +26,9 @@ namespace city
         std::array<Amd64Register, 8> registers_ = amd64_register_definitions;
 
     public:
-        void InsertReturnInst(Amd64ReturnType return_type = Amd64ReturnType::Near);
+        [[nodiscard]] Amd64Register *FindUnusedRegister() const noexcept;
+
+        void InsertReturnInst(Amd64ReturnType return_type = Amd64ReturnType::Near) const;
         void InsertPopInst(Amd64RegisterCode reg);
 
         [[nodiscard]] Amd64Register *MoveValueToUnusedRegister(Value *value);
