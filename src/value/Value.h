@@ -2,6 +2,7 @@
 #define CITY_VALUE_H
 
 #include <cstddef>
+#include <vector>
 #include "Container.h"
 #include "type/Type.h"
 

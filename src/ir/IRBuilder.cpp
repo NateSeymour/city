@@ -1,32 +1,34 @@
 #include "IRBuilder.h"
 #include "IRModule.h"
+#include "value/ConstantValue.h"
 
 using namespace city;
 
 IRBuilder::IRBuilder(IRModule &module) : module_(module) {}
 
-Block *IRBuilder::CreateBlock()
+IRBlock *IRBuilder::CreateBlock()
 {
-    auto &block = this->module_.blocks_.emplace_back(std::make_unique<IRBlock>());
+    auto insert_function = this->insert_point_->parent_function_;
+    auto &block = this->module_.blocks_.emplace_back(std::make_unique<IRBlock>(insert_function));
     return block.get();
 }
 
-IRFunction *IRBuilder::CreateFunction(std::string name)
+IRFunction *IRBuilder::CreateFunction(std::string const &name)
 {
-    return this->CreateFunction(std::move(name), this->GetType<void>(), {});
+    return this->CreateFunction(name, this->GetType<void>(), {});
 }
 
-IRFunction *IRBuilder::CreateFunction(std::string name, Type ret)
+IRFunction *IRBuilder::CreateFunction(std::string const &name, Type ret)
 {
-    return this->CreateFunction(std::move(name), ret, {});
+    return this->CreateFunction(name, ret, {});
 }
 
-IRFunction *IRBuilder::CreateFunction(std::string name, Type ret, std::vector<Type> const &args)
+IRFunction *IRBuilder::CreateFunction(std::string const &name, Type ret, std::vector<Type> const &args)
 {
     auto block = this->CreateBlock();
-    auto &function = this->module_.functions_.emplace_back(std::make_unique<IRFunction>(std::move(name), ret, args, block));
+    auto [it, _] = this->module_.functions_.insert({name, std::make_unique<IRFunction>(ret, args, block)});
 
-    return function.get();
+    return it->second.get();
 }
 
 void IRBuilder::SetInsertPoint(IRBlock *block) noexcept
@@ -39,14 +41,14 @@ void IRBuilder::SetInsertPoint(IRFunction *function) noexcept
     this->SetInsertPoint(function->blocks_.back());
 }
 
-Block *IRBuilder::GetInsertPoint() const noexcept
+IRBlock *IRBuilder::GetInsertPoint() const noexcept
 {
     return this->insert_point_;
 }
 
 Value *IRBuilder::CreateConstant(Type type, std::vector<std::byte> const &data)
 {
-    return this->ReserveLocalValue<Value>(type, data);
+    return this->ReserveLocalValue<ConstantValue>(type, data);
 }
 
 AddInst *IRBuilder::InsertAddInst(Value *lhs, Value *rhs)

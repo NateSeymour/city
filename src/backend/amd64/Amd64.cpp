@@ -24,11 +24,11 @@ Object Amd64::BuildModule(IRModule &ir_module)
     Amd64Module amd64_module{};
 
     Amd64Translator translator{amd64_module};
-    for (auto &function : ir_module.functions_)
+    for (auto &[name, function] : ir_module.functions_)
     {
         // Function Prolog
         auto entry = Amd64Push::O64(Amd64RegisterCode::RBP);
-        entry.SetLabel(function->name_);
+        entry.SetLabel(name);
         amd64_module.InsertInstruction(std::move(entry));
 
         amd64_module.InsertInstruction(Amd64Mov::MR64(Amd64RegisterCode::RBP, Amd64RegisterCode::RSP));

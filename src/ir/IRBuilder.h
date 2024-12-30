@@ -28,7 +28,8 @@ namespace city
             requires std::derived_from<T, Value>
         [[nodiscard]] T *ReserveLocalValue(Args... args)
         {
-            auto &locals = this->insert_point_->local_values_;
+            auto function = this->insert_point_->parent_function_;
+            auto &locals = function->local_values_;
             auto &value = locals.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
             return dynamic_cast<T *>(value.get());
         }
@@ -82,9 +83,9 @@ namespace city
         }
 
         // Functions
-        [[nodiscard]] IRFunction *CreateFunction(std::string name);
-        [[nodiscard]] IRFunction *CreateFunction(std::string name, Type ret);
-        [[nodiscard]] IRFunction *CreateFunction(std::string name, Type ret, std::vector<Type> const &args);
+        [[nodiscard]] IRFunction *CreateFunction(std::string const &name);
+        [[nodiscard]] IRFunction *CreateFunction(std::string const &name, Type ret);
+        [[nodiscard]] IRFunction *CreateFunction(std::string const &name, Type ret, std::vector<Type> const &args);
 
         // Values
         [[nodiscard]] Value *CreateConstant(Type type, std::vector<std::byte> const &data);
