@@ -1,4 +1,5 @@
 #include "Value.h"
+#include <stdexcept>
 
 using namespace city;
 
@@ -26,6 +27,12 @@ bool Value::IsCompileTimeConstant() const noexcept
 {
     return false;
 }
+
+std::vector<std::byte> const &Value::GetDataBuffer() const
+{
+    throw std::runtime_error("non-constant value has no data buffer");
+}
+
 
 Type Value::GetType() const noexcept
 {

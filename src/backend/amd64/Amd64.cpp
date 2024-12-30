@@ -2,8 +2,8 @@
 #include "Amd64Translator.h"
 #include "instruction/memory/Amd64Mov.h"
 #include "instruction/memory/Amd64Push.h"
-#include "ir/Block.h"
-#include "ir/Function.h"
+#include "ir/IRBlock.h"
+#include "ir/IRFunction.h"
 #include "ir/instruction/IRInstruction.h"
 
 using namespace city;

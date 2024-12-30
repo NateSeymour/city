@@ -13,6 +13,12 @@ namespace city
         Discard,
     };
 
+    enum class Amd64ReturnType
+    {
+        Near,
+        Far,
+    };
+
     class Amd64Builder
     {
         Amd64Module &module_;
@@ -20,8 +26,8 @@ namespace city
         std::array<Amd64Register, 8> registers_ = amd64_register_definitions;
 
     public:
-        void Return();
-        void PopRegister(Amd64RegisterCode reg);
+        void InsertReturnInst(Amd64ReturnType return_type = Amd64ReturnType::Near);
+        void InsertPopInst(Amd64RegisterCode reg);
 
         [[nodiscard]] Amd64Register *MoveValueToUnusedRegister(Value *value);
         Amd64Register *MoveValueToRegister(Value *value, Amd64RegisterCode reg, Amd64RegisterConflictStrategy conflict_strategy);

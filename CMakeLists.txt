@@ -21,18 +21,18 @@ add_library(city
         src/JIT.h
         src/ir/IRModule.cpp
         src/ir/IRModule.h
-        src/ir/Builder.cpp
+        src/ir/IRBuilder.cpp
         src/ir/IRBuilder.h
         src/ir/instruction/IRInstruction.cpp
         src/ir/instruction/IRInstruction.h
         src/Assembly.cpp
         src/Assembly.h
-        src/ir/Block.cpp
-        src/ir/Block.h
+        src/ir/IRBlock.cpp
+        src/ir/IRBlock.h
         src/Symbol.cpp
         src/Symbol.h
-        src/ir/Function.cpp
-        src/ir/Function.h
+        src/ir/IRFunction.cpp
+        src/ir/IRFunction.h
         src/ir/instruction/arithmetic/AddInst.h
         src/ir/instruction/control/RetInst.h
         src/ir/instruction/control/BranchInst.h

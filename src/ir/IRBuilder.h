@@ -3,8 +3,8 @@
 
 #include <cstdlib>
 #include <type_traits>
-#include "Block.h"
-#include "Function.h"
+#include "IRBlock.h"
+#include "IRFunction.h"
 #include "instruction/arithmetic/AddInst.h"
 #include "instruction/control/BranchInst.h"
 #include "instruction/control/RetInst.h"
@@ -21,7 +21,7 @@ namespace city
         friend class IRModule;
 
         IRModule &module_;
-        Block *insert_point_ = nullptr;
+        IRBlock *insert_point_ = nullptr;
 
     protected:
         template<typename T, typename... Args>
@@ -46,11 +46,11 @@ namespace city
 
     public:
         // Blocks
-        [[nodiscard]] Block *CreateBlock();
+        [[nodiscard]] IRBlock *CreateBlock();
 
-        void SetInsertPoint(Block *block) noexcept;
-        void SetInsertPoint(Function *function) noexcept;
-        [[nodiscard]] Block *GetInsertPoint() const noexcept;
+        void SetInsertPoint(IRBlock *block) noexcept;
+        void SetInsertPoint(IRFunction *function) noexcept;
+        [[nodiscard]] IRBlock *GetInsertPoint() const noexcept;
 
         // Types
         template<typename T>
@@ -82,9 +82,9 @@ namespace city
         }
 
         // Functions
-        [[nodiscard]] Function *CreateFunction(std::string name);
-        [[nodiscard]] Function *CreateFunction(std::string name, Type ret);
-        [[nodiscard]] Function *CreateFunction(std::string name, Type ret, std::vector<Type> const &args);
+        [[nodiscard]] IRFunction *CreateFunction(std::string name);
+        [[nodiscard]] IRFunction *CreateFunction(std::string name, Type ret);
+        [[nodiscard]] IRFunction *CreateFunction(std::string name, Type ret, std::vector<Type> const &args);
 
         // Values
         [[nodiscard]] Value *CreateConstant(Type type, std::vector<std::byte> const &data);

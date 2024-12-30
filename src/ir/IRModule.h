@@ -5,7 +5,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include "Block.h"
+#include "IRBlock.h"
 #include "IRBuilder.h"
 
 namespace city
@@ -22,9 +22,9 @@ namespace city
         std::string name_;
 
     protected:
-        std::unordered_map<std::string, std::unique_ptr<Function>> functions_;
+        std::unordered_map<std::string, std::unique_ptr<IRFunction>> functions_;
         std::unordered_map<std::string, std::unique_ptr<Value>> global_values_;
-        std::vector<std::unique_ptr<Block>> blocks_;
+        std::vector<std::unique_ptr<IRBlock>> blocks_;
 
     public:
         [[nodiscard]] std::string const &GetName() const noexcept;

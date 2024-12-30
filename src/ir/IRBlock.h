@@ -1,5 +1,5 @@
-#ifndef CITY_BLOCK_H
-#define CITY_BLOCK_H
+#ifndef CITY_IRBLOCK_H
+#define CITY_IRBLOCK_H
 
 #include <memory>
 #include <vector>
@@ -11,22 +11,22 @@ namespace city
     class IRBuilder;
     class AArch64;
     class Amd64;
-    class Function;
+    class IRFunction;
 
-    class Block
+    class IRBlock
     {
         friend class IRBuilder;
         friend class AArch64;
         friend class Amd64;
 
     protected:
-        Function *parent_function_ = nullptr;
+        IRFunction *parent_function_ = nullptr;
 
         std::vector<std::unique_ptr<IRInstruction>> instructions_;
 
     public:
-        explicit Block(Function *parent_function);
+        explicit IRBlock(IRFunction *parent_function);
     };
 } // namespace city
 
-#endif // CITY_BLOCK_H
+#endif // CITY_IRBLOCK_H

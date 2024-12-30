@@ -7,34 +7,34 @@ IRBuilder::IRBuilder(IRModule &module) : module_(module) {}
 
 Block *IRBuilder::CreateBlock()
 {
-    auto &block = this->module_.blocks_.emplace_back(std::make_unique<Block>());
+    auto &block = this->module_.blocks_.emplace_back(std::make_unique<IRBlock>());
     return block.get();
 }
 
-Function *IRBuilder::CreateFunction(std::string name)
+IRFunction *IRBuilder::CreateFunction(std::string name)
 {
     return this->CreateFunction(std::move(name), this->GetType<void>(), {});
 }
 
-Function *IRBuilder::CreateFunction(std::string name, Type ret)
+IRFunction *IRBuilder::CreateFunction(std::string name, Type ret)
 {
     return this->CreateFunction(std::move(name), ret, {});
 }
 
-Function *IRBuilder::CreateFunction(std::string name, Type ret, std::vector<Type> const &args)
+IRFunction *IRBuilder::CreateFunction(std::string name, Type ret, std::vector<Type> const &args)
 {
     auto block = this->CreateBlock();
-    auto &function = this->module_.functions_.emplace_back(std::make_unique<Function>(std::move(name), ret, args, block));
+    auto &function = this->module_.functions_.emplace_back(std::make_unique<IRFunction>(std::move(name), ret, args, block));
 
     return function.get();
 }
 
-void IRBuilder::SetInsertPoint(Block *block) noexcept
+void IRBuilder::SetInsertPoint(IRBlock *block) noexcept
 {
     this->insert_point_ = block;
 }
 
-void IRBuilder::SetInsertPoint(Function *function) noexcept
+void IRBuilder::SetInsertPoint(IRFunction *function) noexcept
 {
     this->SetInsertPoint(function->blocks_.back());
 }

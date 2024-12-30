@@ -14,8 +14,8 @@ IRTranslationResult Amd64Translator::Translate(RetInst *instruction)
         this->builder.MoveValueToRegister(return_value, Amd64RegisterCode::RAX, Amd64RegisterConflictStrategy::Discard);
     }
 
-    this->builder.PopRegister(Amd64RegisterCode::RBP);
-    this->builder.Return();
+    this->builder.InsertPopInst(Amd64RegisterCode::RBP);
+    this->builder.InsertReturnInst();
 
     return {};
 }
