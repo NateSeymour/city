@@ -16,16 +16,13 @@ TEST_F(Amd64TestRunner, ReturnVoidFunction)
     city::IRModule module{"test"};
     auto builder = module.CreateBuilder();
 
-    auto function = builder.CreateFunction("return_void");
-    builder.SetInsertPoint(function);
-
+    (void)builder.CreateFunction("return_void");
     builder.InsertRetInst(nullptr);
 
     this->jit.InsertIRModule(std::move(module));
     auto assembly = this->jit.CompileAndLink();
 
-    auto test_symbol = assembly.Lookup("return_void");
-    auto test = test_symbol.ToPointer<void()>();
+    auto test = assembly["return_void"].ToPointer<void()>();
 
     test();
 
@@ -34,22 +31,23 @@ TEST_F(Amd64TestRunner, ReturnVoidFunction)
 
 TEST_F(Amd64TestRunner, ReturnConstantFunction)
 {
+    int const EXPECTED_RETURN_VALUE = 69;
+
     city::IRModule module{"test"};
     auto builder = module.CreateBuilder();
 
-    auto function = builder.CreateFunction("return_constant");
-    builder.SetInsertPoint(function);
+    auto return_type = builder.GetType<int>();
+    (void)builder.CreateFunction("return_constant", return_type);
 
-    auto return_value = builder.CreateConstant<int>(69);
+    auto return_value = builder.CreateConstant<int>(EXPECTED_RETURN_VALUE);
     builder.InsertRetInst(return_value);
 
     this->jit.InsertIRModule(std::move(module));
     auto assembly = this->jit.CompileAndLink();
 
-    auto test_symbol = assembly.Lookup("return_constant");
-    auto test = test_symbol.ToPointer<int()>();
+    auto test = assembly["return_constant"].ToPointer<int()>();
 
-    ASSERT_EQ(test(), 69);
+    ASSERT_EQ(test(), EXPECTED_RETURN_VALUE);
 
     this->jit.RemoveModule("test");
 }

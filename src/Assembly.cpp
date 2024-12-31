@@ -2,6 +2,11 @@
 
 using namespace city;
 
+Symbol Assembly::operator[](std::string const &symbol) const
+{
+    return this->symbol_table_.at(symbol);
+}
+
 Symbol Assembly::Lookup(std::string const &symbol)
 {
     return this->symbol_table_[symbol];

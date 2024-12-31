@@ -19,6 +19,7 @@ namespace city
         std::unordered_map<std::string, Symbol> symbol_table_;
 
     public:
+        [[nodiscard]] Symbol operator[](std::string const &symbol) const;
         [[nodiscard]] Symbol Lookup(std::string const &symbol);
 
         Assembly(NativeMemoryHandle native_memory);
