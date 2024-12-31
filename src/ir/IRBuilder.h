@@ -3,8 +3,8 @@
 
 #include <cstdlib>
 #include <type_traits>
-#include "IRBlock.h"
 #include "IRFunction.h"
+#include "block/IRBlock.h"
 #include "instruction/arithmetic/AddInst.h"
 #include "instruction/control/BranchInst.h"
 #include "instruction/control/RetInst.h"
@@ -28,8 +28,8 @@ namespace city
             requires std::derived_from<T, Value>
         [[nodiscard]] T *ReserveLocalValue(Args... args)
         {
-            auto function = this->insert_point_->parent_function_;
-            auto &locals = function->local_values_;
+            auto &function = this->insert_point_->parent_function_;
+            auto &locals = function.local_values_;
             auto &value = locals.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
             return dynamic_cast<T *>(value.get());
         }
@@ -47,11 +47,11 @@ namespace city
 
     public:
         // Blocks
-        [[nodiscard]] IRBlock *CreateBlock();
+        [[nodiscard]] IRBlock &CreateBlock();
 
-        void SetInsertPoint(IRBlock *block) noexcept;
+        void SetInsertPoint(IRBlock &block) noexcept;
         void SetInsertPoint(IRFunction *function) noexcept;
-        [[nodiscard]] IRBlock *GetInsertPoint() const noexcept;
+        [[nodiscard]] IRBlock &GetInsertPoint() const;
 
         // Types
         template<typename T>

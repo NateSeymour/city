@@ -2,7 +2,22 @@
 
 using namespace city;
 
-IRFunction::IRFunction(Type ret, std::vector<Type> const &args, IRBlock *first_block) : ret_type_(ret), arg_types_(args), first_block_(first_block)
+IRBlock &IRFunction::GetFirstBlock() noexcept
 {
-    this->blocks_.push_back(this->first_block_);
+    return this->blocks_.front();
+}
+
+IRBlock &IRFunction::GetLastBlock() noexcept
+{
+    return this->blocks_.back();
+}
+
+IRBlock &IRFunction::AppendBlock()
+{
+    return this->blocks_.emplace_back(*this);
+}
+
+IRFunction::IRFunction(Type ret, std::vector<Type> const &args) : ret_type_(ret), arg_types_(args)
+{
+    (void)this->AppendBlock();
 }

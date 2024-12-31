@@ -2,8 +2,9 @@
 #define CITY_IRBLOCK_H
 
 #include <memory>
+#include <optional>
 #include <vector>
-#include "instruction/IRInstruction.h"
+#include "ir/instruction/IRInstruction.h"
 #include "value/Value.h"
 
 namespace city
@@ -20,12 +21,12 @@ namespace city
         friend class Amd64;
 
     protected:
-        IRFunction *parent_function_ = nullptr;
+        IRFunction &parent_function_;
 
         std::vector<std::unique_ptr<IRInstruction>> instructions_;
 
     public:
-        explicit IRBlock(IRFunction *parent_function);
+        explicit IRBlock(IRFunction &parent_function);
     };
 } // namespace city
 

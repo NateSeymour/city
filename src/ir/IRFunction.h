@@ -1,10 +1,10 @@
 #ifndef CITY_IRFUNCTION_H
 #define CITY_IRFUNCTION_H
 
+#include <list>
 #include <memory>
 #include <value/Value.h>
-#include <vector>
-#include "IRBlock.h"
+#include "block/IRBlock.h"
 #include "type/Type.h"
 
 namespace city
@@ -23,13 +23,17 @@ namespace city
         Type ret_type_;
         std::vector<Type> arg_types_;
 
-        IRBlock *first_block_;
-        std::vector<IRBlock *> blocks_;
+        std::list<IRBlock> blocks_;
 
         std::vector<std::unique_ptr<Value>> local_values_;
 
     public:
-        IRFunction(Type ret, std::vector<Type> const &args, IRBlock *first_block);
+        [[nodiscard]] IRBlock &GetFirstBlock() noexcept;
+        [[nodiscard]] IRBlock &GetLastBlock() noexcept;
+
+        [[nodiscard]] IRBlock &AppendBlock();
+
+        IRFunction(Type ret, std::vector<Type> const &args);
     };
 } // namespace city
 

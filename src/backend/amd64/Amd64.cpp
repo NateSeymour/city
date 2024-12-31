@@ -2,8 +2,8 @@
 #include "Amd64Translator.h"
 #include "instruction/memory/Amd64Mov.h"
 #include "instruction/memory/Amd64Push.h"
-#include "ir/IRBlock.h"
 #include "ir/IRFunction.h"
+#include "ir/block/IRBlock.h"
 #include "ir/instruction/IRInstruction.h"
 
 using namespace city;
@@ -34,9 +34,9 @@ Object Amd64::BuildModule(IRModule &ir_module)
         amd64_module.InsertInstruction(Amd64Mov::MR64(Amd64RegisterCode::RBP, Amd64RegisterCode::RSP));
 
         // Function Body
-        for (auto block : function->blocks_)
+        for (auto &block : function->blocks_)
         {
-            for (auto &instruction : block->instructions_)
+            for (auto &instruction : block.instructions_)
             {
                 instruction->Apply(&translator);
             }
