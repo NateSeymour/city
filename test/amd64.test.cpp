@@ -31,7 +31,7 @@ TEST_F(Amd64TestRunner, ReturnVoidFunction)
 
 TEST_F(Amd64TestRunner, ReturnConstantFunction)
 {
-    int const EXPECTED_RETURN_VALUE = 69;
+    int const EXPECTED_RETURN_VALUE = 696969;
 
     city::IRModule module{"test"};
     auto builder = module.CreateBuilder();
