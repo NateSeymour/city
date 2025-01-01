@@ -13,9 +13,13 @@ namespace city
     };
 
     class Value;
+    class Amd64Builder;
 
     class Container
     {
+        friend class Amd64Builder;
+        
+    protected:
         Value *value_ = nullptr;
 
     public:

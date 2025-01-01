@@ -4,7 +4,7 @@ using namespace city;
 
 bool IRInstruction::HasReturnValue() const noexcept
 {
-    return false;
+    return this->return_value_ != nullptr;
 }
 
 Value *IRInstruction::GetReturnValue()

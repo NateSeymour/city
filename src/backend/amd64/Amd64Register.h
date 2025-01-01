@@ -6,8 +6,13 @@
 
 namespace city
 {
+    class Amd64Builder;
+
     class Amd64Register : public Container
     {
+        friend class Amd64Builder;
+        
+    protected:
         Amd64RegisterCode code_;
 
     public:
