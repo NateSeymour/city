@@ -1,5 +1,6 @@
 #include "Amd64Builder.h"
 
+#include "instruction/arithmetic/Amd64Add.h"
 #include "instruction/control/Amd64Ret.h"
 #include "instruction/memory/Amd64Mov.h"
 #include "instruction/memory/Amd64Pop.h"
@@ -19,6 +20,11 @@ Amd64Register *Amd64Builder::FindUnusedRegister() const noexcept
     }
 
     return nullptr;
+}
+
+void Amd64Builder::InsertAddInst(Amd64RegisterCode dst, Amd64RegisterCode src)
+{
+    this->module_.InsertInstruction(Amd64Add::MR64(dst, src));
 }
 
 void Amd64Builder::InsertReturnInst(Amd64ReturnType return_type) const
@@ -73,7 +79,7 @@ Amd64Register *Amd64Builder::MoveValueToRegister(Value *value, Amd64RegisterCode
     {
         this->module_.InsertInstruction(Amd64Mov::OIX(reg, value->GetDataBuffer()));
     }
-    
+
     return &physical_reg;
 }
 

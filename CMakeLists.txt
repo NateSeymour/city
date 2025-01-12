@@ -46,8 +46,6 @@ add_library(city
         src/backend/amd64/Amd64Translator.h
         src/backend/amd64/instruction/Amd64Instruction.cpp
         src/backend/amd64/instruction/Amd64Instruction.h
-        src/backend/amd64/instruction/arithmetic/Amd64AddMI32Inst.h
-        src/backend/amd64/instruction/arithmetic/Amd64AddRM32Inst.h
         src/backend/amd64/instruction/control/Amd64Ret.h
         src/backend/amd64/instruction/memory/Amd64Mov.h
         src/backend/amd64/instruction/memory/Amd64Pop.h
@@ -84,6 +82,9 @@ add_library(city
         src/value/ConstantValue.h
         src/value/Value.cpp
         src/value/Value.h
+        src/ir/instruction/IRBinaryInstruction.cpp
+        src/ir/instruction/IRBinaryInstruction.h
+        src/backend/amd64/instruction/arithmetic/Amd64Add.h
 )
 target_include_directories(city PUBLIC src)
 

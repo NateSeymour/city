@@ -2,7 +2,15 @@
 
 using namespace city;
 
-IRTranslationResult Amd64Translator::Translate(AddInst *instruction) {}
+IRTranslationResult Amd64Translator::Translate(AddInst *instruction)
+{
+    auto lhs = this->builder.MoveValueToUnusedRegister(instruction->GetLHS());
+    auto rhs = this->builder.MoveValueToUnusedRegister(instruction->GetRHS());
+
+    this->builder.InsertAddInst(lhs->GetCode(), rhs->GetCode());
+
+    return {};
+}
 
 IRTranslationResult Amd64Translator::Translate(BranchInst *instruction) {}
 

@@ -30,6 +30,7 @@ namespace city
 
         [[nodiscard]] Amd64Register *FindUnusedRegister() const noexcept;
 
+        void InsertAddInst(Amd64RegisterCode dst, Amd64RegisterCode src);
         void InsertReturnInst(Amd64ReturnType return_type = Amd64ReturnType::Near) const;
         void InsertPopInst(Amd64RegisterCode reg);
 

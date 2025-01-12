@@ -51,3 +51,31 @@ TEST_F(Amd64TestRunner, ReturnConstantFunction)
 
     this->jit.RemoveModule("test");
 }
+
+TEST_F(Amd64TestRunner, AddConstantFunction)
+{
+    int const X_VALUE = 69;
+    int const Y_VALUE = 420;
+    int const EXPECTED_RETURN_VALUE = X_VALUE + Y_VALUE;
+
+    city::IRModule module{"test"};
+    auto builder = module.CreateBuilder();
+
+    auto return_type = builder.GetType<int>();
+    (void)builder.CreateFunction("add_constants", return_type);
+
+    auto x_value = builder.CreateConstant<int>(X_VALUE);
+    auto y_value = builder.CreateConstant<int>(Y_VALUE);
+    auto return_value = builder.InsertAddInst(x_value, y_value);
+
+    builder.InsertRetInst(return_value->GetReturnValue());
+
+    this->jit.InsertIRModule(std::move(module));
+    auto assembly = this->jit.CompileAndLink();
+
+    auto test = assembly["add_constants"].ToPointer<int()>();
+
+    ASSERT_EQ(test(), EXPECTED_RETURN_VALUE);
+
+    this->jit.RemoveModule("test");
+}

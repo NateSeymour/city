@@ -13,4 +13,4 @@ bool AddInst::HasReturnValue() const noexcept
     return true;
 }
 
-AddInst::AddInst(Value *lhs, Value *rhs) : lhs_(lhs), rhs_(rhs) {}
+AddInst::AddInst(Value *lhs, Value *rhs) : IRBinaryInstruction(lhs, rhs) {}

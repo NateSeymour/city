@@ -1,15 +1,12 @@
 #ifndef CITY_ADDINST_H
 #define CITY_ADDINST_H
 
-#include "ir/instruction/IRInstruction.h"
+#include "ir/instruction/IRBinaryInstruction.h"
 
 namespace city
 {
-    class AddInst : public IRInstruction
+    class AddInst : public IRBinaryInstruction
     {
-        Value *lhs_;
-        Value *rhs_;
-
     public:
         void Apply(IRTranslator *interface) override;
 
