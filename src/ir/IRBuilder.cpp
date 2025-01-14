@@ -63,23 +63,17 @@ AddInst *IRBuilder::InsertAddInst(Value *lhs, Value *rhs)
     }
 
     auto return_value = this->ReserveLocalValue<Value>(lhs_type, StorageClass::Temporary);
-    auto addtmp = this->ReserveInstruction<AddInst>(lhs, rhs);
-    addtmp->SetReturnValue(return_value);
+    auto addtmp = this->ReserveInstruction<AddInst>(return_value, lhs, rhs);
 
     return addtmp;
 }
 
-StoreInst *IRBuilder::InsertStoreInst(Value *dst, Value *src)
+RetInst *IRBuilder::InsertRetInst(Value *return_value)
 {
-    return this->ReserveInstruction<StoreInst>(dst, src);
-}
+    if (!return_value)
+    {
+        return_value = this->ReserveLocalValue<Value>(this->GetType<void>());
+    }
 
-BranchInst *IRBuilder::InsertBranchInst(IRInstruction *target)
-{
-    return this->ReserveInstruction<BranchInst>(target);
-}
-
-RetInst *IRBuilder::InsertRetInst(Value *ret)
-{
-    return this->ReserveInstruction<RetInst>(ret);
+    return this->ReserveInstruction<RetInst>(return_value);
 }

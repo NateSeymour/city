@@ -3,10 +3,10 @@
 
 #include <array>
 #include <cstdint>
+#include "../container/Amd64ModRM.h"
 #include "ByteBuffer.h"
 #include "backend/NativeInstruction.h"
 #include "backend/amd64/Amd64.h"
-#include "backend/amd64/Amd64ModRM.h"
 
 namespace city
 {

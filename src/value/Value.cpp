@@ -8,14 +8,19 @@ void Value::IncrementReadCount() noexcept
     this->read_count_++;
 }
 
-void Value::IncrementWriteCount() noexcept
+void Value::DecrementReadCount() noexcept
 {
-    this->write_count_++;
+    this->read_count_--;
 }
 
-bool Value::IsConstant() const noexcept
+void Value::SetContainer(Container *container)
 {
-    return this->write_count_ == 0;
+    this->container_ = container;
+}
+
+bool Value::IsInstantiated() const noexcept
+{
+    return this->container_;
 }
 
 bool Value::IsUsed() const noexcept

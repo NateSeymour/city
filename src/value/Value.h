@@ -16,15 +16,16 @@ namespace city
         Container *container_ = nullptr;
 
         std::size_t read_count_ = 0;
-        std::size_t write_count_ = 0;
 
     public:
         void IncrementReadCount() noexcept;
-        void IncrementWriteCount() noexcept;
+        void DecrementReadCount() noexcept;
+
+        void SetContainer(Container *container);
 
         [[nodiscard]] Type GetType() const noexcept;
 
-        [[nodiscard]] bool IsConstant() const noexcept;
+        [[nodiscard]] bool IsInstantiated() const noexcept;
         [[nodiscard]] bool IsUsed() const noexcept;
         [[nodiscard]] virtual bool IsCompileTimeConstant() const noexcept;
         [[nodiscard]] virtual std::vector<std::byte> const &GetDataBuffer() const;

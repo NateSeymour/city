@@ -2,25 +2,21 @@
 #define AMD64MODULE_H
 
 #include <vector>
-#include "Amd64.h"
 #include "instruction/Amd64Instruction.h"
 
 namespace city
 {
-    class Amd64Builder;
+    class Amd64Translator;
 
     class Amd64Module
     {
         friend class Amd64;
-        friend class Amd64Builder;
+        friend class Amd64Translator;
 
         std::vector<Amd64Instruction> instructions_;
 
     protected:
-        void InsertInstruction(Amd64Instruction &&inst);
-
-    public:
-        [[nodiscard]] Amd64Builder CreateBuilder();
+        void Insert(Amd64Instruction &&inst);
     };
 } // namespace city
 

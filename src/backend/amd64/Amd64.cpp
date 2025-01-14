@@ -29,9 +29,9 @@ Object Amd64::BuildModule(IRModule &ir_module)
         // Function Prolog
         auto entry = Amd64Push::O64(Amd64RegisterCode::RBP);
         entry.SetLabel(name);
-        amd64_module.InsertInstruction(std::move(entry));
+        amd64_module.Insert(std::move(entry));
 
-        amd64_module.InsertInstruction(Amd64Mov::MR64(Amd64RegisterCode::RBP, Amd64RegisterCode::RSP));
+        amd64_module.Insert(Amd64Mov::MR64(Amd64RegisterCode::RBP, Amd64RegisterCode::RSP));
 
         // Function Body
         for (auto &block : function->blocks_)

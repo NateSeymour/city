@@ -10,9 +10,7 @@ namespace city
     public:
         void Apply(IRTranslator *interface) override;
 
-        [[nodiscard]] bool HasReturnValue() const noexcept override;
-
-        AddInst(Value *lhs, Value *rhs);
+        AddInst(Value *return_value, Value *lhs, Value *rhs);
     };
 } // namespace city
 

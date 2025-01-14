@@ -12,4 +12,8 @@ Value *IRBinaryInstruction::GetRHS() const noexcept
     return this->rhs_;
 }
 
-IRBinaryInstruction::IRBinaryInstruction(Value *lhs, Value *rhs) : lhs_(lhs), rhs_(rhs) {}
+IRBinaryInstruction::IRBinaryInstruction(Value *return_value, Value *lhs, Value *rhs) : IRInstruction(return_value), lhs_(lhs), rhs_(rhs)
+{
+    lhs->IncrementReadCount();
+    rhs->IncrementReadCount();
+}

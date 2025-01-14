@@ -27,6 +27,11 @@ namespace city
         {
             return this->size_ == rhs.size_ && this->native_type_ == rhs.native_type_;
         }
+
+        [[nodiscard]] bool IsVoid() const noexcept
+        {
+            return this->native_type_ == NativeType::Void;
+        }
     };
 } // namespace city
 

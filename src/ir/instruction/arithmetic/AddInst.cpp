@@ -8,9 +8,4 @@ void AddInst::Apply(IRTranslator *interface)
     interface->Translate(this);
 }
 
-bool AddInst::HasReturnValue() const noexcept
-{
-    return true;
-}
-
-AddInst::AddInst(Value *lhs, Value *rhs) : IRBinaryInstruction(lhs, rhs) {}
+AddInst::AddInst(Value *return_value, Value *lhs, Value *rhs) : IRBinaryInstruction(return_value, lhs, rhs) {}

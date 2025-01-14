@@ -16,8 +16,8 @@ add_library(city
         src/Assembly.cpp
         src/Assembly.h
         src/ByteBuffer.h
-        src/Container.cpp
-        src/Container.h
+        src/container/Container.cpp
+        src/container/Container.h
         src/JIT.cpp
         src/JIT.h
         src/Object.cpp
@@ -35,13 +35,11 @@ add_library(city
         src/backend/aarch64/instruction/AArch64Instruction.h
         src/backend/amd64/Amd64.cpp
         src/backend/amd64/Amd64.h
-        src/backend/amd64/Amd64Builder.cpp
-        src/backend/amd64/Amd64Builder.h
-        src/backend/amd64/Amd64ModRM.h
+        src/backend/amd64/container/Amd64ModRM.h
         src/backend/amd64/Amd64Module.cpp
         src/backend/amd64/Amd64Module.h
-        src/backend/amd64/Amd64Register.cpp
-        src/backend/amd64/Amd64Register.h
+        src/backend/amd64/container/Amd64Register.cpp
+        src/backend/amd64/container/Amd64Register.h
         src/backend/amd64/Amd64Translator.cpp
         src/backend/amd64/Amd64Translator.h
         src/backend/amd64/instruction/Amd64Instruction.cpp
@@ -63,12 +61,8 @@ add_library(city
         src/ir/instruction/InstructionFunctor.h
         src/ir/instruction/arithmetic/AddInst.cpp
         src/ir/instruction/arithmetic/AddInst.h
-        src/ir/instruction/control/BranchInst.cpp
-        src/ir/instruction/control/BranchInst.h
         src/ir/instruction/control/RetInst.cpp
         src/ir/instruction/control/RetInst.h
-        src/ir/instruction/memory/StoreInst.cpp
-        src/ir/instruction/memory/StoreInst.h
         src/runtime/MacOS.cpp
         src/runtime/MacOS.h
         src/runtime/NativeMemoryHandle.cpp
@@ -85,6 +79,10 @@ add_library(city
         src/ir/instruction/IRBinaryInstruction.cpp
         src/ir/instruction/IRBinaryInstruction.h
         src/backend/amd64/instruction/arithmetic/Amd64Add.h
+        src/backend/amd64/container/Amd64ContainerFunctor.cpp
+        src/backend/amd64/container/Amd64ContainerFunctor.h
+        src/container/CompileTimeConstant.cpp
+        src/container/CompileTimeConstant.h
 )
 target_include_directories(city PUBLIC src)
 

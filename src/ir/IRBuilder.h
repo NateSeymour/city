@@ -105,12 +105,8 @@ namespace city
         // Instructions - Arithmetic
         [[nodiscard]] AddInst *InsertAddInst(Value *lhs, Value *rhs);
 
-        // Instructions - Memory
-        StoreInst *InsertStoreInst(Value *dst, Value *src);
-
         // Instructions - Control
-        BranchInst *InsertBranchInst(IRInstruction *target);
-        RetInst *InsertRetInst(Value *ret);
+        RetInst *InsertRetInst(Value *return_value = nullptr);
 
         // Constructors
         IRBuilder() = delete;
