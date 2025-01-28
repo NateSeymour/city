@@ -6,12 +6,14 @@
 
 namespace city
 {
-    class Amd64Translator;
+    struct Amd64Translator;
+    struct Amd64RegisterLoader;
 
     class Amd64Module
     {
         friend class Amd64;
-        friend class Amd64Translator;
+        friend struct Amd64Translator;
+        friend struct Amd64RegisterLoader;
 
         std::vector<Amd64Instruction> instructions_;
 

@@ -3,6 +3,7 @@
 
 #include "Amd64Module.h"
 #include "backend/IRTranslator.h"
+#include "container/Amd64RegisterLoader.h"
 #include "ir/instruction/InstructionFunctor.h"
 
 namespace city
@@ -10,7 +11,7 @@ namespace city
     enum class ConflictStrategy
     {
         Push,
-        MoveToUnused,
+        PreferMoveToUnused,
         Discard,
     };
 
@@ -24,6 +25,7 @@ namespace city
     struct Amd64Translator : IRTranslator
     {
         Amd64Module &module;
+        Amd64RegisterLoader register_loader{*this};
 
         std::array<Amd64Register, 8> registers_ = amd64_register_definitions;
 
@@ -38,7 +40,7 @@ namespace city
          * @return
          */
         [[nodiscard]] Amd64Register *LoadValue(
-                Value *value, Amd64Register *reg = nullptr, ConflictStrategy strategy = ConflictStrategy::Push, LoadType load_type = LoadType::Value) const;
+                Value *value, Amd64Register *reg = nullptr, ConflictStrategy strategy = ConflictStrategy::Push, LoadType load_type = LoadType::Value);
 
         /**
          * Moves value and transfers its ownership.
@@ -47,13 +49,14 @@ namespace city
          * @param strategy
          * @return
          */
-        [[nodiscard]] Amd64Register *MoveValue(Value *value, Amd64Register *reg, ConflictStrategy strategy);
+        [[nodiscard]] Amd64Register *MoveValue(Value &value, Amd64Register &reg, ConflictStrategy strategy);
 
-        [[nodiscard]] Amd64Register *InstantiateValue(Value *value, Amd64Register *reg, ConflictStrategy strategy);
+        [[nodiscard]] Amd64Register *InstantiateValue(Value &value, Amd64Register &reg, ConflictStrategy strategy);
 
         [[nodiscard]] Amd64Register *FindUnusedRegister() noexcept;
 
         IRTranslationResult Translate(AddInst *instruction) override;
+        IRTranslationResult Translate(SubInst *instruction) override;
         IRTranslationResult Translate(RetInst *instruction) override;
 
         explicit Amd64Translator(Amd64Module &module) : module(module) {}

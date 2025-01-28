@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include <vector>
 #include "IRBuilder.h"
-#include "block/IRBlock.h"
+#include "../container/ConstantDataContainer.h"
 
 namespace city
 {
@@ -24,6 +24,7 @@ namespace city
     protected:
         std::unordered_map<std::string, std::unique_ptr<IRFunction>> functions_;
         std::unordered_map<std::string, std::unique_ptr<Value>> global_values_;
+        std::vector<std::unique_ptr<ConstantDataContainer>> global_constants_;
 
     public:
         [[nodiscard]] std::string const &GetName() const noexcept;

@@ -72,17 +72,18 @@ add_library(city
         src/runtime/Windows.h
         src/type/Type.cpp
         src/type/Type.h
-        src/value/ConstantValue.cpp
-        src/value/ConstantValue.h
-        src/value/Value.cpp
-        src/value/Value.h
+        src/Value.cpp
+        src/Value.h
         src/ir/instruction/IRBinaryInstruction.cpp
         src/ir/instruction/IRBinaryInstruction.h
         src/backend/amd64/instruction/arithmetic/Amd64Add.h
-        src/backend/amd64/container/Amd64ContainerFunctor.cpp
-        src/backend/amd64/container/Amd64ContainerFunctor.h
-        src/container/CompileTimeConstant.cpp
-        src/container/CompileTimeConstant.h
+        src/container/ConstantDataContainer.cpp
+        src/container/ConstantDataContainer.h
+        src/backend/amd64/container/Amd64RegisterLoader.h
+        src/backend/amd64/container/Amd64RegisterLoader.cpp
+        src/ir/instruction/arithmetic/SubInst.cpp
+        src/ir/instruction/arithmetic/SubInst.h
+        src/backend/amd64/instruction/arithmetic/Amd64Sub.h
 )
 target_include_directories(city PUBLIC src)
 

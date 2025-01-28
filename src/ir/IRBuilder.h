@@ -1,16 +1,15 @@
 #ifndef CITY_IRBUILDER_H
 #define CITY_IRBUILDER_H
 
-#include <cstdlib>
 #include <type_traits>
 #include "IRFunction.h"
+#include "Value.h"
 #include "block/IRBlock.h"
+#include "container/ConstantDataContainer.h"
 #include "instruction/arithmetic/AddInst.h"
-#include "instruction/control/BranchInst.h"
+#include "instruction/arithmetic/SubInst.h"
 #include "instruction/control/RetInst.h"
-#include "instruction/memory/StoreInst.h"
 #include "type/Type.h"
-#include "value/Value.h"
 
 namespace city
 {
@@ -24,15 +23,9 @@ namespace city
         IRBlock *insert_point_ = nullptr;
 
     protected:
-        template<typename T, typename... Args>
-            requires std::derived_from<T, Value>
-        [[nodiscard]] T *ReserveLocalValue(Args... args)
-        {
-            auto &function = this->insert_point_->parent_function_;
-            auto &locals = function.local_values_;
-            auto &value = locals.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
-            return dynamic_cast<T *>(value.get());
-        }
+        [[nodiscard]] ConstantDataContainer *CreateConstantDataContainer(std::vector<std::byte> const &data);
+
+        [[nodiscard]] Value *ReserveLocalValue(Type type);
 
         template<typename T, typename... Args>
             requires std::derived_from<T, IRInstruction>
@@ -104,6 +97,7 @@ namespace city
 
         // Instructions - Arithmetic
         [[nodiscard]] AddInst *InsertAddInst(Value *lhs, Value *rhs);
+        [[nodiscard]] SubInst *InsertSubInst(Value *lhs, Value *rhs);
 
         // Instructions - Control
         RetInst *InsertRetInst(Value *return_value = nullptr);

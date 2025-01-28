@@ -1,17 +1,10 @@
 #ifndef CITY_CONTAINER_H
 #define CITY_CONTAINER_H
 
+#include "backend/amd64/container/Amd64RegisterLoader.h"
+
 namespace city
 {
-    enum class StorageClass
-    {
-        Temporary,
-        Constant,
-        StackPreferred,
-        HeapPreferred,
-        StaticPreferred,
-    };
-
     class Value;
 
     class Container
@@ -20,9 +13,12 @@ namespace city
         Value *value_ = nullptr;
 
     public:
-        void SetValue(Value *value);
+        void AssociateValue(Value *value);
+        void Disassociate();
         [[nodiscard]] Value *GetValue() const noexcept;
         [[nodiscard]] bool HasValue() const noexcept;
+
+        virtual void LoadIntoAmd64Register(Amd64RegisterLoader *loader, Amd64Register &target) = 0;
 
         virtual ~Container() = default;
     };

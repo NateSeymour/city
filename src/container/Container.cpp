@@ -3,9 +3,14 @@
 
 using namespace city;
 
-void Container::SetValue(Value *value)
+void Container::AssociateValue(Value *value)
 {
     this->value_ = value;
+}
+
+void Container::Disassociate()
+{
+    this->value_ = nullptr;
 }
 
 Value *Container::GetValue() const noexcept

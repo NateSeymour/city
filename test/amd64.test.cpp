@@ -31,7 +31,7 @@ TEST_F(Amd64TestRunner, ReturnVoidFunction)
 
 TEST_F(Amd64TestRunner, ReturnConstantFunction)
 {
-    int const EXPECTED_RETURN_VALUE = 696969;
+    constexpr int EXPECTED_RETURN_VALUE = 696969;
 
     city::IRModule module{"test"};
     auto builder = module.CreateBuilder();
@@ -74,6 +74,64 @@ TEST_F(Amd64TestRunner, AddConstantFunction)
     auto assembly = this->jit.CompileAndLink();
 
     auto test = assembly["add_constants"].ToPointer<int()>();
+
+    ASSERT_EQ(test(), EXPECTED_RETURN_VALUE);
+
+    this->jit.RemoveModule("test");
+}
+
+TEST_F(Amd64TestRunner, ChainedAdditionFunction)
+{
+    int const X_VALUE = 69;
+    int const Y_VALUE = 420;
+    int const EXPECTED_RETURN_VALUE = X_VALUE + Y_VALUE + Y_VALUE;
+
+    city::IRModule module{"test"};
+    auto builder = module.CreateBuilder();
+
+    auto return_type = builder.GetType<int>();
+    (void)builder.CreateFunction("chained_addition", return_type);
+
+    auto x_value = builder.CreateConstant<int>(X_VALUE);
+    auto y_value = builder.CreateConstant<int>(Y_VALUE);
+
+    auto intermediate = builder.InsertAddInst(x_value, y_value);
+    auto return_value = builder.InsertAddInst(intermediate->GetReturnValue(), y_value);
+
+    builder.InsertRetInst(return_value->GetReturnValue());
+
+    this->jit.InsertIRModule(std::move(module));
+    auto assembly = this->jit.CompileAndLink();
+
+    auto test = assembly["chained_addition"].ToPointer<int()>();
+
+    ASSERT_EQ(test(), EXPECTED_RETURN_VALUE);
+
+    this->jit.RemoveModule("test");
+}
+
+TEST_F(Amd64TestRunner, SubtractConstantFunction)
+{
+    int const X_VALUE = 69;
+    int const Y_VALUE = 420;
+    int const EXPECTED_RETURN_VALUE = X_VALUE - Y_VALUE;
+
+    city::IRModule module{"test"};
+    auto builder = module.CreateBuilder();
+
+    auto return_type = builder.GetType<int>();
+    (void)builder.CreateFunction("subtract_constants", return_type);
+
+    auto x_value = builder.CreateConstant<int>(X_VALUE);
+    auto y_value = builder.CreateConstant<int>(Y_VALUE);
+    auto return_value = builder.InsertSubInst(x_value, y_value);
+
+    builder.InsertRetInst(return_value->GetReturnValue());
+
+    this->jit.InsertIRModule(std::move(module));
+    auto assembly = this->jit.CompileAndLink();
+
+    auto test = assembly["subtract_constants"].ToPointer<int()>();
 
     ASSERT_EQ(test(), EXPECTED_RETURN_VALUE);
 

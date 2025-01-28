@@ -1,7 +1,7 @@
 #ifndef CITY_X86REGISTER_H
 #define CITY_X86REGISTER_H
 
-#include "../../../Container.h"
+#include "../../../container/Container.h"
 #include "Amd64ModRM.h"
 
 namespace city
@@ -17,6 +17,8 @@ namespace city
 
     public:
         [[nodiscard]] Amd64RegisterCode GetCode() const noexcept;
+
+        void LoadIntoAmd64Register(Amd64RegisterLoader *loader, Amd64Register &target) override;
 
         Amd64Register(Amd64RegisterCode code);
     };

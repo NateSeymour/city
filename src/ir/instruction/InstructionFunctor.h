@@ -2,6 +2,7 @@
 #define INSTRUCTIONFUNCTOR_H
 
 #include "ir/instruction/arithmetic/AddInst.h"
+#include "ir/instruction/arithmetic/SubInst.h"
 #include "ir/instruction/control/RetInst.h"
 
 namespace city
@@ -10,6 +11,7 @@ namespace city
     struct InstructionFunctor
     {
         virtual ResultType Translate(AddInst *instruction) = 0;
+        virtual ResultType Translate(SubInst *instruction) = 0;
         virtual ResultType Translate(RetInst *instruction) = 0;
 
         template<typename T>

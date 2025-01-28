@@ -3,7 +3,7 @@
 
 #include <list>
 #include <memory>
-#include <value/Value.h>
+#include "../Value.h"
 #include "block/IRBlock.h"
 #include "type/Type.h"
 

@@ -4,8 +4,8 @@
 #include <memory>
 #include <optional>
 #include <vector>
+#include "../../Value.h"
 #include "ir/instruction/IRInstruction.h"
-#include "value/Value.h"
 
 namespace city
 {
