@@ -38,7 +38,7 @@ IRFunction *IRBuilder::CreateFunction(std::string const &name, Type ret)
 
 IRFunction *IRBuilder::CreateFunction(std::string const &name, Type ret, std::vector<Type> const &args)
 {
-    auto [it, _] = this->module_.functions_.insert({name, std::make_unique<IRFunction>(ret, args)});
+    auto [it, _] = this->module_.functions_.insert({name, std::make_unique<IRFunction>(name, ret, args)});
     auto function = it->second.get();
 
     this->SetInsertPoint(function->GetLastBlock());
@@ -102,6 +102,12 @@ SubInst *IRBuilder::InsertSubInst(Value *lhs, Value *rhs)
     auto subtmp = this->ReserveInstruction<SubInst>(return_value, lhs, rhs);
 
     return subtmp;
+}
+
+CallInst *IRBuilder::InsertCallInst(IRFunction *function)
+{
+    auto return_value = this->ReserveLocalValue(function->ret_type_);
+    return this->ReserveInstruction<CallInst>(return_value, function);
 }
 
 RetInst *IRBuilder::InsertRetInst(Value *return_value)

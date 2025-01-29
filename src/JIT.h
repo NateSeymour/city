@@ -11,6 +11,8 @@
 
 namespace city
 {
+    constexpr std::uint64_t kLinkerCanary = 0xbeefbeef'cafebabe;
+
     class JIT
     {
         std::unique_ptr<Backend> backend_;

@@ -8,6 +8,7 @@
 #include "container/ConstantDataContainer.h"
 #include "instruction/arithmetic/AddInst.h"
 #include "instruction/arithmetic/SubInst.h"
+#include "instruction/control/CallInst.h"
 #include "instruction/control/RetInst.h"
 #include "type/Type.h"
 
@@ -100,6 +101,7 @@ namespace city
         [[nodiscard]] SubInst *InsertSubInst(Value *lhs, Value *rhs);
 
         // Instructions - Control
+        CallInst *InsertCallInst(IRFunction *function);
         RetInst *InsertRetInst(Value *return_value = nullptr);
 
         // Constructors

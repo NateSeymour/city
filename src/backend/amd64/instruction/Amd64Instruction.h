@@ -44,8 +44,9 @@ namespace city
         Amd64Immediate immediate_ = {};
 
     public:
-        [[nodiscard]] size_t GetBinarySize() const noexcept override;
-        [[nodiscard]] size_t WriteToBuffer(std::byte *buffer) const override;
+        [[nodiscard]] std::size_t GetBinarySize() const noexcept override;
+        [[nodiscard]] std::size_t WriteToBuffer(std::byte *buffer) const override;
+        [[nodiscard]] std::size_t GetLinkerRefInstructionOffset() override;
 
         void SetPrefix(std::initializer_list<std::uint8_t> bytes);
         void SetOpcode(std::initializer_list<std::uint8_t> bytes);

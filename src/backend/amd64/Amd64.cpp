@@ -2,9 +2,7 @@
 #include "Amd64Translator.h"
 #include "instruction/memory/Amd64Mov.h"
 #include "instruction/memory/Amd64Push.h"
-#include "ir/IRFunction.h"
 #include "ir/block/IRBlock.h"
-#include "ir/instruction/IRInstruction.h"
 
 using namespace city;
 
@@ -54,6 +52,7 @@ Object Amd64::BuildModule(IRModule &ir_module)
 
     // Symbol table
     SymbolTable symbol_table;
+    SymbolRefList symbol_refs;
 
     // Write to buffer
     std::size_t offset = 0;
@@ -63,14 +62,22 @@ Object Amd64::BuildModule(IRModule &ir_module)
         if (label != nullptr)
         {
             symbol_table[label] = {
-                    .flags = SymbolFlags::Exectuable,
                     .location = reinterpret_cast<std::byte *>(offset),
+                    .flags = SymbolFlags::Exectuable,
             };
+        }
+
+        if (inst.HasLinkerRef())
+        {
+            symbol_refs.push_back({
+                    .symbol_name = inst.GetLinkerRef(),
+                    .offset = offset + inst.GetLinkerRefInstructionOffset(),
+            });
         }
 
         auto addr = native_memory.GetAddressAtOffset(offset);
         offset += inst.WriteToBuffer(addr);
     }
 
-    return {std::move(native_memory), std::move(symbol_table)};
+    return {std::move(native_memory), std::move(symbol_table), std::move(symbol_refs)};
 }

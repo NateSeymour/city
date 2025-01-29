@@ -34,6 +34,31 @@ namespace city
             return inst;
         }
 
+        static Amd64Mov OI64(Amd64RegisterCode dst, std::uint64_t data) noexcept
+        {
+            Amd64Mov inst;
+
+            auto buffer = reinterpret_cast<std::uint8_t *>(&data);
+
+            auto rexw = static_cast<std::uint8_t>(Amd64PrefixCode::REXW);
+            inst.SetPrefix({rexw});
+
+            std::uint8_t opcode = 0xB8 + static_cast<uint8_t>(dst);
+            inst.SetOpcode({opcode});
+            inst.SetImmediate({
+                    buffer[0],
+                    buffer[1],
+                    buffer[2],
+                    buffer[3],
+                    buffer[4],
+                    buffer[5],
+                    buffer[6],
+                    buffer[7],
+            });
+
+            return inst;
+        }
+
         static Amd64Mov OIX(Amd64RegisterCode dst, std::vector<std::byte> const &buffer)
         {
             if (buffer.size() <= 2)
@@ -50,6 +75,8 @@ namespace city
 
             if (buffer.size() <= 8)
             {
+                std::uint64_t data = *reinterpret_cast<std::uint64_t const *>(buffer.data());
+                return Amd64Mov::OI64(dst, data);
             }
 
             throw std::runtime_error("data buffer is too big to fit into immediate value");

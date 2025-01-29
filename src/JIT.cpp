@@ -33,8 +33,6 @@ Assembly JIT::LinkObjects() const
         auto object_addr = object.native_memory_.GetAddressAtOffset(0);
         memcpy(assembly_addr, object_addr, object_size);
 
-        object_insertion_offset += object_size;
-
         for (auto &[name, offset] : object.symbol_table_)
         {
             assembly.symbol_table_[name] = {
@@ -42,6 +40,28 @@ Assembly JIT::LinkObjects() const
                     .flags = SymbolFlags::Exectuable,
             };
         }
+
+        for (auto &symbol_ref : object.symbol_refs_)
+        {
+            assembly.symbol_refs_.push_back({
+                    .symbol_name = symbol_ref.symbol_name,
+                    .offset = object_insertion_offset + symbol_ref.offset,
+            });
+        }
+
+        object_insertion_offset += object_size;
+    }
+
+    for (auto &symbol_ref : assembly.symbol_refs_)
+    {
+        auto ref_addr = reinterpret_cast<std::uint64_t *>(assembly.native_memory_.GetAddressAtOffset(symbol_ref.offset));
+
+        if (*ref_addr != kLinkerCanary)
+        {
+            throw std::runtime_error("failed to link symbol");
+        }
+
+        *ref_addr = reinterpret_cast<std::uint64_t>(assembly.symbol_table_[symbol_ref.symbol_name].location);
     }
 
     assembly.native_memory_.SetProtection(MemoryProtection::Read | MemoryProtection::Execute);

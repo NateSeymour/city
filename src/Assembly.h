@@ -2,7 +2,6 @@
 #define CITY_ASSEMBLY_H
 
 #include <string>
-#include <unordered_map>
 #include "Symbol.h"
 #include "runtime/NativeMemoryHandle.h"
 
@@ -16,7 +15,8 @@ namespace city
 
     protected:
         NativeMemoryHandle native_memory_;
-        std::unordered_map<std::string, Symbol> symbol_table_;
+        SymbolTable symbol_table_;
+        SymbolRefList symbol_refs_;
 
     public:
         [[nodiscard]] Symbol operator[](std::string const &symbol) const;

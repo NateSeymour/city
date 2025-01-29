@@ -57,6 +57,7 @@ namespace city
 
         IRTranslationResult Translate(AddInst *instruction) override;
         IRTranslationResult Translate(SubInst *instruction) override;
+        IRTranslationResult Translate(CallInst *instruction) override;
         IRTranslationResult Translate(RetInst *instruction) override;
 
         explicit Amd64Translator(Amd64Module &module) : module(module) {}

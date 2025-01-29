@@ -8,4 +8,7 @@ void RetInst::Apply(IRTranslator *interface)
     interface->Translate(this);
 }
 
-RetInst::RetInst(Value *return_value) : IRInstruction(return_value) {}
+RetInst::RetInst(Value *value) : IRInstruction(value)
+{
+    value->IncrementReadCount();
+}

@@ -31,7 +31,7 @@ TEST_F(Amd64TestRunner, ReturnVoidFunction)
 
 TEST_F(Amd64TestRunner, ReturnConstantFunction)
 {
-    constexpr int EXPECTED_RETURN_VALUE = 696969;
+    int const EXPECTED_RETURN_VALUE = 696969;
 
     city::IRModule module{"test"};
     auto builder = module.CreateBuilder();
@@ -134,6 +134,32 @@ TEST_F(Amd64TestRunner, SubtractConstantFunction)
     auto test = assembly["subtract_constants"].ToPointer<int()>();
 
     ASSERT_EQ(test(), EXPECTED_RETURN_VALUE);
+
+    this->jit.RemoveModule("test");
+}
+
+TEST_F(Amd64TestRunner, IRFunctionCall)
+{
+    int const FOO_RET_VALUE = 6969420;
+    int const BAR_RET_VALUE = FOO_RET_VALUE + 69;
+
+    city::IRModule module{"test"};
+    auto builder = module.CreateBuilder();
+
+    auto foo = builder.CreateFunction("foo", builder.GetType<int>());
+    builder.InsertRetInst(builder.CreateConstant(FOO_RET_VALUE));
+
+    (void)builder.CreateFunction("bar", builder.GetType<int>());
+    auto foo_retval = builder.InsertCallInst(foo);
+    auto addition = builder.InsertAddInst(foo_retval->GetReturnValue(), builder.CreateConstant(69));
+    builder.InsertRetInst(addition->GetReturnValue());
+
+    this->jit.InsertIRModule(std::move(module));
+    auto assembly = this->jit.CompileAndLink();
+
+    auto bar = assembly["bar"].ToPointer<int()>();
+
+    ASSERT_EQ(bar(), BAR_RET_VALUE);
 
     this->jit.RemoveModule("test");
 }

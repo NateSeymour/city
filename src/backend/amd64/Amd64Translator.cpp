@@ -1,7 +1,9 @@
 #include "Amd64Translator.h"
+#include "JIT.h"
 
 #include "instruction/arithmetic/Amd64Add.h"
 #include "instruction/arithmetic/Amd64Sub.h"
+#include "instruction/control/Amd64Call.h"
 #include "instruction/control/Amd64Ret.h"
 #include "instruction/memory/Amd64Mov.h"
 #include "instruction/memory/Amd64Pop.h"
@@ -127,13 +129,30 @@ IRTranslationResult Amd64Translator::Translate(SubInst *instruction)
     return {};
 }
 
+IRTranslationResult Amd64Translator::Translate(CallInst *instruction)
+{
+    auto address_reg = this->FindUnusedRegister();
+
+    auto movinst = Amd64Mov::OI64(address_reg->GetCode(), city::kLinkerCanary);
+    movinst.SetLinkerRef(instruction->GetTargetName());
+    this->module.Insert(std::move(movinst));
+
+    this->module.Insert(Amd64Call::M64(address_reg->GetCode(), Amd64Mod::Register));
+
+    auto return_value = instruction->GetReturnValue();
+    auto rax = this->GetRegisterByCode(Amd64RegisterCode::RAX);
+    (void)this->InstantiateValue(*return_value, *rax, ConflictStrategy::Discard);
+
+    return {};
+}
+
 IRTranslationResult Amd64Translator::Translate(RetInst *instruction)
 {
     auto return_value = instruction->GetReturnValue();
+    auto rax = this->GetRegisterByCode(Amd64RegisterCode::RAX);
 
     if (!return_value->GetType().IsVoid() || return_value->IsInstantiated())
     {
-        auto rax = this->GetRegisterByCode(Amd64RegisterCode::RAX);
         (void)this->MoveValue(*return_value, *rax, ConflictStrategy::Discard);
     }
     else

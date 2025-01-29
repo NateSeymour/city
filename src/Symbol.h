@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 namespace city
 {
@@ -25,6 +26,14 @@ namespace city
     };
 
     using SymbolTable = std::unordered_map<std::string, Symbol>;
+
+    struct SymbolRef
+    {
+        std::string symbol_name;
+        std::size_t offset;
+    };
+
+    using SymbolRefList = std::vector<SymbolRef>;
 } // namespace city
 
 #endif // CITY_SYMBOL_H

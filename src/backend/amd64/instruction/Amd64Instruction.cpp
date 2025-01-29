@@ -44,6 +44,11 @@ size_t Amd64Instruction::WriteToBuffer(std::byte *buffer) const
     return buffer_it - buffer;
 }
 
+std::size_t Amd64Instruction::GetLinkerRefInstructionOffset()
+{
+    return this->GetBinarySize() - this->immediate_.GetSize();
+}
+
 void Amd64Instruction::SetPrefix(std::initializer_list<std::uint8_t> bytes)
 {
     this->prefix_ = bytes;

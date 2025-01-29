@@ -84,6 +84,9 @@ add_library(city
         src/ir/instruction/arithmetic/SubInst.cpp
         src/ir/instruction/arithmetic/SubInst.h
         src/backend/amd64/instruction/arithmetic/Amd64Sub.h
+        src/ir/instruction/control/CallInst.cpp
+        src/ir/instruction/control/CallInst.h
+        src/backend/amd64/instruction/control/Amd64Call.h
 )
 target_include_directories(city PUBLIC src)
 

@@ -12,7 +12,7 @@ namespace city
     public:
         void Apply(IRTranslator *interface) override;
 
-        RetInst(Value *return_value);
+        RetInst(Value *value);
     };
 } // namespace city
 

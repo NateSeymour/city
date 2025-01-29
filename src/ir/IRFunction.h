@@ -20,6 +20,7 @@ namespace city
         friend class Amd64;
 
     protected:
+        std::string name_;
         Type ret_type_;
         std::vector<Type> arg_types_;
 
@@ -28,12 +29,13 @@ namespace city
         std::vector<std::unique_ptr<Value>> local_values_;
 
     public:
+        [[nodiscard]] std::string const &GetName() const noexcept;
         [[nodiscard]] IRBlock &GetFirstBlock() noexcept;
         [[nodiscard]] IRBlock &GetLastBlock() noexcept;
 
         [[nodiscard]] IRBlock &AppendBlock();
 
-        IRFunction(Type ret, std::vector<Type> const &args);
+        IRFunction(std::string name, Type ret, std::vector<Type> const &args);
     };
 } // namespace city
 

@@ -16,3 +16,18 @@ char const *NativeInstruction::GetLabel() const noexcept
 
     return nullptr;
 }
+
+void NativeInstruction::SetLinkerRef(std::string name)
+{
+    this->linker_ref_ = std::move(name);
+}
+
+bool NativeInstruction::HasLinkerRef() const noexcept
+{
+    return this->linker_ref_.has_value();
+}
+
+std::string const &NativeInstruction::GetLinkerRef() const
+{
+    return *this->linker_ref_;
+}
