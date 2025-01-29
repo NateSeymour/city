@@ -10,4 +10,7 @@ void Amd64RegisterLoader::Load(Amd64Register &target, ConstantDataContainer *con
     this->translator.module.Insert(Amd64Mov::OIX(target.GetCode(), container->GetData()));
 }
 
-void Amd64RegisterLoader::Load(Amd64Register &target, Amd64Register *container) {}
+void Amd64RegisterLoader::Load(Amd64Register &target, Amd64Register *container)
+{
+    this->translator.module.Insert(Amd64Mov::MR64(target.GetCode(), container->GetCode()));
+}
