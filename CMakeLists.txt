@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.29)
-project(city VERSION 0.0.3)
+project(city VERSION 0.0.4)
 
 set(CMAKE_CXX_STANDARD 23)
 
-add_library(city STATIC
+add_library(city
         include/city/Assembly.h
         include/city/ByteBuffer.h
         include/city/container/ConstantDataContainer.h
@@ -60,7 +60,7 @@ add_library(city STATIC
         lib/runtime/Windows.cpp
         lib/Value.cpp
 )
-target_include_directories(city PUBLIC include PRIVATE lib)
+target_include_directories(city PUBLIC include)
 
 option(CITY_ENABLE_TESTS "Include googletest and enable test targets" ON)
 if (CITY_ENABLE_TESTS)
