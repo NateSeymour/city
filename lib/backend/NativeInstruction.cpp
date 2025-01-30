@@ -17,17 +17,17 @@ char const *NativeInstruction::GetLabel() const noexcept
     return nullptr;
 }
 
-void NativeInstruction::SetLinkerRef(std::string name)
+void NativeInstruction::SetStub(Stub stub)
 {
-    this->linker_ref_ = std::move(name);
+    this->stub_ = std::move(stub);
 }
 
-bool NativeInstruction::HasLinkerRef() const noexcept
+bool NativeInstruction::HasStub() const noexcept
 {
-    return this->linker_ref_.has_value();
+    return this->stub_.has_value();
 }
 
-std::string const &NativeInstruction::GetLinkerRef() const
+Stub const &NativeInstruction::GetStub() const
 {
-    return *this->linker_ref_;
+    return *this->stub_;
 }

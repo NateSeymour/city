@@ -16,17 +16,45 @@ namespace city
         Executable = (1 << 0),
     };
 
-    enum class StubType
+    enum class StubSourceLocation
     {
         Text,
         Data,
     };
 
+    /**
+     * A Stub is a reference to an anonymous/named symbol that the linker should generate a pointer to.
+     */
     struct Stub
     {
+        /**
+         * Label to the named symbol that is referenced. If used, src_offset will be ignored.
+         */
         std::optional<std::string> label = std::nullopt;
-        std::size_t offset = 0;
-        StubType type;
+
+        /**
+         * Offset into the section designated by StubSourceLocation where the linker should generate an address to.
+         */
+        std::size_t src_offset = 0;
+
+        /**
+         * Binary section to link to.
+         */
+        StubSourceLocation type;
+
+        /**
+         * Offset into the text section where the stub is to be resolved.
+         */
+        std::size_t dst_offset = 0;
+
+        /**
+         * Index of this stub in the StubList it belongs to.
+         */
+        std::size_t index = 0;
+
+        /**
+         * Data type of source data (equivalent of *data).
+         */
         Type data_type;
 
         [[nodiscard]] bool IsAnonymous() const noexcept;

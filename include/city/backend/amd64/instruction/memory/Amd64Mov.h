@@ -1,6 +1,9 @@
 #ifndef CITY_AMD64MOVMR64_H
 #define CITY_AMD64MOVMR64_H
 
+#include "city/JIT.h"
+
+
 #include <city/backend/amd64/instruction/Amd64Instruction.h>
 
 namespace city
@@ -80,6 +83,14 @@ namespace city
             }
 
             throw std::runtime_error("data buffer is too big to fit into immediate value");
+        }
+
+        static Amd64Mov OIS(Amd64RegisterCode dst, Stub stub)
+        {
+            auto inst = Amd64Mov::OI64(dst, kLinkerCanary64 | stub.index);
+            inst.SetStub(std::move(stub));
+
+            return inst;
         }
 
         static constexpr Amd64Mov MR64(Amd64RegisterCode dst, Amd64RegisterCode src) noexcept

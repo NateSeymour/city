@@ -67,11 +67,11 @@ Object Amd64::BuildModule(IRModule &ir_module)
             };
         }
 
-        if (inst.HasLinkerRef())
+        if (inst.HasStub())
         {
             symbol_refs.push_back({
-                    .symbol_name = inst.GetLinkerRef(),
-                    .offset = offset + inst.GetLinkerRefInstructionOffset(),
+                    .symbol_name = inst.GetStub(),
+                    .offset = offset + inst.GetStubOffset(),
             });
         }
 
