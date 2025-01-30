@@ -1,6 +1,6 @@
-#include <JIT.h>
+#include <city/JIT.h>
+#include <city/ir/IRModule.h>
 #include <gtest/gtest.h>
-#include <ir/IRModule.h>
 
 class Amd64TestRunner : public testing::Test
 {
