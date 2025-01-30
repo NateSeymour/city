@@ -56,6 +56,7 @@ namespace city
         [[nodiscard]] Amd64Register *FindUnusedRegister() noexcept;
 
         IRTranslationResult Translate(AddInst *instruction) override;
+        IRTranslationResult Translate(FAddInst *instruction) override;
         IRTranslationResult Translate(SubInst *instruction) override;
         IRTranslationResult Translate(CallInst *instruction) override;
         IRTranslationResult Translate(RetInst *instruction) override;

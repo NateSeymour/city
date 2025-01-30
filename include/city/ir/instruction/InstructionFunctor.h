@@ -2,6 +2,7 @@
 #define INSTRUCTIONFUNCTOR_H
 
 #include "arithmetic/AddInst.h"
+#include "arithmetic/FAddInst.h"
 #include "arithmetic/SubInst.h"
 #include "control/CallInst.h"
 #include "control/RetInst.h"
@@ -12,15 +13,10 @@ namespace city
     struct InstructionFunctor
     {
         virtual ResultType Translate(AddInst *instruction) = 0;
+        virtual ResultType Translate(FAddInst *instruction) = 0;
         virtual ResultType Translate(SubInst *instruction) = 0;
         virtual ResultType Translate(CallInst *instruction) = 0;
         virtual ResultType Translate(RetInst *instruction) = 0;
-
-        template<typename T>
-        ResultType Translate(T *)
-        {
-            static_assert("unknown instruction type");
-        }
 
         virtual ~InstructionFunctor() = default;
     };

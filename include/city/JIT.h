@@ -11,7 +11,8 @@
 
 namespace city
 {
-    constexpr std::uint64_t kLinkerCanary = 0xbeefbeef'cafebabe;
+    constexpr std::uint32_t kLinkerCanary32 = 0xbeef'0000;
+    constexpr std::uint64_t kLinkerCanary64 = 0xcafebeef'00000000;
 
     class JIT
     {

@@ -59,6 +59,13 @@ add_library(city
         lib/runtime/NativeMemoryHandle.cpp
         lib/runtime/Windows.cpp
         lib/Value.cpp
+        include/city/ir/instruction/arithmetic/FAddInst.h
+        lib/ir/instruction/arithmetic/FAddInst.cpp
+        lib/Symbol.cpp
+        include/city/type/PointerType.h
+        include/city/type/FunctionType.h
+        include/city/type/ScalarType.h
+        include/city/type/FloatingPointType.h
 )
 target_include_directories(city PUBLIC include)
 

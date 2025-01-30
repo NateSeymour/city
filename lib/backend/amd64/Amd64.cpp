@@ -63,7 +63,7 @@ Object Amd64::BuildModule(IRModule &ir_module)
         {
             symbol_table[label] = {
                     .location = reinterpret_cast<std::byte *>(offset),
-                    .flags = SymbolFlags::Exectuable,
+                    .flags = SymbolFlags::Executable,
             };
         }
 

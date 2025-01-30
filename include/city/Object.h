@@ -13,14 +13,16 @@ namespace city
         friend class JIT;
 
     protected:
-        NativeMemoryHandle native_memory_;
+        std::vector<std::byte> data_;
+        NativeMemoryHandle text_;
+
         SymbolTable symbol_table_;
         SymbolRefList symbol_refs_;
 
     public:
         [[nodiscard]] std::size_t GetBinarySize() const noexcept;
 
-        Object(NativeMemoryHandle &&native_memory, SymbolTable &&symbol_table, SymbolRefList &&symbol_refs);
+        Object(NativeMemoryHandle &&text, NativeMemoryHandle &&data, SymbolTable &&symbol_table, SymbolRefList &&symbol_refs);
     };
 } // namespace city
 

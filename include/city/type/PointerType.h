@@ -1,0 +1,4 @@
+#ifndef CITY_POINTERTYPE_H
+#define CITY_POINTERTYPE_H
+
+#endif // CITY_POINTERTYPE_H

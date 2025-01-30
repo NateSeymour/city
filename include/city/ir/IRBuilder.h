@@ -8,6 +8,7 @@
 #include "IRFunction.h"
 #include "block/IRBlock.h"
 #include "instruction/arithmetic/AddInst.h"
+#include "instruction/arithmetic/FAddInst.h"
 #include "instruction/arithmetic/SubInst.h"
 #include "instruction/control/CallInst.h"
 #include "instruction/control/RetInst.h"
@@ -99,6 +100,9 @@ namespace city
         // Instructions - Arithmetic
         [[nodiscard]] AddInst *InsertAddInst(Value *lhs, Value *rhs);
         [[nodiscard]] SubInst *InsertSubInst(Value *lhs, Value *rhs);
+
+        // Instructions - Arithmetic (Floating Point)
+        [[nodiscard]] FAddInst *InsertFAddInst(Value *lhs, Value *rhs);
 
         // Instructions - Control
         CallInst *InsertCallInst(IRFunction *function);

@@ -113,6 +113,11 @@ IRTranslationResult Amd64Translator::Translate(AddInst *instruction)
     return {};
 }
 
+IRTranslationResult Amd64Translator::Translate(FAddInst *instruction)
+{
+    return {};
+}
+
 IRTranslationResult Amd64Translator::Translate(SubInst *instruction)
 {
     auto dsttmp = this->LoadValue(instruction->GetLHS());
@@ -133,7 +138,7 @@ IRTranslationResult Amd64Translator::Translate(CallInst *instruction)
 {
     auto address_reg = this->FindUnusedRegister();
 
-    auto movinst = Amd64Mov::OI64(address_reg->GetCode(), city::kLinkerCanary);
+    auto movinst = Amd64Mov::OI64(address_reg->GetCode(), city::kLinkerCanary64);
     movinst.SetLinkerRef(instruction->GetTargetName());
     this->module.Insert(std::move(movinst));
 

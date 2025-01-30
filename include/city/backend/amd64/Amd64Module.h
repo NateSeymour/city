@@ -1,6 +1,7 @@
 #ifndef AMD64MODULE_H
 #define AMD64MODULE_H
 
+#include <city/Symbol.h>
 #include <vector>
 #include "instruction/Amd64Instruction.h"
 
@@ -15,6 +16,8 @@ namespace city
         friend struct Amd64Translator;
         friend struct Amd64RegisterLoader;
 
+        std::vector<Stub> stubs_;
+        std::vector<std::byte> data_;
         std::vector<Amd64Instruction> instructions_;
 
     protected:

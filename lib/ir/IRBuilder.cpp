@@ -104,6 +104,22 @@ SubInst *IRBuilder::InsertSubInst(Value *lhs, Value *rhs)
     return subtmp;
 }
 
+FAddInst *IRBuilder::InsertFAddInst(Value *lhs, Value *rhs)
+{
+    auto lhs_type = lhs->GetType();
+    auto rhs_type = rhs->GetType();
+
+    if (lhs_type != rhs_type)
+    {
+        throw std::runtime_error("incompatible types");
+    }
+
+    auto return_value = this->ReserveLocalValue(lhs_type);
+    auto faddtmp = this->ReserveInstruction<FAddInst>(return_value, lhs, rhs);
+
+    return faddtmp;
+}
+
 CallInst *IRBuilder::InsertCallInst(IRFunction *function)
 {
     auto return_value = this->ReserveLocalValue(function->ret_type_);

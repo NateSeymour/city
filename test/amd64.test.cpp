@@ -80,6 +80,31 @@ TEST_F(Amd64TestRunner, AddConstantFunction)
     this->jit.RemoveModule("test");
 }
 
+TEST_F(Amd64TestRunner, AddConstantFPFunction)
+{
+    double const X_VALUE = 8.432;
+    double const Y_VALUE = 98213.4821;
+    double const EXPECTED_RETURN_VALUE = X_VALUE + Y_VALUE;
+
+    city::IRModule module{"test"};
+    auto builder = module.CreateBuilder();
+
+    (void)builder.CreateFunction("add_floating_points", builder.GetType<double>());
+
+    auto addtmp = builder.InsertAddInst(builder.CreateConstant(X_VALUE), builder.CreateConstant(Y_VALUE));
+
+    builder.InsertRetInst(addtmp->GetReturnValue());
+
+    this->jit.InsertIRModule(std::move(module));
+    auto assembly = this->jit.CompileAndLink();
+
+    auto test = assembly["add_floating_points"].ToPointer<double()>();
+
+    ASSERT_EQ(test(), EXPECTED_RETURN_VALUE);
+
+    this->jit.RemoveModule("test");
+}
+
 TEST_F(Amd64TestRunner, ChainedAdditionFunction)
 {
     int const X_VALUE = 69;
