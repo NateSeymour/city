@@ -23,7 +23,8 @@ namespace city
 
     public:
         void SetLabel(std::string name);
-        [[nodiscard]] char const *GetLabel() const noexcept;
+        [[nodiscard]] bool HasLabel() const noexcept;
+        [[nodiscard]] std::string const &GetLabel() const noexcept;
 
         void SetStub(Stub stub);
         [[nodiscard]] bool HasStub() const noexcept;
@@ -31,7 +32,7 @@ namespace city
         [[nodiscard]] virtual std::size_t GetStubOffset() = 0;
 
         [[nodiscard]] virtual std::size_t GetBinarySize() const noexcept = 0;
-        [[nodiscard]] virtual std::size_t WriteToBuffer(std::byte *buffer) const = 0;
+        virtual std::size_t AppendToBuffer(std::vector<std::uint8_t> &buffer) = 0;
 
         virtual ~NativeInstruction() = default;
     };

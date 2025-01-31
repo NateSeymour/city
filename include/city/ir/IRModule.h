@@ -5,23 +5,22 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include "IRBuilder.h"
 #include "../container/ConstantDataContainer.h"
+#include "IRBuilder.h"
 
 namespace city
 {
-    class AArch64;
-    class Amd64;
+    class Amd64Module;
 
     class IRModule
     {
         friend class IRBuilder;
-        friend class AArch64;
-        friend class Amd64;
+        friend class Amd64Module;
 
         std::string name_;
 
     protected:
+        std::vector<std::uint8_t> data_;
         std::unordered_map<std::string, std::unique_ptr<IRFunction>> functions_;
         std::unordered_map<std::string, std::unique_ptr<Value>> global_values_;
         std::vector<std::unique_ptr<ConstantDataContainer>> global_constants_;

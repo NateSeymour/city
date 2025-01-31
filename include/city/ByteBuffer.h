@@ -25,6 +25,16 @@ namespace city
             return this->size_;
         }
 
+        std::uint8_t *begin()
+        {
+            return this->buffer_.data();
+        }
+
+        std::uint8_t *end()
+        {
+            return this->buffer_.data() + this->size_;
+        }
+
         constexpr ByteBuffer(std::initializer_list<std::uint8_t> bytes)
         {
             this->size_ = std::min(bytes.size(), MaxSize);

@@ -13,16 +13,17 @@ namespace city
         friend class JIT;
 
     protected:
-        std::vector<std::byte> data_;
-        NativeMemoryHandle text_;
+        std::vector<std::uint8_t> data_;
+        std::vector<std::uint8_t> text_;
 
-        SymbolTable symbol_table_;
-        SymbolRefList symbol_refs_;
+        SymbolTable symtab_;
+        StubList stubs_;
 
     public:
+        [[nodiscard]] std::size_t GetDataSize() const noexcept;
         [[nodiscard]] std::size_t GetBinarySize() const noexcept;
 
-        Object(NativeMemoryHandle &&text, NativeMemoryHandle &&data, SymbolTable &&symbol_table, SymbolRefList &&symbol_refs);
+        Object(std::vector<std::uint8_t> data, std::vector<std::uint8_t> text, SymbolTable symtab, StubList stubs);
     };
 } // namespace city
 

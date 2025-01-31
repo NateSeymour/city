@@ -2,14 +2,19 @@
 
 using namespace city;
 
-std::vector<std::byte> const &ConstantDataContainer::GetData() const noexcept
-{
-    return this->data_;
-}
-
 void ConstantDataContainer::LoadIntoAmd64Register(Amd64RegisterLoader *loader, Amd64Register &target)
 {
     loader->Load(target, this);
 }
 
-ConstantDataContainer::ConstantDataContainer(std::vector<std::byte> const &data) : data_(data) {}
+std::size_t ConstantDataContainer::GetOffset() const noexcept
+{
+    return this->offset_;
+}
+
+std::size_t ConstantDataContainer::GetSize() const noexcept
+{
+    return this->size_;
+}
+
+ConstantDataContainer::ConstantDataContainer(std::size_t size, std::size_t offset) : size_(size), offset_(offset) {}

@@ -1,28 +1,30 @@
-#ifndef AMD64MODULE_H
-#define AMD64MODULE_H
+#ifndef CITY_AMD64MODULE_H
+#define CITY_AMD64MODULE_H
 
 #include <city/Symbol.h>
+#include <city/backend/amd64/instruction/Amd64Instruction.h>
+#include <city/ir/IRModule.h>
 #include <vector>
-#include "instruction/Amd64Instruction.h"
 
 namespace city
 {
-    struct Amd64Translator;
-    struct Amd64RegisterLoader;
-
     class Amd64Module
     {
-        friend class Amd64;
-        friend struct Amd64Translator;
-        friend struct Amd64RegisterLoader;
-
-        std::vector<Stub> stubs_;
-        std::vector<std::byte> data_;
+        IRModule &ir_module_;
+        SymbolTable symtab_;
+        StubList stubs_;
+        std::vector<std::uint8_t> data_;
         std::vector<Amd64Instruction> instructions_;
 
-    protected:
-        void Insert(Amd64Instruction &&inst);
+        void TranslateIRFunctions();
+
+    public:
+        void Insert(Amd64Instruction &&instruction);
+
+        [[nodiscard]] Object Compile();
+
+        Amd64Module(IRModule &ir_module);
     };
 } // namespace city
 
-#endif // AMD64MODULE_H
+#endif // CITY_AMD64MODULE_H

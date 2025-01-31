@@ -7,14 +7,14 @@ void NativeInstruction::SetLabel(std::string name)
     this->label_ = std::move(name);
 }
 
-char const *NativeInstruction::GetLabel() const noexcept
+bool NativeInstruction::HasLabel() const noexcept
 {
-    if (this->label_)
-    {
-        return this->label_->data();
-    }
+    return this->label_.has_value();
+}
 
-    return nullptr;
+std::string const &NativeInstruction::GetLabel() const noexcept
+{
+    return *this->label_;
 }
 
 void NativeInstruction::SetStub(Stub stub)

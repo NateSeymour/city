@@ -1,5 +1,6 @@
 #include <city/backend/amd64/instruction/Amd64Instruction.h>
 #include <cstring>
+#include <ranges>
 
 using namespace city;
 
@@ -16,32 +17,23 @@ size_t Amd64Instruction::GetBinarySize() const noexcept
     return size;
 }
 
-size_t Amd64Instruction::WriteToBuffer(std::byte *buffer) const
+size_t Amd64Instruction::AppendToBuffer(std::vector<std::uint8_t> &buffer)
 {
-    std::byte *buffer_it = buffer;
-
-    std::memcpy(buffer_it, this->prefix_.GetBuffer(), this->prefix_.GetSize());
-    buffer_it += this->prefix_.GetSize();
-
-    std::memcpy(buffer_it, this->opcode_.GetBuffer(), this->opcode_.GetSize());
-    buffer_it += this->opcode_.GetSize();
+    buffer.append_range(this->prefix_);
+    buffer.append_range(this->opcode_);
 
     if (this->has_mod_rm_)
     {
-        std::memcpy(buffer_it, &this->mod_rm_, 1);
-        buffer_it++;
+        buffer.push_back(this->mod_rm_);
     }
 
     if (this->has_sib_)
     {
-        std::memcpy(buffer_it, &this->sib_, 1);
-        buffer_it++;
+        buffer.push_back(this->sib_);
     }
 
-    std::memcpy(buffer_it, this->immediate_.GetBuffer(), this->immediate_.GetSize());
-    buffer_it += this->immediate_.GetSize();
-
-    return buffer_it - buffer;
+    buffer.append_range(this->immediate_);
+    return this->GetBinarySize();
 }
 
 std::size_t Amd64Instruction::GetStubOffset()

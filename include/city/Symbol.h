@@ -48,11 +48,6 @@ namespace city
         std::size_t dst_offset = 0;
 
         /**
-         * Index of this stub in the StubList it belongs to.
-         */
-        std::size_t index = 0;
-
-        /**
          * Data type of source data (equivalent of *data).
          */
         Type data_type;

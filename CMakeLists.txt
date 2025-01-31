@@ -34,7 +34,6 @@ add_library(city
         lib/backend/aarch64/instruction/AArch64Instruction.cpp
         lib/backend/aarch64/instruction/AArch64Instruction.h
         lib/backend/amd64/Amd64.cpp
-        lib/backend/amd64/Amd64Module.cpp
         lib/backend/amd64/Amd64Translator.cpp
         lib/backend/amd64/container/Amd64Register.cpp
         lib/backend/amd64/container/Amd64RegisterLoader.cpp
@@ -66,6 +65,8 @@ add_library(city
         include/city/type/FunctionType.h
         include/city/type/ScalarType.h
         include/city/type/FloatingPointType.h
+        include/city/backend/amd64/Amd64Module.h
+        lib/backend/amd64/Amd64Module.cpp
 )
 target_include_directories(city PUBLIC include)
 

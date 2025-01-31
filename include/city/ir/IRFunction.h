@@ -10,14 +10,12 @@
 namespace city
 {
     class IRBuilder;
-    class AArch64;
-    class Amd64;
+    class Amd64Module;
 
     class IRFunction
     {
         friend class IRBuilder;
-        friend class AArch64;
-        friend class Amd64;
+        friend class Amd64Module;
 
     protected:
         std::string name_;

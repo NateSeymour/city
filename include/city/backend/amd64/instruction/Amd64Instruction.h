@@ -45,7 +45,7 @@ namespace city
 
     public:
         [[nodiscard]] std::size_t GetBinarySize() const noexcept override;
-        [[nodiscard]] std::size_t WriteToBuffer(std::byte *buffer) const override;
+        size_t AppendToBuffer(std::vector<std::uint8_t> &buffer) override;
         [[nodiscard]] std::size_t GetStubOffset() override;
 
         void SetPrefix(std::initializer_list<std::uint8_t> bytes);

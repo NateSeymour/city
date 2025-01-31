@@ -138,9 +138,11 @@ IRTranslationResult Amd64Translator::Translate(CallInst *instruction)
 {
     auto address_reg = this->FindUnusedRegister();
 
-    auto movinst = Amd64Mov::OI64(address_reg->GetCode(), city::kLinkerCanary64);
-    movinst.SetStub(instruction->GetTargetName());
-    this->module.Insert(std::move(movinst));
+    Stub stub{
+            .label = instruction->GetTargetName(),
+            .type = StubSourceLocation::Text,
+    };
+    this->module.Insert(Amd64Mov::OIS(address_reg->GetCode(), std::move(stub)));
 
     this->module.Insert(Amd64Call::M64(address_reg->GetCode(), Amd64Mod::Register));
 

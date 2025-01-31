@@ -10,15 +10,13 @@
 namespace city
 {
     class IRBuilder;
-    class AArch64;
-    class Amd64;
     class IRFunction;
+    class Amd64Module;
 
     class IRBlock
     {
         friend class IRBuilder;
-        friend class AArch64;
-        friend class Amd64;
+        friend class Amd64Module;
 
     protected:
         IRFunction &parent_function_;

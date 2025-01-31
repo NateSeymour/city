@@ -25,7 +25,7 @@ namespace city
         IRBlock *insert_point_ = nullptr;
 
     protected:
-        [[nodiscard]] ConstantDataContainer *CreateConstantDataContainer(std::vector<std::byte> const &data);
+        [[nodiscard]] ConstantDataContainer *CreateConstantDataContainer(std::size_t size, std::size_t offset);
 
         [[nodiscard]] Value *ReserveLocalValue(Type type);
 
@@ -83,14 +83,14 @@ namespace city
         [[nodiscard]] IRFunction *CreateFunction(std::string const &name, Type ret, std::vector<Type> const &args);
 
         // Values
-        [[nodiscard]] Value *CreateConstant(Type type, std::vector<std::byte> const &data);
+        [[nodiscard]] Value *CreateConstant(Type type, std::vector<std::uint8_t> const &data);
 
         template<typename T>
         [[nodiscard]] Value *CreateConstant(T value)
         {
             auto type = this->GetType<T>();
 
-            std::vector<std::byte> data(type.size_, static_cast<std::byte>(0));
+            std::vector<std::uint8_t> data(type.size_, 0);
 
             memcpy(data.data(), &value, data.size());
 

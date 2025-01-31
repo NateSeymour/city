@@ -15,56 +15,100 @@ void JIT::CompileIRModules()
 
 Assembly JIT::LinkObjects() const
 {
-    std::size_t allocation_size = 0;
+    // Create memory allocations
+    std::size_t assembly_data_size = 0;
+    std::size_t assembly_text_size = 0;
     for (auto const &[name, object] : this->objects_)
     {
-        allocation_size += object.GetBinarySize();
+        assembly_data_size += object.GetDataSize();
+        assembly_text_size += object.GetBinarySize();
     }
-    auto native_memory = NativeMemoryHandle::Allocate(allocation_size);
+    auto data = NativeMemoryHandle::Allocate(assembly_text_size);
+    auto text = NativeMemoryHandle::Allocate(assembly_text_size);
 
-    Assembly assembly{std::move(native_memory)};
+    Assembly assembly{std::move(data), std::move(text)};
 
-    std::size_t object_insertion_offset = 0;
+    StubList stubs;
+    std::size_t data_offset = 0;
+    std::size_t text_offset = 0;
     for (auto const &[name, object] : this->objects_)
     {
-        auto object_size = object.GetBinarySize();
+        auto data_size = object.GetDataSize();
+        auto text_size = object.GetBinarySize();
 
-        auto assembly_addr = assembly.native_memory_.GetAddressAtOffset(object_insertion_offset);
-        auto object_addr = object.text_.GetAddressAtOffset(0);
-        memcpy(assembly_addr, object_addr, object_size);
+        auto data_insertion_addr = assembly.data_.GetAddressAtOffset(data_offset);
+        auto text_insertion_addr = assembly.text_.GetAddressAtOffset(text_offset);
 
-        for (auto &[name, offset] : object.symbol_table_)
+        memcpy(data_insertion_addr, object.data_.data(), data_size);
+        memcpy(text_insertion_addr, object.text_.data(), text_size);
+
+        for (auto &[symbol_name, symbol] : object.symtab_)
         {
-            assembly.symbol_table_[name] = {
-                    .location = assembly_addr + reinterpret_cast<std::size_t>(offset.location),
+            assembly.symtab_[symbol_name] = {
+                    .location = text_insertion_addr + reinterpret_cast<std::size_t>(symbol.location),
                     .flags = SymbolFlags::Executable,
             };
         }
 
-        for (auto &symbol_ref : object.symbol_refs_)
+        for (auto stub : object.stubs_)
         {
-            assembly.symbol_refs_.push_back({
-                    .symbol_name = symbol_ref.symbol_name,
-                    .offset = object_insertion_offset + symbol_ref.offset,
-            });
+            switch (stub.type)
+            {
+                case StubSourceLocation::Data:
+                {
+                    stub.src_offset += data_offset;
+                    break;
+                }
+
+                case StubSourceLocation::Text:
+                {
+                    stub.src_offset += text_offset;
+                    break;
+                }
+            }
+
+            stub.dst_offset += text_offset;
+            stubs.push_back(std::move(stub));
         }
 
-        object_insertion_offset += object_size;
+        data_offset += data_size;
+        text_offset += text_size;
     }
 
-    for (auto &symbol_ref : assembly.symbol_refs_)
+    for (auto &stub : stubs)
     {
-        auto ref_addr = reinterpret_cast<std::uint64_t *>(assembly.native_memory_.GetAddressAtOffset(symbol_ref.offset));
+        auto ref_addr = reinterpret_cast<std::uint64_t *>(assembly.text_.GetAddressAtOffset(stub.dst_offset));
 
         if (*ref_addr != kLinkerCanary64)
         {
             throw std::runtime_error("failed to link symbol");
         }
 
-        *ref_addr = reinterpret_cast<std::uint64_t>(assembly.symbol_table_[symbol_ref.symbol_name].location);
+        if (stub.label.has_value())
+        {
+            *ref_addr = reinterpret_cast<std::uint64_t>(assembly.symtab_[*stub.label].location);
+        }
+        else
+        {
+            switch (stub.type)
+            {
+                case StubSourceLocation::Data:
+                {
+                    *ref_addr = reinterpret_cast<std::uint64_t>(assembly.data_.GetAddressAtOffset(stub.src_offset));
+                    break;
+                }
+
+                case StubSourceLocation::Text:
+                {
+                    *ref_addr = reinterpret_cast<std::uint64_t>(assembly.text_.GetAddressAtOffset(stub.src_offset));
+                    break;
+                }
+            }
+        }
     }
 
-    assembly.native_memory_.SetProtection(MemoryProtection::Read | MemoryProtection::Execute);
+    assembly.data_.SetProtection(MemoryProtection::Read);
+    assembly.text_.SetProtection(MemoryProtection::Read | MemoryProtection::Execute);
 
     return assembly;
 }

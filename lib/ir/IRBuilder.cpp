@@ -3,9 +3,9 @@
 
 using namespace city;
 
-ConstantDataContainer *IRBuilder::CreateConstantDataContainer(std::vector<std::byte> const &data)
+ConstantDataContainer *IRBuilder::CreateConstantDataContainer(std::size_t size, std::size_t offset)
 {
-    auto &container = this->module_.global_constants_.emplace_back(std::make_unique<ConstantDataContainer>(data));
+    auto &container = this->module_.global_constants_.emplace_back(std::make_unique<ConstantDataContainer>(size, offset));
     return container.get();
 }
 
@@ -61,9 +61,13 @@ IRBlock &IRBuilder::GetInsertPoint() const
     return *this->insert_point_;
 }
 
-Value *IRBuilder::CreateConstant(Type type, std::vector<std::byte> const &data)
+Value *IRBuilder::CreateConstant(Type type, std::vector<std::uint8_t> const &data)
 {
-    auto container = this->CreateConstantDataContainer(data);
+    // Append the constant data to the module
+    std::size_t offset = this->module_.data_.size();
+    this->module_.data_.append_range(data);
+
+    auto container = this->CreateConstantDataContainer(data.size(), offset);
     auto value = this->ReserveLocalValue(type);
 
     value->AssociateContainer(container);

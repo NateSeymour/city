@@ -87,7 +87,7 @@ namespace city
 
         static Amd64Mov OIS(Amd64RegisterCode dst, Stub stub)
         {
-            auto inst = Amd64Mov::OI64(dst, kLinkerCanary64 | stub.index);
+            auto inst = Amd64Mov::OI64(dst, kLinkerCanary64);
             inst.SetStub(std::move(stub));
 
             return inst;

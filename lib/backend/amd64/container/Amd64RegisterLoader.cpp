@@ -6,7 +6,11 @@ using namespace city;
 
 void Amd64RegisterLoader::Load(Amd64Register &target, ConstantDataContainer *container)
 {
-    this->translator.module.Insert(Amd64Mov::OIX(target.GetCode(), container->GetData()));
+    Stub stub{
+            .src_offset = container->GetOffset(),
+            .type = StubSourceLocation::Data,
+    };
+    this->translator.module.Insert(Amd64Mov::OIS(target.GetCode(), std::move(stub)));
 }
 
 void Amd64RegisterLoader::Load(Amd64Register &target, Amd64Register *container)

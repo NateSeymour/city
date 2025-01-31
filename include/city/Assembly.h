@@ -14,15 +14,15 @@ namespace city
         friend class JIT;
 
     protected:
-        NativeMemoryHandle native_memory_;
-        SymbolTable symbol_table_;
-        SymbolRefList symbol_refs_;
+        NativeMemoryHandle data_;
+        NativeMemoryHandle text_;
+        SymbolTable symtab_;
 
     public:
         [[nodiscard]] Symbol operator[](std::string const &symbol) const;
         [[nodiscard]] Symbol Lookup(std::string const &symbol);
 
-        Assembly(NativeMemoryHandle native_memory);
+        Assembly(NativeMemoryHandle data, NativeMemoryHandle text);
     };
 } // namespace city
 
