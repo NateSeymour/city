@@ -107,7 +107,7 @@ Assembly JIT::LinkObjects() const
         }
     }
 
-    assembly.data_.SetProtection(MemoryProtection::Read);
+    assembly.data_.SetProtection(MemoryProtection::Read | MemoryProtection::Write);
     assembly.text_.SetProtection(MemoryProtection::Read | MemoryProtection::Execute);
 
     return assembly;

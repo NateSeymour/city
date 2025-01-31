@@ -93,16 +93,63 @@ namespace city
             return inst;
         }
 
-        static constexpr Amd64Mov MR64(Amd64RegisterCode dst, Amd64RegisterCode src) noexcept
+        static constexpr Amd64Mov MR32(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64Mod mod = Amd64Mod::Register) noexcept
+        {
+            Amd64Mov inst{};
+
+            inst.SetOpcode({0x89});
+            inst.SetModRM(src, dst, mod);
+
+            return inst;
+        }
+
+        static constexpr Amd64Mov MR64(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64Mod mod = Amd64Mod::Register) noexcept
         {
             Amd64Mov inst{};
 
             auto rexw = static_cast<std::uint8_t>(Amd64PrefixCode::REXW);
             inst.SetPrefix({rexw});
             inst.SetOpcode({0x89});
-            inst.SetModRM(src, dst, Amd64Mod::Register);
+            inst.SetModRM(src, dst, mod);
 
             return inst;
+        }
+
+        static constexpr Amd64Mov RM32(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64Mod mod = Amd64Mod::Register) noexcept
+        {
+            Amd64Mov inst{};
+
+            inst.SetOpcode({0x8B});
+            inst.SetModRM(src, dst, mod);
+
+            return inst;
+        }
+
+        static constexpr Amd64Mov RM64(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64Mod mod = Amd64Mod::Register) noexcept
+        {
+            Amd64Mov inst{};
+
+            auto rexw = static_cast<std::uint8_t>(Amd64PrefixCode::REXW);
+            inst.SetPrefix({rexw});
+            inst.SetOpcode({0x8B});
+            inst.SetModRM(src, dst, mod);
+
+            return inst;
+        }
+
+        static Amd64Mov RMX(Amd64RegisterCode dst, Amd64RegisterCode src, std::size_t size, Amd64Mod mod = Amd64Mod::Register)
+        {
+            if (size <= 4)
+            {
+                return Amd64Mov::RM32(dst, src, mod);
+            }
+
+            if (size <= 8)
+            {
+                return Amd64Mov::RM64(dst, src, mod);
+            }
+
+            throw std::runtime_error("data is too big to fit into single register");
         }
     };
 } // namespace city

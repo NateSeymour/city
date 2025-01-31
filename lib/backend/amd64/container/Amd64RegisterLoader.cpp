@@ -11,6 +11,7 @@ void Amd64RegisterLoader::Load(Amd64Register &target, ConstantDataContainer *con
             .type = StubSourceLocation::Data,
     };
     this->translator.module.Insert(Amd64Mov::OIS(target.GetCode(), std::move(stub)));
+    this->translator.module.Insert(Amd64Mov::RMX(target.GetCode(), target.GetCode(), container->GetSize(), Amd64Mod::Memory));
 }
 
 void Amd64RegisterLoader::Load(Amd64Register &target, Amd64Register *container)

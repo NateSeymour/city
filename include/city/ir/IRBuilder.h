@@ -92,7 +92,7 @@ namespace city
 
             std::vector<std::uint8_t> data(type.size_, 0);
 
-            memcpy(data.data(), &value, data.size());
+            std::memcpy(reinterpret_cast<void *>(data.data()), reinterpret_cast<void *>(&value), data.size());
 
             return this->CreateConstant(type, data);
         }
