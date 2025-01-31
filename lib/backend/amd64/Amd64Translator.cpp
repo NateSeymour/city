@@ -155,7 +155,7 @@ IRTranslationResult Amd64Translator::Translate(CallInst *instruction)
     };
     this->module.Insert(Amd64Mov::OIS(address_reg->GetCode(), std::move(stub)));
 
-    this->module.Insert(Amd64Call::M64(address_reg->GetCode(), Amd64Mod::Register));
+    this->module.Insert(Amd64Call::M64(address_reg->GetCode(), Amd64RegisterAccessType::Value));
 
     auto return_value = instruction->GetReturnValue();
     auto rax = this->GetRegisterByCode(Amd64RegisterCode::RAX);
@@ -167,16 +167,16 @@ IRTranslationResult Amd64Translator::Translate(CallInst *instruction)
 IRTranslationResult Amd64Translator::Translate(RetInst *instruction)
 {
     auto return_value = instruction->GetReturnValue();
-    auto rax = this->GetRegisterByCode(Amd64RegisterCode::RAX);
+    Amd64Register &return_register = [&]() { if (return_value->GetType().GetNativeType() ==) }();
 
     if (!return_value->GetType().IsVoid() || return_value->IsInstantiated())
     {
-        (void)this->MoveValue(*return_value, *rax, ConflictStrategy::Discard);
+        (void)this->MoveValue(*return_value, return_register, ConflictStrategy::Discard);
     }
     else
     {
         // In the case of a void return value, simply return zero.
-        this->module.Insert(Amd64Mov::OI32(Amd64RegisterCode::RAX, 0));
+        this->module.Insert(Amd64Mov::OI32(return_register.GetCode(), 0));
     }
 
     this->module.Insert(Amd64Pop::O64(Amd64RegisterCode::RBP));

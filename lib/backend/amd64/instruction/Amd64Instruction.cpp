@@ -56,7 +56,7 @@ void Amd64Instruction::SetImmediate(std::initializer_list<std::uint8_t> bytes)
     this->immediate_ = bytes;
 }
 
-void Amd64Instruction::SetModRM(Amd64RegisterCode reg, Amd64RegisterCode r_m, Amd64Mod mod)
+void Amd64Instruction::SetModRM(Amd64RegisterCode reg, Amd64RegisterCode r_m, Amd64RegisterAccessType mod)
 {
     auto breg = static_cast<std::uint8_t>(reg);
     auto br_m = static_cast<std::uint8_t>(r_m);

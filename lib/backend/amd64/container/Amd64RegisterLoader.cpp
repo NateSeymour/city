@@ -16,11 +16,11 @@ void Amd64RegisterLoader::Load(Amd64Register &target, ConstantDataContainer *con
     auto value_type = container->GetValue()->GetType();
     if (value_type.GetNativeType() == NativeType::Integer)
     {
-        this->translator.module.Insert(Amd64Mov::RMX(target.GetCode(), target.GetCode(), container->GetSize(), Amd64Mod::Memory));
+        this->translator.module.Insert(Amd64Mov::RMX(target.GetCode(), target.GetCode(), container->GetSize(), Amd64RegisterAccessType::Pointer));
     }
     else
     {
-        this->translator.module.Insert(Amd64Mov::SDA(target.GetCode(), target.GetCode(), Amd64Mod::Memory));
+        this->translator.module.Insert(Amd64Mov::SDA(target.GetCode(), target.GetCode(), Amd64RegisterAccessType::Pointer));
     }
 }
 

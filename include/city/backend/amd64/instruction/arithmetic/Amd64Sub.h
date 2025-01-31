@@ -15,7 +15,7 @@ namespace city
             auto rexw = static_cast<std::uint8_t>(Amd64PrefixCode::REXW);
             inst.SetPrefix({rexw});
             inst.SetOpcode({0x29});
-            inst.SetModRM(src, dst, Amd64Mod::Register);
+            inst.SetModRM(src, dst, Amd64RegisterAccessType::Value);
 
             return inst;
         }

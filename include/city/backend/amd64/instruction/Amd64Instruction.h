@@ -59,7 +59,7 @@ namespace city
          * @param mod Addressing Mode
          * @return ModR/M
          */
-        void SetModRM(Amd64RegisterCode reg, Amd64RegisterCode r_m, Amd64Mod mod);
+        void SetModRM(Amd64RegisterCode reg, Amd64RegisterCode r_m, Amd64RegisterAccessType mod);
     };
 } // namespace city
 

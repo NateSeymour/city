@@ -5,6 +5,7 @@
 #include <city/backend/amd64/container/Amd64RegisterLoader.h>
 #include <city/ir/instruction/InstructionFunctor.h>
 #include "Amd64Module.h"
+#include "container/Amd64RegisterBank.h"
 
 namespace city
 {
@@ -26,11 +27,8 @@ namespace city
     {
         Amd64Module &module;
         Amd64RegisterLoader register_loader{*this};
-
-        std::array<Amd64Register, 8> registers_ = amd64_register_definitions;
-
-        [[nodiscard]] Amd64Register *GetRegisterByCode(Amd64RegisterCode code);
-
+        Amd64RegisterBank reg;
+        
         /**
          * Loads a value into a register without transferring its ownership.
          * @param value

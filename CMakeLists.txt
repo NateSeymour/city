@@ -67,6 +67,7 @@ add_library(city
         include/city/type/FloatingPointType.h
         include/city/backend/amd64/Amd64Module.h
         lib/backend/amd64/Amd64Module.cpp
+        include/city/backend/amd64/container/Amd64RegisterBank.h
 )
 target_include_directories(city PUBLIC include)
 

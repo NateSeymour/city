@@ -93,7 +93,7 @@ namespace city
             return inst;
         }
 
-        static constexpr Amd64Mov MR32(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64Mod mod = Amd64Mod::Register) noexcept
+        static constexpr Amd64Mov MR32(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64RegisterAccessType mod = Amd64RegisterAccessType::Value) noexcept
         {
             Amd64Mov inst{};
 
@@ -103,7 +103,7 @@ namespace city
             return inst;
         }
 
-        static constexpr Amd64Mov MR64(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64Mod mod = Amd64Mod::Register) noexcept
+        static constexpr Amd64Mov MR64(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64RegisterAccessType mod = Amd64RegisterAccessType::Value) noexcept
         {
             Amd64Mov inst{};
 
@@ -115,7 +115,7 @@ namespace city
             return inst;
         }
 
-        static constexpr Amd64Mov RM32(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64Mod mod = Amd64Mod::Register) noexcept
+        static constexpr Amd64Mov RM32(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64RegisterAccessType mod = Amd64RegisterAccessType::Value) noexcept
         {
             Amd64Mov inst{};
 
@@ -125,7 +125,7 @@ namespace city
             return inst;
         }
 
-        static constexpr Amd64Mov RM64(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64Mod mod = Amd64Mod::Register) noexcept
+        static constexpr Amd64Mov RM64(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64RegisterAccessType mod = Amd64RegisterAccessType::Value) noexcept
         {
             Amd64Mov inst{};
 
@@ -137,7 +137,7 @@ namespace city
             return inst;
         }
 
-        static Amd64Mov RMX(Amd64RegisterCode dst, Amd64RegisterCode src, std::size_t size, Amd64Mod mod = Amd64Mod::Register)
+        static Amd64Mov RMX(Amd64RegisterCode dst, Amd64RegisterCode src, std::size_t size, Amd64RegisterAccessType mod = Amd64RegisterAccessType::Value)
         {
             if (size <= 4)
             {
@@ -152,7 +152,7 @@ namespace city
             throw std::runtime_error("data is too big to fit into single register");
         }
 
-        static constexpr Amd64Mov SDA(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64Mod mod = Amd64Mod::Register)
+        static constexpr Amd64Mov SDA(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64RegisterAccessType mod = Amd64RegisterAccessType::Value)
         {
             Amd64Mov inst{};
 
