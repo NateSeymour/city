@@ -23,6 +23,11 @@ namespace city
         NativeType native_type_ = NativeType::Integer;
 
     public:
+        [[nodiscard]] NativeType GetNativeType() const noexcept
+        {
+            return this->native_type_;
+        }
+
         bool operator==(Type const &rhs) const noexcept
         {
             return this->size_ == rhs.size_ && this->native_type_ == rhs.native_type_;

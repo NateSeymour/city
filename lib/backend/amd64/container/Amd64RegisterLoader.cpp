@@ -10,8 +10,18 @@ void Amd64RegisterLoader::Load(Amd64Register &target, ConstantDataContainer *con
             .src_offset = container->GetOffset(),
             .type = StubSourceLocation::Data,
     };
+
     this->translator.module.Insert(Amd64Mov::OIS(target.GetCode(), std::move(stub)));
-    this->translator.module.Insert(Amd64Mov::RMX(target.GetCode(), target.GetCode(), container->GetSize(), Amd64Mod::Memory));
+
+    auto value_type = container->GetValue()->GetType();
+    if (value_type.GetNativeType() == NativeType::Integer)
+    {
+        this->translator.module.Insert(Amd64Mov::RMX(target.GetCode(), target.GetCode(), container->GetSize(), Amd64Mod::Memory));
+    }
+    else
+    {
+        this->translator.module.Insert(Amd64Mov::SDA(target.GetCode(), target.GetCode(), Amd64Mod::Memory));
+    }
 }
 
 void Amd64RegisterLoader::Load(Amd64Register &target, Amd64Register *container)

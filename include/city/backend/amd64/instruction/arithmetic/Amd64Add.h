@@ -10,12 +10,22 @@ namespace city
     public:
         static constexpr Amd64Add MR64(Amd64RegisterCode dst, Amd64RegisterCode src)
         {
-            Amd64Add inst;
+            Amd64Add inst{};
 
             auto rexw = static_cast<std::uint8_t>(Amd64PrefixCode::REXW);
             inst.SetPrefix({rexw});
             inst.SetOpcode({0x01});
             inst.SetModRM(src, dst, Amd64Mod::Register);
+
+            return inst;
+        }
+
+        static constexpr Amd64Add SDA(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64Mod mod = Amd64Mod::Register)
+        {
+            Amd64Add inst{};
+
+            inst.SetOpcode({0xF2, 0x0F, 0x58});
+            inst.SetModRM(dst, src, mod);
 
             return inst;
         }

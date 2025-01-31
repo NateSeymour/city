@@ -91,7 +91,7 @@ TEST_F(Amd64TestRunner, AddConstantFPFunction)
 
     (void)builder.CreateFunction("add_floating_points", builder.GetType<double>());
 
-    auto addtmp = builder.InsertAddInst(builder.CreateConstant(X_VALUE), builder.CreateConstant(Y_VALUE));
+    auto addtmp = builder.InsertFAddInst(builder.CreateConstant(X_VALUE), builder.CreateConstant(Y_VALUE));
 
     builder.InsertRetInst(addtmp->GetReturnValue());
 

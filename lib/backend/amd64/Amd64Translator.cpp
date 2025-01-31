@@ -115,6 +115,17 @@ IRTranslationResult Amd64Translator::Translate(AddInst *instruction)
 
 IRTranslationResult Amd64Translator::Translate(FAddInst *instruction)
 {
+    auto dsttmp = this->LoadValue(instruction->GetLHS());
+    auto srctmp = this->LoadValue(instruction->GetRHS());
+
+    this->module.Insert(Amd64Add::SDA(dsttmp->GetCode(), srctmp->GetCode()));
+    (void)this->InstantiateValue(*instruction->GetReturnValue(), *dsttmp, ConflictStrategy::Discard);
+
+    srctmp->Disassociate();
+
+    instruction->GetLHS()->DecrementReadCount();
+    instruction->GetRHS()->DecrementReadCount();
+
     return {};
 }
 

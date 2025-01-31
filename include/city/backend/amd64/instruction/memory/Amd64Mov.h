@@ -151,6 +151,16 @@ namespace city
 
             throw std::runtime_error("data is too big to fit into single register");
         }
+
+        static constexpr Amd64Mov SDA(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64Mod mod = Amd64Mod::Register)
+        {
+            Amd64Mov inst{};
+
+            inst.SetOpcode({0xF2, 0x0F, 0x10});
+            inst.SetModRM(src, dst, mod);
+
+            return inst;
+        }
     };
 } // namespace city
 
