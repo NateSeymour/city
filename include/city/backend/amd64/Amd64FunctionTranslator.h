@@ -58,11 +58,14 @@ namespace city
         [[nodiscard]] Amd64Register *FindUnusedRegister() noexcept;
 
     public:
+        Amd64Module &module;
         IRFunction &ir_function;
         Amd64RegisterLoader register_loader{*this};
         Amd64RegisterBank registers;
 
-        explicit Amd64FunctionTranslator(Amd64Module &module) : module(module) {}
+        [[nodiscard]] Amd64Function Translate();
+
+        explicit Amd64FunctionTranslator(Amd64Module &module, IRFunction &ir_function) : module(module), ir_function(ir_function) {}
     };
 } // namespace city
 

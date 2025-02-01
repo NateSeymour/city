@@ -10,12 +10,12 @@
 
 namespace city
 {
-    class Amd64Module;
+    class Amd64;
 
     class IRModule
     {
         friend class IRBuilder;
-        friend class Amd64Module;
+        friend class Amd64;
 
         std::string name_;
 

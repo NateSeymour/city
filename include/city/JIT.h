@@ -18,13 +18,7 @@ namespace city
     {
         std::unique_ptr<Backend> backend_;
 
-        std::unordered_map<std::string, IRModule> ir_modules_;
         std::unordered_map<std::string, Object> objects_;
-
-        /**
-         * Translates all IR modules to native modules and deletes the IR modules.
-         */
-        void CompileIRModules();
 
         /**
          * Links all objects together (non-destructively) and returns the final linked Assembly.
@@ -34,10 +28,10 @@ namespace city
 
     public:
         /**
-         * Adds a module to the compiler, transferring ownership to the compiler.
+         * Adds a module to the compiler and compiles it directly to Object.
          * @param module Module to transfer to the compiler
          */
-        void InsertIRModule(IRModule module);
+        void InsertIRModule(IRModule &&module);
 
         /**
          * Removes a module (or corresponding object if already compiled) from the compiler.

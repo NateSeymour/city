@@ -42,9 +42,7 @@ Object Amd64Module::Compile()
     {
         if (inst.HasLabel())
         {
-            auto &label = inst.GetLabel();
-
-            this->symtab_[label] = {
+            this->symtab_[inst.GetLabel()] = {
                     .location = reinterpret_cast<std::byte *>(offset),
                     .flags = SymbolFlags::Executable,
             };
@@ -63,9 +61,4 @@ Object Amd64Module::Compile()
     return {std::move(this->data_), std::move(text), std::move(this->symtab_), std::move(this->stubs_)};
 }
 
-Amd64Module::Amd64Module(IRModule &ir_module) : ir_module_(ir_module)
-{
-    this->data_ = std::move(ir_module.data_);
-
-    this->TranslateIRFunctions();
-}
+Amd64Module::Amd64Module(std::string name) : name_(std::move(name)) {}

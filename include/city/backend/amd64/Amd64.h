@@ -9,7 +9,7 @@ namespace city
     class Amd64 : public Backend
     {
     public:
-        [[nodiscard]] Object BuildModule(IRModule &ir_module) override;
+        [[nodiscard]] Object BuildIRModule(IRModule &&ir_module) override;
     };
 } // namespace city
 

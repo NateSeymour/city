@@ -3,16 +3,6 @@
 
 using namespace city;
 
-void JIT::CompileIRModules()
-{
-    for (auto &[name, module] : this->ir_modules_)
-    {
-        this->objects_.insert({name, this->backend_->BuildModule(module)});
-    }
-
-    this->ir_modules_.clear();
-}
-
 Assembly JIT::LinkObjects() const
 {
     // Create memory allocations
@@ -113,21 +103,18 @@ Assembly JIT::LinkObjects() const
     return assembly;
 }
 
-void JIT::InsertIRModule(IRModule module)
+void JIT::InsertIRModule(IRModule &&module)
 {
-    this->ir_modules_.insert({module.GetName(), std::move(module)});
+    this->objects_.insert({module.GetName(), this->backend_->BuildIRModule(std::move(module))});
 }
 
 void JIT::RemoveModule(std::string const &name)
 {
-    this->ir_modules_.erase(name);
     this->objects_.erase(name);
 }
 
 Assembly JIT::CompileAndLink()
 {
-    this->CompileIRModules();
-
     return this->LinkObjects();
 }
 

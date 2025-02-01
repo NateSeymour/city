@@ -8,22 +8,24 @@
 
 namespace city
 {
+    class Amd64;
+
     class Amd64Module
     {
-        IRModule &ir_module_;
-        SymbolTable symtab_;
-        StubList stubs_;
+        friend class Amd64;
+
+    protected:
+        std::string name_;
+
         std::vector<std::uint8_t> data_;
-        std::vector<Amd64Instruction> instructions_;
+        std::vector<Amd64Function> functions_;
 
-        void TranslateIRFunctions();
-
+        StubList stubs_;
+        
     public:
-        void Insert(Amd64Instruction &&instruction);
-
         [[nodiscard]] Object Compile();
 
-        Amd64Module(IRModule &ir_module);
+        Amd64Module(std::string name);
     };
 } // namespace city
 
