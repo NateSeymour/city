@@ -12,7 +12,7 @@ void Amd64Register::LoadIntoAmd64Register(Amd64RegisterLoader *loader, Amd64Regi
     loader->Load(target, this);
 }
 
-Amd64Register::Amd64Register(std::uint8_t code, Amd64RegisterValueType value_type, Amd64RegisterType type, bool ext) :
+constexpr Amd64Register::Amd64Register(std::uint8_t code, Amd64RegisterValueType value_type, Amd64RegisterType type, bool ext) :
     code_(code), value_type_(value_type), type_(type), is_ext_(ext)
 {
 }

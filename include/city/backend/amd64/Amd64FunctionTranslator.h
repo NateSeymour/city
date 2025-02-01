@@ -4,6 +4,7 @@
 #include <city/backend/IRTranslator.h>
 #include <city/backend/amd64/container/Amd64RegisterLoader.h>
 #include <city/ir/instruction/InstructionFunctor.h>
+#include "Amd64Function.h"
 #include "Amd64Module.h"
 #include "container/Amd64RegisterBank.h"
 
@@ -23,12 +24,15 @@ namespace city
         Optimal,
     };
 
-    struct Amd64Translator : IRTranslator
+    class Amd64FunctionTranslator : IRTranslator
     {
-        Amd64Module &module;
-        Amd64RegisterLoader register_loader{*this};
-        Amd64RegisterBank reg;
-        
+    protected:
+        void TranslateInstruction(AddInst &inst) override;
+        void TranslateInstruction(FAddInst &inst) override;
+        void TranslateInstruction(SubInst &inst) override;
+        void TranslateInstruction(CallInst &inst) override;
+        void TranslateInstruction(RetInst &inst) override;
+
         /**
          * Loads a value into a register without transferring its ownership.
          * @param value
@@ -53,13 +57,12 @@ namespace city
 
         [[nodiscard]] Amd64Register *FindUnusedRegister() noexcept;
 
-        IRTranslationResult Translate(AddInst *instruction) override;
-        IRTranslationResult Translate(FAddInst *instruction) override;
-        IRTranslationResult Translate(SubInst *instruction) override;
-        IRTranslationResult Translate(CallInst *instruction) override;
-        IRTranslationResult Translate(RetInst *instruction) override;
+    public:
+        IRFunction &ir_function;
+        Amd64RegisterLoader register_loader{*this};
+        Amd64RegisterBank registers;
 
-        explicit Amd64Translator(Amd64Module &module) : module(module) {}
+        explicit Amd64FunctionTranslator(Amd64Module &module) : module(module) {}
     };
 } // namespace city
 

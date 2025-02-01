@@ -5,12 +5,15 @@
 
 namespace city
 {
-    struct IRTranslationResult
+    struct IRTranslator
     {
-    };
+        virtual void TranslateInstruction(AddInst &inst) = 0;
+        virtual void TranslateInstruction(FAddInst &inst) = 0;
+        virtual void TranslateInstruction(SubInst &inst) = 0;
+        virtual void TranslateInstruction(CallInst &inst) = 0;
+        virtual void TranslateInstruction(RetInst &inst) = 0;
 
-    struct IRTranslator : InstructionFunctor<IRTranslationResult>
-    {
+        virtual ~IRTranslator() = default;
     };
 } // namespace city
 

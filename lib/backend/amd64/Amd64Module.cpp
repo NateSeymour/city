@@ -1,5 +1,5 @@
+#include <city/backend/amd64/Amd64FunctionTranslator.h>
 #include <city/backend/amd64/Amd64Module.h>
-#include <city/backend/amd64/Amd64Translator.h>
 #include <city/backend/amd64/instruction/Amd64Instruction.h>
 #include <city/backend/amd64/instruction/memory/Amd64Mov.h>
 #include <city/backend/amd64/instruction/memory/Amd64Push.h>
@@ -8,7 +8,7 @@ using namespace city;
 
 void Amd64Module::TranslateIRFunctions()
 {
-    Amd64Translator translator{*this};
+    Amd64FunctionTranslator translator{*this};
     for (auto &[name, function] : this->ir_module_.functions_)
     {
         // Function Prolog

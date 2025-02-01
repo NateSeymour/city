@@ -3,13 +3,13 @@
 
 namespace city
 {
-    struct Amd64Translator;
+    struct Amd64FunctionTranslator;
     class Amd64Register;
     class ConstantDataContainer;
 
     struct Amd64RegisterLoader
     {
-        Amd64Translator &translator;
+        Amd64FunctionTranslator &translator;
 
         void Load(Amd64Register &target, ConstantDataContainer *container);
         void Load(Amd64Register &target, Amd64Register *container);

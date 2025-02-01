@@ -1,4 +1,4 @@
-#include <city/backend/amd64/Amd64Translator.h>
+#include <city/backend/amd64/Amd64FunctionTranslator.h>
 #include <city/backend/amd64/container/Amd64RegisterLoader.h>
 #include <city/backend/amd64/instruction/memory/Amd64Mov.h>
 

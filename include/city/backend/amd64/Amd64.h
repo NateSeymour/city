@@ -6,8 +6,6 @@
 
 namespace city
 {
-    extern std::array<Amd64Register, 8> const amd64_register_definitions;
-
     class Amd64 : public Backend
     {
     public:

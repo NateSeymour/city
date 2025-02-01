@@ -13,7 +13,6 @@ add_library(city
         include/city/ir/instruction/arithmetic/SubInst.h
         include/city/ir/instruction/control/CallInst.h
         include/city/ir/instruction/control/RetInst.h
-        include/city/ir/instruction/InstructionFunctor.h
         include/city/ir/instruction/IRBinaryInstruction.h
         include/city/ir/instruction/IRInstruction.h
         include/city/ir/IRBuilder.h
@@ -68,6 +67,8 @@ add_library(city
         include/city/backend/amd64/Amd64Module.h
         lib/backend/amd64/Amd64Module.cpp
         include/city/backend/amd64/container/Amd64RegisterBank.h
+        include/city/backend/amd64/instruction/control/Amd64Leave.h
+        include/city/backend/amd64/Amd64Function.h
 )
 target_include_directories(city PUBLIC include)
 

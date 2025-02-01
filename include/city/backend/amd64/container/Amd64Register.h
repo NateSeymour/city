@@ -2,7 +2,7 @@
 #define CITY_X86REGISTER_H
 
 #include <city/container/Container.h>
-#include "Amd64ModRM.h"
+#include <cstdint>
 
 namespace city
 {
@@ -49,7 +49,7 @@ namespace city
 
         void LoadIntoAmd64Register(Amd64RegisterLoader *loader, Amd64Register &target) override;
 
-        Amd64Register(Amd64RegisterCode code, Amd64RegisterValueType value_type, Amd64RegisterType type = Amd64RegisterType::GeneralPurpose, bool ext = false);
+        constexpr Amd64Register(Amd64RegisterCode code, Amd64RegisterValueType value_type, Amd64RegisterType type = Amd64RegisterType::GeneralPurpose, bool ext = false);
     };
 } // namespace city
 
