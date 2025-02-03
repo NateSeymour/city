@@ -23,6 +23,12 @@ namespace city
         Special,
     };
 
+    enum class Amd64RegisterVolatility
+    {
+        Volatile,
+        NonVolatile,
+    };
+
     /**
      * Determines the type of access made to into the register.
      * If Pointer, then the value in the register will be treated as a pointer. Instructions will load value from memory location held in pointer.
@@ -42,14 +48,26 @@ namespace city
         Amd64RegisterCode code_;
         Amd64RegisterValueType value_type_;
         Amd64RegisterType type_;
+        Amd64RegisterVolatility volatility_;
         bool is_ext_ = false;
+
+        bool touched_ = false;
 
     public:
         [[nodiscard]] Amd64RegisterCode GetCode() const noexcept;
+        [[nodiscard]] Amd64RegisterType GetType() const noexcept;
+        [[nodiscard]] Amd64RegisterVolatility GetVolatility() const noexcept;
+
+        void Touch() noexcept;
+        [[nodiscard]] bool IsTouched() const noexcept;
 
         void LoadIntoAmd64Register(Amd64RegisterLoader *loader, Amd64Register &target) override;
 
-        constexpr Amd64Register(Amd64RegisterCode code, Amd64RegisterValueType value_type, Amd64RegisterType type = Amd64RegisterType::GeneralPurpose, bool ext = false);
+        constexpr Amd64Register(Amd64RegisterCode code, Amd64RegisterValueType value_type, Amd64RegisterVolatility volatility,
+                Amd64RegisterType type = Amd64RegisterType::GeneralPurpose, bool ext = false) :
+            code_(code), value_type_(value_type), volatility_(volatility), type_(type), is_ext_(ext)
+        {
+        }
     };
 } // namespace city
 

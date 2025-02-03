@@ -7,7 +7,6 @@
 #include <city/backend/amd64/instruction/control/Amd64Leave.h>
 #include <city/backend/amd64/instruction/control/Amd64Ret.h>
 #include <city/backend/amd64/instruction/memory/Amd64Mov.h>
-#include <city/backend/amd64/instruction/memory/Amd64Pop.h>
 
 using namespace city;
 
@@ -23,12 +22,12 @@ void Amd64FunctionTranslator::TranslateInstruction(FAddInst &inst)
 
 void Amd64FunctionTranslator::TranslateInstruction(SubInst &inst)
 {
-    this->TranslateBinaryInstruction<SubInst, Amd64Add>(inst);
+    this->TranslateBinaryInstruction<SubInst, Amd64Sub>(inst);
 }
 
 void Amd64FunctionTranslator::TranslateInstruction(CallInst &inst)
 {
-    auto address_reg = this->FindUnusedRegister();
+    auto address_reg = this->FindUnusedGPRegister();
 
     // TODO: PERSIST USED REGISTERS
 
@@ -36,8 +35,8 @@ void Amd64FunctionTranslator::TranslateInstruction(CallInst &inst)
             .label = inst.GetTargetName(),
             .type = StubSourceLocation::Text,
     };
-    this->function.text_.push_back(Amd64Mov::OIS(address_reg->GetCode(), std::move(stub)));
-    this->function.text_.push_back(Amd64Call::M64(address_reg->GetCode(), Amd64RegisterAccessType::Value));
+    this->function.text_.push_back(Amd64Mov::OIS(address_reg.GetCode(), std::move(stub)));
+    this->function.text_.push_back(Amd64Call::M64(address_reg.GetCode(), Amd64RegisterAccessType::Value));
 
     (void)this->InstantiateValue(*inst.GetReturnValue(), this->registers.r[0], ConflictStrategy::Discard);
 }
@@ -61,7 +60,7 @@ void Amd64FunctionTranslator::TranslateInstruction(RetInst &inst)
         this->function.text_.push_back(Amd64Mov::OI64(this->registers.r[0].GetCode(), 0));
     }
 
-    this->function.text_.push_back(Amd64Leave::ZO());
+    // this->function.text_.push_back(Amd64Leave::ZO());
     this->function.text_.push_back(Amd64Ret::ZONear());
 }
 
@@ -72,16 +71,15 @@ Amd64Register *Amd64FunctionTranslator::LoadValue(Value *value, Amd64Register *r
         throw std::runtime_error("impossible to load uninstantiated value");
     }
 
-    if (!reg)
-    {
-        reg = this->FindUnusedRegister();
-    }
+    auto value_type = value->GetType();
+    auto register_type = value_type.GetNativeType() == NativeType::Integer ? Amd64RegisterValueType::Integer : Amd64RegisterValueType::FloatingPoint;
+    auto &target_register = reg ? *reg : this->FindUnusedGPRegister(register_type);
 
     auto container = value->GetContainer();
-    container->LoadIntoAmd64Register(&this->register_loader, *reg);
-    reg->AssociateValue(value);
+    container->LoadIntoAmd64Register(&this->register_loader, target_register);
+    target_register.AssociateValue(value);
 
-    return reg;
+    return &target_register;
 }
 
 Amd64Register *Amd64FunctionTranslator::MoveValue(Value &value, Amd64Register &reg, ConflictStrategy strategy)
@@ -98,31 +96,28 @@ Amd64Register *Amd64FunctionTranslator::InstantiateValue(Value &value, Amd64Regi
 
     if (reg.HasValue())
     {
+        auto conflicting_value = reg.GetValue();
+
         switch (strategy)
         {
             case ConflictStrategy::Discard:
             {
+                conflicting_value->Disassociate();
                 reg.Disassociate();
                 break;
             }
 
             case ConflictStrategy::PreferMoveToUnused:
             {
-                auto new_register = this->FindUnusedRegister();
+                auto &new_register = this->FindUnusedGPRegister();
 
-                if (new_register)
-                {
-                    (void)this->MoveValue(*reg.GetValue(), *new_register, ConflictStrategy::Push);
-                    break;
-                }
-
-                // INTENTIONALLY fall through to PUSH, because unused was unsuccessful
+                (void)this->MoveValue(*reg.GetValue(), new_register, ConflictStrategy::Push);
+                break;
             }
 
             case ConflictStrategy::Push:
             {
-                // DO SOMETHING
-                break;
+                throw std::runtime_error("unimplemented");
             }
         }
     }
@@ -133,17 +128,30 @@ Amd64Register *Amd64FunctionTranslator::InstantiateValue(Value &value, Amd64Regi
     return &reg;
 }
 
-Amd64Register *Amd64FunctionTranslator::FindUnusedRegister() noexcept
+Amd64Register &Amd64FunctionTranslator::FindUnusedGPRegister(Amd64RegisterValueType value_type)
 {
-    for (auto &reg : this->registers_)
+    auto &available_registers = value_type == Amd64RegisterValueType::Integer ? this->registers.r : this->registers.xmm;
+
+    for (auto &reg : available_registers)
     {
+        if (reg.GetType() != Amd64RegisterType::GeneralPurpose)
+        {
+            continue;
+        }
+
+        // TODO: save and restore volatile registers instead of just not using them
+        if (reg.GetVolatility() != Amd64RegisterVolatility::Volatile)
+        {
+            continue;
+        }
+
         if (!reg.HasValue() || !reg.GetValue()->IsUsed())
         {
-            return &reg;
+            return reg;
         }
     }
 
-    return nullptr;
+    throw std::runtime_error("register overflow");
 }
 
 Amd64Function Amd64FunctionTranslator::Translate()

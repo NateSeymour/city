@@ -19,6 +19,16 @@ namespace city
 
             return inst;
         }
+
+        static constexpr Amd64Sub SDA(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64RegisterAccessType mod = Amd64RegisterAccessType::Value)
+        {
+            Amd64Sub inst{};
+
+            inst.SetOpcode({0xF2, 0x0F, 0x5C});
+            inst.SetModRM(dst, src, mod);
+
+            return inst;
+        }
     };
 } // namespace city
 

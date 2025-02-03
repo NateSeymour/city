@@ -33,7 +33,7 @@ add_library(city
         lib/backend/aarch64/instruction/AArch64Instruction.cpp
         lib/backend/aarch64/instruction/AArch64Instruction.h
         lib/backend/amd64/Amd64.cpp
-        lib/backend/amd64/Amd64Translator.cpp
+        lib/backend/amd64/Amd64FunctionTranslator.cpp
         lib/backend/amd64/container/Amd64Register.cpp
         lib/backend/amd64/container/Amd64RegisterLoader.cpp
         lib/backend/amd64/instruction/Amd64Instruction.cpp
