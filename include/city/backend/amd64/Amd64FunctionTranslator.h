@@ -25,6 +25,8 @@ namespace city
 
     class Amd64FunctionTranslator : IRTranslator
     {
+        friend class Amd64RegisterLoader;
+        
     protected:
         void TranslateInstruction(AddInst &inst) override;
         void TranslateInstruction(FAddInst &inst) override;
@@ -81,6 +83,8 @@ namespace city
         [[nodiscard]] Amd64Register *InstantiateValue(Value &value, Amd64Register &reg, ConflictStrategy strategy);
 
         [[nodiscard]] Amd64Register *FindUnusedRegister() noexcept;
+
+        void Insert(Amd64Instruction &&inst);
 
     public:
         Amd64Module &module;

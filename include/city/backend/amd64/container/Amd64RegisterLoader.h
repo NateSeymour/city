@@ -11,8 +11,8 @@ namespace city
     {
         Amd64FunctionTranslator &translator;
 
-        void Load(Amd64Register &target, ConstantDataContainer *container);
-        void Load(Amd64Register &target, Amd64Register *container);
+        void Load(Amd64Register &target, ConstantDataContainer &container);
+        void Load(Amd64Register &target, Amd64Register &container);
     };
 } // namespace city
 

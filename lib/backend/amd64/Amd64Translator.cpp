@@ -42,33 +42,27 @@ void Amd64FunctionTranslator::TranslateInstruction(CallInst &inst)
     (void)this->InstantiateValue(*inst.GetReturnValue(), this->registers.r[0], ConflictStrategy::Discard);
 }
 
-void Amd64FunctionTranslator::TranslateInstruction(RetInst &instruction)
+void Amd64FunctionTranslator::TranslateInstruction(RetInst &inst)
 {
-    auto return_value = instruction->GetReturnValue();
-    auto &return_register = [&]() -> Amd64Register &
+    auto return_value = inst.GetReturnValue();
+    if (!return_value->GetType().IsVoid() || return_value->IsInstantiated())
     {
         if (return_value->GetType().GetNativeType() == NativeType::Integer)
         {
-            return this->registers.r[0];
+            (void)this->MoveValue(*return_value, this->registers.r[0], ConflictStrategy::Discard);
         }
         else
         {
-            return this->registers.xmm[0];
+            (void)this->MoveValue(*return_value, this->registers.xmm[0], ConflictStrategy::Discard);
         }
-    }();
-
-    if (!return_value->GetType().IsVoid() || return_value->IsInstantiated())
-    {
-        (void)this->MoveValue(*return_value, return_register, ConflictStrategy::Discard);
     }
     else
     {
-        // In the case of a void return value, simply return zero.
-        this->module.Insert(Amd64Mov::OI32(return_register.GetCode(), 0));
+        this->function.text_.push_back(Amd64Mov::OI64(this->registers.r[0].GetCode(), 0));
     }
 
-    this->module.Insert(Amd64Leave::ZO());
-    this->module.Insert(Amd64Ret::ZONear());
+    this->function.text_.push_back(Amd64Leave::ZO());
+    this->function.text_.push_back(Amd64Ret::ZONear());
 }
 
 Amd64Register *Amd64FunctionTranslator::LoadValue(Value *value, Amd64Register *reg, ConflictStrategy strategy, LoadType load_type)
@@ -166,6 +160,11 @@ Amd64Function Amd64FunctionTranslator::Translate()
     // Function Prolog
 
     return std::move(this->function);
+}
+
+void Amd64FunctionTranslator::Insert(Amd64Instruction &&inst)
+{
+    this->function.text_.push_back(std::move(inst));
 }
 
 Amd64FunctionTranslator::Amd64FunctionTranslator(Amd64Module &module, IRFunction &ir_function) : module(module), ir_function(ir_function), function({ir_function.GetName()}) {}

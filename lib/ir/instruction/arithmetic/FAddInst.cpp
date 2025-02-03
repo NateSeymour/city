@@ -5,7 +5,7 @@ using namespace city;
 
 void FAddInst::Apply(IRTranslator *interface)
 {
-    interface->Translate(this);
+    interface->TranslateInstruction(*this);
 }
 
 FAddInst::FAddInst(Value *return_value, Value *lhs, Value *rhs) : IRBinaryInstruction(return_value, lhs, rhs) {}

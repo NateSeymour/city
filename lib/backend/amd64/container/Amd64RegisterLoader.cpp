@@ -4,27 +4,27 @@
 
 using namespace city;
 
-void Amd64RegisterLoader::Load(Amd64Register &target, ConstantDataContainer *container)
+void Amd64RegisterLoader::Load(Amd64Register &target, ConstantDataContainer &container)
 {
     Stub stub{
-            .src_offset = container->GetOffset(),
+            .src_offset = container.GetOffset(),
             .type = StubSourceLocation::Data,
     };
 
-    this->translator.module.Insert(Amd64Mov::OIS(target.GetCode(), std::move(stub)));
+    this->translator.Insert(Amd64Mov::OIS(target.GetCode(), std::move(stub)));
 
-    auto value_type = container->GetValue()->GetType();
+    auto value_type = container.GetValue()->GetType();
     if (value_type.GetNativeType() == NativeType::Integer)
     {
-        this->translator.module.Insert(Amd64Mov::RMX(target.GetCode(), target.GetCode(), container->GetSize(), Amd64RegisterAccessType::Pointer));
+        this->translator.Insert(Amd64Mov::RMX(target.GetCode(), target.GetCode(), container->GetSize(), Amd64RegisterAccessType::Pointer));
     }
     else
     {
-        this->translator.module.Insert(Amd64Mov::SDA(target.GetCode(), target.GetCode(), Amd64RegisterAccessType::Pointer));
+        this->translator.Insert(Amd64Mov::SDA(target.GetCode(), target.GetCode(), Amd64RegisterAccessType::Pointer));
     }
 }
 
-void Amd64RegisterLoader::Load(Amd64Register &target, Amd64Register *container)
+void Amd64RegisterLoader::Load(Amd64Register &target, Amd64Register &container)
 {
-    this->translator.module.Insert(Amd64Mov::MR64(target.GetCode(), container->GetCode()));
+    this->translator.Insert(Amd64Mov::MR64(target.GetCode(), container.GetCode()));
 }
