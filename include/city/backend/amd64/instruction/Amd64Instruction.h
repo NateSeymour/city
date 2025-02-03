@@ -5,7 +5,6 @@
 #include <city/ByteBuffer.h>
 #include <city/backend/NativeInstruction.h>
 #include <city/backend/amd64/Amd64.h>
-#include <city/backend/amd64/container/Amd64ModRM.h>
 #include <cstdint>
 
 namespace city

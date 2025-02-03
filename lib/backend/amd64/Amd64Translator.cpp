@@ -11,6 +11,66 @@
 
 using namespace city;
 
+void Amd64FunctionTranslator::TranslateInstruction(AddInst &inst)
+{
+    this->TranslateBinaryInstruction<AddInst, Amd64Add>(inst);
+}
+
+void Amd64FunctionTranslator::TranslateInstruction(FAddInst &inst)
+{
+    this->TranslateBinaryInstruction<FAddInst, Amd64Add>(inst);
+}
+
+void Amd64FunctionTranslator::TranslateInstruction(SubInst &inst)
+{
+    this->TranslateBinaryInstruction<SubInst, Amd64Add>(inst);
+}
+
+void Amd64FunctionTranslator::TranslateInstruction(CallInst &inst)
+{
+    auto address_reg = this->FindUnusedRegister();
+
+    // TODO: PERSIST USED REGISTERS
+
+    Stub stub{
+            .label = inst.GetTargetName(),
+            .type = StubSourceLocation::Text,
+    };
+    this->function.text_.push_back(Amd64Mov::OIS(address_reg->GetCode(), std::move(stub)));
+    this->function.text_.push_back(Amd64Call::M64(address_reg->GetCode(), Amd64RegisterAccessType::Value));
+
+    (void)this->InstantiateValue(*inst.GetReturnValue(), this->registers.r[0], ConflictStrategy::Discard);
+}
+
+void Amd64FunctionTranslator::TranslateInstruction(RetInst &instruction)
+{
+    auto return_value = instruction->GetReturnValue();
+    auto &return_register = [&]() -> Amd64Register &
+    {
+        if (return_value->GetType().GetNativeType() == NativeType::Integer)
+        {
+            return this->registers.r[0];
+        }
+        else
+        {
+            return this->registers.xmm[0];
+        }
+    }();
+
+    if (!return_value->GetType().IsVoid() || return_value->IsInstantiated())
+    {
+        (void)this->MoveValue(*return_value, return_register, ConflictStrategy::Discard);
+    }
+    else
+    {
+        // In the case of a void return value, simply return zero.
+        this->module.Insert(Amd64Mov::OI32(return_register.GetCode(), 0));
+    }
+
+    this->module.Insert(Amd64Leave::ZO());
+    this->module.Insert(Amd64Ret::ZONear());
+}
+
 Amd64Register *Amd64FunctionTranslator::LoadValue(Value *value, Amd64Register *reg, ConflictStrategy strategy, LoadType load_type)
 {
     if (!value->IsInstantiated())
@@ -92,100 +152,20 @@ Amd64Register *Amd64FunctionTranslator::FindUnusedRegister() noexcept
     return nullptr;
 }
 
-IRTranslationResult Amd64FunctionTranslator::Translate(AddInst *instruction)
+Amd64Function Amd64FunctionTranslator::Translate()
 {
-    auto dsttmp = this->LoadValue(instruction->GetLHS());
-    auto srctmp = this->LoadValue(instruction->GetRHS());
-
-    this->module.Insert(Amd64Add::MR64(dsttmp->GetCode(), srctmp->GetCode()));
-    (void)this->InstantiateValue(*instruction->GetReturnValue(), *dsttmp, ConflictStrategy::Discard);
-
-    srctmp->Disassociate();
-
-    instruction->GetLHS()->DecrementReadCount();
-    instruction->GetRHS()->DecrementReadCount();
-
-    return {};
-}
-
-IRTranslationResult Amd64FunctionTranslator::Translate(FAddInst *instruction)
-{
-    auto dsttmp = this->LoadValue(instruction->GetLHS());
-    auto srctmp = this->LoadValue(instruction->GetRHS());
-
-    this->module.Insert(Amd64Add::SDA(dsttmp->GetCode(), srctmp->GetCode()));
-    (void)this->InstantiateValue(*instruction->GetReturnValue(), *dsttmp, ConflictStrategy::Discard);
-
-    srctmp->Disassociate();
-
-    instruction->GetLHS()->DecrementReadCount();
-    instruction->GetRHS()->DecrementReadCount();
-
-    return {};
-}
-
-IRTranslationResult Amd64FunctionTranslator::Translate(SubInst *instruction)
-{
-    auto dsttmp = this->LoadValue(instruction->GetLHS());
-    auto srctmp = this->LoadValue(instruction->GetRHS());
-
-    this->module.Insert(Amd64Sub::MR64(dsttmp->GetCode(), srctmp->GetCode()));
-    (void)this->InstantiateValue(*instruction->GetReturnValue(), *dsttmp, ConflictStrategy::Discard);
-
-    srctmp->Disassociate();
-
-    instruction->GetLHS()->DecrementReadCount();
-    instruction->GetRHS()->DecrementReadCount();
-
-    return {};
-}
-
-IRTranslationResult Amd64FunctionTranslator::Translate(CallInst *instruction)
-{
-    auto address_reg = this->FindUnusedRegister();
-
-    Stub stub{
-            .label = instruction->GetTargetName(),
-            .type = StubSourceLocation::Text,
-    };
-    this->module.Insert(Amd64Mov::OIS(address_reg->GetCode(), std::move(stub)));
-
-    this->module.Insert(Amd64Call::M64(address_reg->GetCode(), Amd64RegisterAccessType::Value));
-
-    auto return_value = instruction->GetReturnValue();
-    auto rax = this->GetRegisterByCode(Amd64RegisterCode::RAX);
-    (void)this->InstantiateValue(*return_value, *rax, ConflictStrategy::Discard);
-
-    return {};
-}
-
-IRTranslationResult Amd64FunctionTranslator::Translate(RetInst *instruction)
-{
-    auto return_value = instruction->GetReturnValue();
-    auto &return_register = [&]() -> Amd64Register &
+    // Function Body
+    for (auto &block : this->ir_function.blocks_)
     {
-        if (return_value->GetType().GetNativeType() == NativeType::Integer)
+        for (auto &instruction : block.instructions_)
         {
-            return this->registers.r[0];
+            instruction->Apply(this);
         }
-        else
-        {
-            return this->registers.xmm[0];
-        }
-    }();
-
-    if (!return_value->GetType().IsVoid() || return_value->IsInstantiated())
-    {
-        (void)this->MoveValue(*return_value, return_register, ConflictStrategy::Discard);
-    }
-    else
-    {
-        // In the case of a void return value, simply return zero.
-        this->module.Insert(Amd64Mov::OI32(return_register.GetCode(), 0));
     }
 
-    this->module.Insert(Amd64Leave::ZO());
-    this->module.Insert(Amd64Ret::ZONear());
+    // Function Prolog
 
-    return {};
+    return std::move(this->function);
 }
+
+Amd64FunctionTranslator::Amd64FunctionTranslator(Amd64Module &module, IRFunction &ir_function) : module(module), ir_function(ir_function), function({ir_function.GetName()}) {}

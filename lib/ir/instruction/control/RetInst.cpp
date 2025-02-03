@@ -5,7 +5,7 @@ using namespace city;
 
 void RetInst::Apply(IRTranslator *interface)
 {
-    interface->Translate(this);
+    interface->TranslateInstruction(*this);
 }
 
 RetInst::RetInst(Value *value) : IRInstruction(value)

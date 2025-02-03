@@ -69,6 +69,7 @@ add_library(city
         include/city/backend/amd64/container/Amd64RegisterBank.h
         include/city/backend/amd64/instruction/control/Amd64Leave.h
         include/city/backend/amd64/Amd64Function.h
+        lib/backend/amd64/Amd64Function.cpp
 )
 target_include_directories(city PUBLIC include)
 

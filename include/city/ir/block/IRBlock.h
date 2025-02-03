@@ -11,12 +11,12 @@ namespace city
 {
     class IRBuilder;
     class IRFunction;
-    class Amd64Module;
+    class Amd64FunctionTranslator;
 
     class IRBlock
     {
         friend class IRBuilder;
-        friend class Amd64Module;
+        friend class Amd64FunctionTranslator;
 
     protected:
         IRFunction &parent_function_;

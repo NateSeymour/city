@@ -10,7 +10,7 @@ std::string const &CallInst::GetTargetName() const noexcept
 
 void CallInst::Apply(IRTranslator *interface)
 {
-    interface->Translate(this);
+    interface->TranslateInstruction(*this);
 }
 
 CallInst::CallInst(Value *return_value, IRFunction *ir_function) : IRInstruction(return_value)

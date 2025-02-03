@@ -21,7 +21,7 @@ namespace city
         std::vector<Amd64Function> functions_;
 
         StubList stubs_;
-        
+
     public:
         [[nodiscard]] Object Compile();
 

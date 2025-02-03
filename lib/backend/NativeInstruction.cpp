@@ -2,21 +2,6 @@
 
 using namespace city;
 
-void NativeInstruction::SetLabel(std::string name)
-{
-    this->label_ = std::move(name);
-}
-
-bool NativeInstruction::HasLabel() const noexcept
-{
-    return this->label_.has_value();
-}
-
-std::string const &NativeInstruction::GetLabel() const noexcept
-{
-    return *this->label_;
-}
-
 void NativeInstruction::SetStub(Stub stub)
 {
     this->stub_ = std::move(stub);

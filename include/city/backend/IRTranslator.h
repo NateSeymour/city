@@ -1,7 +1,11 @@
 #ifndef IRTRANSLATOR_H
 #define IRTRANSLATOR_H
 
-#include <city/ir/instruction/InstructionFunctor.h>
+#include <city/ir/instruction/arithmetic/AddInst.h>
+#include <city/ir/instruction/arithmetic/FAddInst.h>
+#include <city/ir/instruction/arithmetic/SubInst.h>
+#include <city/ir/instruction/control/CallInst.h>
+#include <city/ir/instruction/control/RetInst.h>
 
 namespace city
 {

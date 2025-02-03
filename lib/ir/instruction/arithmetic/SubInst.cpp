@@ -5,7 +5,7 @@ using namespace city;
 
 void SubInst::Apply(IRTranslator *interface)
 {
-    interface->Translate(this);
+    interface->TranslateInstruction(*this);
 }
 
 SubInst::SubInst(Value *return_value, Value *lhs, Value *rhs) : IRBinaryInstruction(return_value, lhs, rhs) {}

@@ -6,34 +6,6 @@
 
 using namespace city;
 
-void Amd64Module::TranslateIRFunctions()
-{
-    Amd64FunctionTranslator translator{*this};
-    for (auto &[name, function] : this->ir_module_.functions_)
-    {
-        // Function Prolog
-        auto entry = Amd64Push::O64(Amd64RegisterCode::RBP);
-        entry.SetLabel(name);
-        this->Insert(std::move(entry));
-
-        this->Insert(Amd64Mov::MR64(Amd64RegisterCode::RBP, Amd64RegisterCode::RSP));
-
-        // Function Body
-        for (auto &block : function->blocks_)
-        {
-            for (auto &instruction : block.instructions_)
-            {
-                instruction->Apply(&translator);
-            }
-        }
-    }
-}
-
-void Amd64Module::Insert(Amd64Instruction &&instruction)
-{
-    this->instructions_.push_back(instruction);
-}
-
 Object Amd64Module::Compile()
 {
     std::vector<std::uint8_t> text;

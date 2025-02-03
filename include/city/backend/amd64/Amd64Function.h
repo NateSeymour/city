@@ -7,13 +7,20 @@
 
 namespace city
 {
+    class Amd64FunctionTranslator;
+
     class Amd64Function
     {
+        friend class Amd64FunctionTranslator;
+
+    protected:
         std::string name_;
 
         std::vector<Amd64Instruction> prolog_;
         std::vector<Amd64Instruction> text_;
-        std::vector<Amd64Instruction> epilog_;
+
+    public:
+        Amd64Function(std::string name);
     };
 } // namespace city
 
