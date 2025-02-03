@@ -1,10 +1,9 @@
 #ifdef WIN64
-
-#include "Windows.h"
+#include <city/runtime/NativeMemoryHandle.h>
+#include <city/runtime/Windows.h>
 #include <stdexcept>
 #include <utility>
 #include <windows.h>
-#include "NativeMemoryHandle.h"
 
 using namespace city;
 

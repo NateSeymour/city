@@ -16,7 +16,7 @@ void Amd64RegisterLoader::Load(Amd64Register &target, ConstantDataContainer &con
     auto value_type = container.GetValue()->GetType();
     if (value_type.GetNativeType() == NativeType::Integer)
     {
-        this->translator.Insert(Amd64Mov::RMX(target.GetCode(), target.GetCode(), container->GetSize(), Amd64RegisterAccessType::Pointer));
+        this->translator.Insert(Amd64Mov::RMX(target.GetCode(), target.GetCode(), container.GetSize(), Amd64RegisterAccessType::Pointer));
     }
     else
     {

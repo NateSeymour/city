@@ -9,7 +9,7 @@ Amd64RegisterCode Amd64Register::GetCode() const noexcept
 
 void Amd64Register::LoadIntoAmd64Register(Amd64RegisterLoader *loader, Amd64Register &target)
 {
-    loader->Load(target, this);
+    loader->Load(target, *this);
 }
 
 constexpr Amd64Register::Amd64Register(std::uint8_t code, Amd64RegisterValueType value_type, Amd64RegisterType type, bool ext) :

@@ -4,7 +4,7 @@ using namespace city;
 
 void ConstantDataContainer::LoadIntoAmd64Register(Amd64RegisterLoader *loader, Amd64Register &target)
 {
-    loader->Load(target, this);
+    loader->Load(target, *this);
 }
 
 std::size_t ConstantDataContainer::GetOffset() const noexcept
