@@ -8,7 +8,7 @@ namespace city
     class Amd64Ret : public Amd64Instruction
     {
     public:
-        static constexpr Amd64Ret ZONear() noexcept
+        static Amd64Ret ZONear() noexcept
         {
             Amd64Ret inst;
 
@@ -17,7 +17,7 @@ namespace city
             return inst;
         }
 
-        static constexpr Amd64Ret ZOFar() noexcept
+        static Amd64Ret ZOFar() noexcept
         {
             Amd64Ret inst;
 

@@ -8,7 +8,7 @@ namespace city
     class Amd64Sub : public Amd64Instruction
     {
     public:
-        static constexpr Amd64Sub MR64(Amd64RegisterCode dst, Amd64RegisterCode src)
+        static Amd64Sub MR64(Amd64RegisterCode dst, Amd64RegisterCode src)
         {
             Amd64Sub inst;
 
@@ -20,7 +20,7 @@ namespace city
             return inst;
         }
 
-        static constexpr Amd64Sub SDA(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64RegisterAccessType mod = Amd64RegisterAccessType::Value)
+        static Amd64Sub SDA(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64RegisterAccessType mod = Amd64RegisterAccessType::Value)
         {
             Amd64Sub inst{};
 

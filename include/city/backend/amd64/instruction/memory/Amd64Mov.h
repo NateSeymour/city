@@ -1,10 +1,9 @@
 #ifndef CITY_AMD64MOVMR64_H
 #define CITY_AMD64MOVMR64_H
 
-#include "city/JIT.h"
-
-
 #include <city/backend/amd64/instruction/Amd64Instruction.h>
+#include <stdexcept>
+#include "city/JIT.h"
 
 namespace city
 {
@@ -93,7 +92,7 @@ namespace city
             return inst;
         }
 
-        static constexpr Amd64Mov MR32(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64RegisterAccessType mod = Amd64RegisterAccessType::Value) noexcept
+        static Amd64Mov MR32(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64RegisterAccessType mod = Amd64RegisterAccessType::Value) noexcept
         {
             Amd64Mov inst{};
 
@@ -103,7 +102,7 @@ namespace city
             return inst;
         }
 
-        static constexpr Amd64Mov MR64(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64RegisterAccessType mod = Amd64RegisterAccessType::Value) noexcept
+        static Amd64Mov MR64(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64RegisterAccessType mod = Amd64RegisterAccessType::Value) noexcept
         {
             Amd64Mov inst{};
 
@@ -115,7 +114,7 @@ namespace city
             return inst;
         }
 
-        static constexpr Amd64Mov RM32(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64RegisterAccessType mod = Amd64RegisterAccessType::Value) noexcept
+        static Amd64Mov RM32(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64RegisterAccessType mod = Amd64RegisterAccessType::Value) noexcept
         {
             Amd64Mov inst{};
 
@@ -125,7 +124,7 @@ namespace city
             return inst;
         }
 
-        static constexpr Amd64Mov RM64(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64RegisterAccessType mod = Amd64RegisterAccessType::Value) noexcept
+        static Amd64Mov RM64(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64RegisterAccessType mod = Amd64RegisterAccessType::Value) noexcept
         {
             Amd64Mov inst{};
 
@@ -152,7 +151,7 @@ namespace city
             throw std::runtime_error("data is too big to fit into single register");
         }
 
-        static constexpr Amd64Mov SDA(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64RegisterAccessType mod = Amd64RegisterAccessType::Value)
+        static Amd64Mov SDA(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64RegisterAccessType mod = Amd64RegisterAccessType::Value)
         {
             Amd64Mov inst{};
 

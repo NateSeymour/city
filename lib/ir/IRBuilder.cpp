@@ -1,5 +1,6 @@
 #include <city/ir/IRBuilder.h>
 #include <city/ir/IRModule.h>
+#include <stdexcept>
 
 using namespace city;
 

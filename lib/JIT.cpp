@@ -1,5 +1,6 @@
 #include <city/JIT.h>
 #include <city/runtime/NativeMemoryHandle.h>
+#include <stdexcept>
 
 using namespace city;
 

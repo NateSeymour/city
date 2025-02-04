@@ -1,4 +1,4 @@
-#ifdef WIN64
+#if defined(WIN64) || defined(_WIN64)
 #ifndef WINDOWS_H
 #define WINDOWS_H
 

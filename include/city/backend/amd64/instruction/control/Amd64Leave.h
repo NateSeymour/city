@@ -8,7 +8,7 @@ namespace city
     class Amd64Leave : public Amd64Instruction
     {
     public:
-        static constexpr Amd64Leave ZO()
+        static Amd64Leave ZO()
         {
             Amd64Leave inst;
 

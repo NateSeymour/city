@@ -1,4 +1,4 @@
-#ifdef WIN64
+#if defined(WIN64) || defined(_WIN64)
 #include <city/runtime/NativeMemoryHandle.h>
 #include <city/runtime/Windows.h>
 #include <stdexcept>
@@ -67,5 +67,4 @@ DWORD city::memory_protection_to_native(MemoryProtection protection)
         }
     }
 }
-
 #endif

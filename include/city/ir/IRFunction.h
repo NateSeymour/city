@@ -5,6 +5,7 @@
 #include <city/type/Type.h>
 #include <list>
 #include <memory>
+#include <string>
 #include "block/IRBlock.h"
 
 namespace city

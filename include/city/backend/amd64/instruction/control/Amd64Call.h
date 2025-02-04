@@ -8,7 +8,7 @@ namespace city
     class Amd64Call : public Amd64Instruction
     {
     public:
-        static constexpr Amd64Call M64(Amd64RegisterCode reg, Amd64RegisterAccessType mod) noexcept
+        static Amd64Call M64(Amd64RegisterCode reg, Amd64RegisterAccessType mod) noexcept
         {
             Amd64Call inst;
 
