@@ -1,12 +1,19 @@
+#include <city/container/StackAllocationContainer.h>
 #include <city/ir/IRBuilder.h>
 #include <city/ir/IRModule.h>
-#include <stdexcept>
 
 using namespace city;
 
 ConstantDataContainer *IRBuilder::CreateConstantDataContainer(std::size_t size, std::size_t offset)
 {
     auto &container = this->module_.global_constants_.emplace_back(std::make_unique<ConstantDataContainer>(size, offset));
+    return container.get();
+}
+
+StackAllocationContainer *IRBuilder::CreateStackAllocationContainer(std::size_t size)
+{
+    auto insert_function = this->GetInsertFunction();
+    auto &container = insert_function->stack_allocations_.emplace_back(std::make_unique<StackAllocationContainer>(size));
     return container.get();
 }
 
@@ -29,7 +36,7 @@ IRBlock &IRBuilder::CreateBlock()
 
 IRFunction *IRBuilder::CreateFunction(std::string const &name)
 {
-    return this->CreateFunction(name, this->GetType<void>(), {});
+    return this->CreateFunction(name, Type::Get<void>(), {});
 }
 
 IRFunction *IRBuilder::CreateFunction(std::string const &name, Type ret)
@@ -82,66 +89,27 @@ Value *IRBuilder::CreateConstant(Type type, std::vector<std::uint8_t> const &dat
     return value;
 }
 
-AddInst *IRBuilder::InsertAddInst(Value *lhs, Value *rhs)
+StackAllocationContainer *IRBuilder::CreateStackAlloc(std::size_t size)
 {
-    auto lhs_type = lhs->GetType();
-    auto rhs_type = rhs->GetType();
-
-    if (lhs_type != rhs_type)
-    {
-        throw std::runtime_error("incompatible types");
-    }
-
-    auto return_value = this->ReserveLocalValue(lhs_type);
-    auto addtmp = this->ReserveInstruction<AddInst>(return_value, lhs, rhs);
-
-    return addtmp;
+    return this->CreateStackAllocationContainer(size);
 }
 
-SubInst *IRBuilder::InsertSubInst(Value *lhs, Value *rhs)
+Value *IRBuilder::InsertCallInst(IRFunction *function)
 {
-    auto lhs_type = lhs->GetType();
-    auto rhs_type = rhs->GetType();
+    auto retval = this->ReserveLocalValue(function->ret_type_);
+    (void)this->ReserveInstruction<CallInst>(retval, function);
 
-    if (lhs_type != rhs_type)
-    {
-        throw std::runtime_error("incompatible types");
-    }
-
-    auto return_value = this->ReserveLocalValue(lhs_type);
-    auto subtmp = this->ReserveInstruction<SubInst>(return_value, lhs, rhs);
-
-    return subtmp;
+    return retval;
 }
 
-FAddInst *IRBuilder::InsertFAddInst(Value *lhs, Value *rhs)
+Value *IRBuilder::InsertRetInst(Value *retval)
 {
-    auto lhs_type = lhs->GetType();
-    auto rhs_type = rhs->GetType();
-
-    if (lhs_type != rhs_type)
+    if (!retval)
     {
-        throw std::runtime_error("incompatible types");
+        retval = this->ReserveLocalValue(Type::Get<void>());
     }
 
-    auto return_value = this->ReserveLocalValue(lhs_type);
-    auto faddtmp = this->ReserveInstruction<FAddInst>(return_value, lhs, rhs);
+    (void)this->ReserveInstruction<RetInst>(retval);
 
-    return faddtmp;
-}
-
-CallInst *IRBuilder::InsertCallInst(IRFunction *function)
-{
-    auto return_value = this->ReserveLocalValue(function->ret_type_);
-    return this->ReserveInstruction<CallInst>(return_value, function);
-}
-
-RetInst *IRBuilder::InsertRetInst(Value *return_value)
-{
-    if (!return_value)
-    {
-        return_value = this->ReserveLocalValue(this->GetType<void>());
-    }
-
-    return this->ReserveInstruction<RetInst>(return_value);
+    return retval;
 }

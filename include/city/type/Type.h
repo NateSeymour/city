@@ -23,6 +23,34 @@ namespace city
         NativeType native_type_ = NativeType::Integer;
 
     public:
+        template<typename T>
+        [[nodiscard]] static Type Get()
+        {
+            Type type;
+
+            if constexpr (std::is_integral_v<T>)
+            {
+                type.size_ = sizeof(T);
+                type.native_type_ = NativeType::Integer;
+            }
+            else if constexpr (std::is_floating_point_v<T>)
+            {
+                type.size_ = sizeof(T);
+                type.native_type_ = NativeType::FloatingPoint;
+            }
+            else if constexpr (std::is_same_v<T, void>)
+            {
+                type.size_ = 0;
+                type.native_type_ = NativeType::Void;
+            }
+            else
+            {
+                static_assert("Unrecognized Native Type!");
+            }
+
+            return type;
+        }
+
         [[nodiscard]] NativeType GetNativeType() const noexcept
         {
             return this->native_type_;

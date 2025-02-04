@@ -4,14 +4,17 @@
 namespace city
 {
     struct Amd64FunctionTranslator;
+
     class Amd64Register;
     class ConstantDataContainer;
+    class StackAllocationContainer;
 
     struct Amd64RegisterLoader
     {
         Amd64FunctionTranslator &translator;
 
         void Load(Amd64Register &target, ConstantDataContainer &container);
+        void Load(Amd64Register &target, StackAllocationContainer &container);
         void Load(Amd64Register &target, Amd64Register &container);
     };
 } // namespace city

@@ -57,8 +57,6 @@ add_library(city
         lib/runtime/NativeMemoryHandle.cpp
         lib/runtime/Windows.cpp
         lib/Value.cpp
-        include/city/ir/instruction/arithmetic/FAddInst.h
-        lib/ir/instruction/arithmetic/FAddInst.cpp
         lib/Symbol.cpp
         include/city/type/PointerType.h
         include/city/type/FunctionType.h
@@ -70,6 +68,8 @@ add_library(city
         include/city/backend/amd64/instruction/control/Amd64Leave.h
         include/city/backend/amd64/Amd64Function.h
         lib/backend/amd64/Amd64Function.cpp
+        include/city/container/StackAllocationContainer.h
+        lib/container/StackAllocationContainer.cpp
 )
 target_include_directories(city PUBLIC include)
 

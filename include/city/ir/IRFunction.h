@@ -11,12 +11,12 @@
 namespace city
 {
     class IRBuilder;
-    class Amd64FunctionTranslator;
+    struct Amd64FunctionTranslator;
 
     class IRFunction
     {
         friend class IRBuilder;
-        friend class Amd64FunctionTranslator;
+        friend struct Amd64FunctionTranslator;
 
     protected:
         std::string name_;
@@ -26,6 +26,7 @@ namespace city
         std::list<IRBlock> blocks_;
 
         std::vector<std::unique_ptr<Value>> local_values_;
+        std::vector<std::unique_ptr<StackAllocationContainer>> stack_allocations_;
 
     public:
         [[nodiscard]] std::string const &GetName() const noexcept;
