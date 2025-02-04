@@ -28,3 +28,5 @@ void Amd64RegisterLoader::Load(Amd64Register &target, Amd64Register &container)
 {
     this->translator.Insert(Amd64Mov::MR64(target.GetCode(), container.GetCode()));
 }
+
+void Amd64RegisterLoader::Load(Amd64Register &target, StackAllocationContainer &container) {}

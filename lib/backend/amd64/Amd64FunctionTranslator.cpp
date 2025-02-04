@@ -15,11 +15,6 @@ void Amd64FunctionTranslator::TranslateInstruction(AddInst &inst)
     this->TranslateBinaryInstruction<AddInst, Amd64Add>(inst);
 }
 
-void Amd64FunctionTranslator::TranslateInstruction(FAddInst &inst)
-{
-    this->TranslateBinaryInstruction<FAddInst, Amd64Add>(inst);
-}
-
 void Amd64FunctionTranslator::TranslateInstruction(SubInst &inst)
 {
     this->TranslateBinaryInstruction<SubInst, Amd64Sub>(inst);

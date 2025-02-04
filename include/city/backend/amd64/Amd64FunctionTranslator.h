@@ -29,7 +29,6 @@ namespace city
 
     protected:
         void TranslateInstruction(AddInst &inst) override;
-        void TranslateInstruction(FAddInst &inst) override;
         void TranslateInstruction(SubInst &inst) override;
         void TranslateInstruction(CallInst &inst) override;
         void TranslateInstruction(RetInst &inst) override;

@@ -1,6 +1,7 @@
 #ifndef CITY_TYPE_H
 #define CITY_TYPE_H
 
+#include <concepts>
 #include <cstddef>
 
 namespace city

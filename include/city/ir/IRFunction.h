@@ -2,6 +2,7 @@
 #define CITY_IRFUNCTION_H
 
 #include <city/Value.h>
+#include <city/container/StackAllocationContainer.h>
 #include <city/type/Type.h>
 #include <list>
 #include <memory>
