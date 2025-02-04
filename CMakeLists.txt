@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.29)
-project(city VERSION 0.0.5)
+project(city VERSION 0.0.6)
 
 set(CMAKE_CXX_STANDARD 23)
 

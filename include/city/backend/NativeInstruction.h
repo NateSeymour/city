@@ -3,6 +3,7 @@
 
 #include <city/Symbol.h>
 #include <cstddef>
+#include <cstdint>
 #include <optional>
 #include <string>
 

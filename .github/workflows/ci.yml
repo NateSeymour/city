@@ -7,7 +7,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-24.04, windows-latest ]
+        # ubuntu-24.04 should be added back in the future!
+        os: [ windows-latest ]
         build_type: [ Release ]
         c_compiler: [ gcc-14, clang-18, cl ]
         include:

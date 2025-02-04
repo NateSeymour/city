@@ -19,8 +19,8 @@ size_t Amd64Instruction::GetBinarySize() const noexcept
 
 size_t Amd64Instruction::AppendToBuffer(std::vector<std::uint8_t> &buffer)
 {
-    buffer.append_range(this->prefix_);
-    buffer.append_range(this->opcode_);
+    buffer.insert(buffer.end(), this->prefix_.begin(), this->prefix_.end());
+    buffer.insert(buffer.end(), this->opcode_.begin(), this->opcode_.end());
 
     if (this->has_mod_rm_)
     {
@@ -32,7 +32,8 @@ size_t Amd64Instruction::AppendToBuffer(std::vector<std::uint8_t> &buffer)
         buffer.push_back(this->sib_);
     }
 
-    buffer.append_range(this->immediate_);
+    buffer.insert(buffer.end(), this->immediate_.begin(), this->immediate_.end());
+
     return this->GetBinarySize();
 }
 

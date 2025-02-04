@@ -4,6 +4,8 @@
 #include <city/Value.h>
 #include <city/container/ConstantDataContainer.h>
 #include <city/type/Type.h>
+#include <cstdint>
+#include <cstring>
 #include <type_traits>
 #include "IRFunction.h"
 #include "block/IRBlock.h"

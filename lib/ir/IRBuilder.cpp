@@ -65,7 +65,7 @@ Value *IRBuilder::CreateConstant(Type type, std::vector<std::uint8_t> const &dat
 {
     // Append the constant data to the module
     std::size_t offset = this->module_.data_.size();
-    this->module_.data_.append_range(data);
+    this->module_.data_.insert(this->module_.data_.end(), data.begin(), data.end());
 
     auto container = this->CreateConstantDataContainer(data.size(), offset);
     auto value = this->ReserveLocalValue(type);
