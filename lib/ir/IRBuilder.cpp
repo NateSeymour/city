@@ -62,6 +62,11 @@ IRBlock &IRBuilder::GetInsertPoint() const
     return *this->insert_point_;
 }
 
+IRFunction *IRBuilder::GetInsertFunction() const
+{
+    return &this->insert_point_->parent_function_;
+}
+
 Value *IRBuilder::CreateConstant(Type type, std::vector<std::uint8_t> const &data)
 {
     // Append the constant data to the module

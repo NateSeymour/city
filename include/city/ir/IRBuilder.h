@@ -49,6 +49,7 @@ namespace city
         void SetInsertPoint(IRBlock &block) noexcept;
         void SetInsertPoint(IRFunction *function) noexcept;
         [[nodiscard]] IRBlock &GetInsertPoint() const;
+        [[nodiscard]] IRFunction *GetInsertFunction() const;
 
         // Types
         template<typename T>
