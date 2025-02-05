@@ -84,6 +84,7 @@ namespace city
         [[nodiscard]] Amd64Register &FindUnusedGPRegister(Amd64RegisterValueType value_type = Amd64RegisterValueType::Integer);
 
         void Insert(Amd64Instruction &&inst);
+        void InsertProlog(Amd64Instruction &&inst);
 
     public:
         Amd64Module &module;
@@ -91,6 +92,8 @@ namespace city
         IRFunction &ir_function;
         Amd64RegisterLoader register_loader{*this};
         Amd64RegisterBank registers;
+        std::size_t stack_depth = 0;
+        std::vector<StackAllocationContainer> local_swap_;
 
         [[nodiscard]] Amd64Function Translate();
 

@@ -7,6 +7,7 @@
 #include <city/backend/amd64/instruction/control/Amd64Leave.h>
 #include <city/backend/amd64/instruction/control/Amd64Ret.h>
 #include <city/backend/amd64/instruction/memory/Amd64Mov.h>
+#include <city/backend/amd64/instruction/memory/Amd64Push.h>
 
 using namespace city;
 
@@ -55,7 +56,11 @@ void Amd64FunctionTranslator::TranslateInstruction(RetInst &inst)
         this->function.text_.push_back(Amd64Mov::OI64(this->registers.r[0].GetCode(), 0));
     }
 
-    // this->function.text_.push_back(Amd64Leave::ZO());
+    if (this->stack_depth > 0)
+    {
+        this->Insert(Amd64Leave::ZO());
+    }
+
     this->function.text_.push_back(Amd64Ret::ZONear());
 }
 
@@ -151,6 +156,19 @@ Amd64Register &Amd64FunctionTranslator::FindUnusedGPRegister(Amd64RegisterValueT
 
 Amd64Function Amd64FunctionTranslator::Translate()
 {
+    /*
+     * Entering into a function
+     * 1. Push RBP. This will save the old stack from.
+     * 2. Save RSP -> RBP. This will initialize the stack frame pointer to use for constant offsets into the stack.
+     * 3. Subtract space for stack storage from RSP.
+     */
+    // Initialize all local stack containers
+    for (auto &stack_allocation : this->ir_function.stack_allocations_)
+    {
+        stack_allocation->SetOffset(this->stack_depth);
+        this->stack_depth += stack_allocation->GetSize();
+    }
+
     // Function Body
     for (auto &block : this->ir_function.blocks_)
     {
@@ -160,7 +178,13 @@ Amd64Function Amd64FunctionTranslator::Translate()
         }
     }
 
-    // Function Prolog
+    // Generate Prolog
+    if (this->stack_depth > 0)
+    {
+        this->InsertProlog(Amd64Push::O64(this->registers.r[5].GetCode()));
+        this->InsertProlog(Amd64Mov::MR64(this->registers.r[5].GetCode(), this->registers.r[4].GetCode()));
+        this->InsertProlog(Amd64Sub::MI64(this->registers.r[4].GetCode(), this->stack_depth));
+    }
 
     return std::move(this->function);
 }
@@ -168,6 +192,11 @@ Amd64Function Amd64FunctionTranslator::Translate()
 void Amd64FunctionTranslator::Insert(Amd64Instruction &&inst)
 {
     this->function.text_.push_back(std::move(inst));
+}
+
+void Amd64FunctionTranslator::InsertProlog(Amd64Instruction &&inst)
+{
+    this->function.prolog_.push_back(std::move(inst));
 }
 
 Amd64FunctionTranslator::Amd64FunctionTranslator(Amd64Module &module, IRFunction &ir_function) : module(module), ir_function(ir_function), function({ir_function.GetName()}) {}

@@ -21,6 +21,10 @@ namespace city
     public:
         void LoadIntoAmd64Register(Amd64RegisterLoader *loader, Amd64Register &target) override;
 
+        void SetOffset(std::size_t offset);
+        [[nodiscard]] std::size_t GetOffset() const noexcept;
+        [[nodiscard]] std::size_t GetSize() const noexcept;
+
         StackAllocationContainer(std::size_t size);
     };
 } // namespace city

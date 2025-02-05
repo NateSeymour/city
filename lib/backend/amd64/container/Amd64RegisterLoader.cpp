@@ -26,7 +26,7 @@ void Amd64RegisterLoader::Load(Amd64Register &target, ConstantDataContainer &con
 
 void Amd64RegisterLoader::Load(Amd64Register &target, Amd64Register &container)
 {
-    this->translator.Insert(Amd64Mov::MR64(target.GetCode(), container.GetCode()));
+    /* Do nothing, because value is already in register */
 }
 
 void Amd64RegisterLoader::Load(Amd64Register &target, StackAllocationContainer &container) {}
