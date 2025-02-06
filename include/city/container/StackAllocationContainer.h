@@ -19,7 +19,8 @@ namespace city
         std::size_t base_offset_ = 0;
 
     public:
-        void LoadIntoAmd64Register(Amd64RegisterLoader *loader, Amd64Register &target) override;
+        void Load(Amd64FunctionTranslator &translator, Amd64Register &dst) override;
+        void Store(Amd64FunctionTranslator &translator, Amd64Register &src) override;
 
         void SetOffset(std::size_t offset);
         [[nodiscard]] std::size_t GetOffset() const noexcept;

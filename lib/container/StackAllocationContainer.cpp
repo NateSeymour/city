@@ -1,10 +1,16 @@
+#include <city/backend/amd64/Amd64FunctionTranslator.h>
 #include <city/container/StackAllocationContainer.h>
 
 using namespace city;
 
-void StackAllocationContainer::LoadIntoAmd64Register(Amd64RegisterLoader *loader, Amd64Register &target)
+void StackAllocationContainer::Load(Amd64FunctionTranslator &translator, Amd64Register &dst)
 {
-    loader->Load(target, *this);
+    translator.Load(dst, *this);
+}
+
+void StackAllocationContainer::Store(Amd64FunctionTranslator &translator, Amd64Register &src)
+{
+    translator.Store(*this, src);
 }
 
 void StackAllocationContainer::SetOffset(std::size_t offset)

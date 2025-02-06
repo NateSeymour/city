@@ -18,7 +18,8 @@ namespace city
         [[nodiscard]] Value *GetValue() const noexcept;
         [[nodiscard]] bool HasValue() const noexcept;
 
-        virtual void LoadIntoAmd64Register(Amd64RegisterLoader *loader, Amd64Register &target) = 0;
+        virtual void Load(Amd64FunctionTranslator &translator, Amd64Register &dst) = 0;
+        virtual void Store(Amd64FunctionTranslator &translator, Amd64Register &src) = 0;
 
         virtual ~Container() = default;
     };

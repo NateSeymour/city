@@ -40,7 +40,7 @@ void Amd64FunctionTranslator::TranslateInstruction(CallInst &inst)
 void Amd64FunctionTranslator::TranslateInstruction(RetInst &inst)
 {
     auto return_value = inst.GetReturnValue();
-    if (!return_value->GetType().IsVoid() || return_value->IsInstantiated())
+    if (return_value->IsInstantiated())
     {
         if (return_value->GetType().GetNativeType() == NativeType::Integer)
         {
@@ -51,10 +51,6 @@ void Amd64FunctionTranslator::TranslateInstruction(RetInst &inst)
             (void)this->MoveValue(*return_value, this->registers.xmm[0], ConflictStrategy::Discard);
         }
     }
-    else
-    {
-        this->function.text_.push_back(Amd64Mov::OI64(this->registers.r[0].GetCode(), 0));
-    }
 
     if (this->stack_depth > 0)
     {
@@ -63,6 +59,21 @@ void Amd64FunctionTranslator::TranslateInstruction(RetInst &inst)
 
     this->function.text_.push_back(Amd64Ret::ZONear());
 }
+
+void Amd64FunctionTranslator::Load(Amd64Register &dst, ConstantDataContainer &src) {}
+
+void Amd64FunctionTranslator::Load(Amd64Register &dst, StackAllocationContainer &src) {}
+
+void Amd64FunctionTranslator::Load(Amd64Register &dst, Amd64Register &src)
+{
+    // Return if attempt to load into the same register.
+    if (dst.GetCode() == src.GetCode())
+    {
+        return;
+    }
+}
+
+void Amd64FunctionTranslator::Store(StackAllocationContainer &dst, Amd64Register &src) {}
 
 Amd64Register *Amd64FunctionTranslator::LoadValue(Value *value, Amd64Register *reg, ConflictStrategy strategy, LoadType load_type)
 {
@@ -76,7 +87,7 @@ Amd64Register *Amd64FunctionTranslator::LoadValue(Value *value, Amd64Register *r
     auto &target_register = reg ? *reg : this->FindUnusedGPRegister(register_type);
 
     auto container = value->GetContainer();
-    container->LoadIntoAmd64Register(&this->register_loader, target_register);
+    container->Load(*this, target_register);
     target_register.AssociateValue(value);
 
     return &target_register;
@@ -156,19 +167,6 @@ Amd64Register &Amd64FunctionTranslator::FindUnusedGPRegister(Amd64RegisterValueT
 
 Amd64Function Amd64FunctionTranslator::Translate()
 {
-    /*
-     * Entering into a function
-     * 1. Push RBP. This will save the old stack from.
-     * 2. Save RSP -> RBP. This will initialize the stack frame pointer to use for constant offsets into the stack.
-     * 3. Subtract space for stack storage from RSP.
-     */
-    // Initialize all local stack containers
-    for (auto &stack_allocation : this->ir_function.stack_allocations_)
-    {
-        stack_allocation->SetOffset(this->stack_depth);
-        this->stack_depth += stack_allocation->GetSize();
-    }
-
     // Function Body
     for (auto &block : this->ir_function.blocks_)
     {
@@ -178,6 +176,12 @@ Amd64Function Amd64FunctionTranslator::Translate()
         }
     }
 
+    /*
+     * Entering into a function
+     * 1. Push RBP. This will save the old stack from.
+     * 2. Save RSP -> RBP. This will initialize the stack frame pointer to use for constant offsets into the stack.
+     * 3. Subtract space for stack storage from RSP.
+     */
     // Generate Prolog
     if (this->stack_depth > 0)
     {

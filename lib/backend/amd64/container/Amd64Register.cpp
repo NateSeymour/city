@@ -1,6 +1,17 @@
+#include <city/backend/amd64/Amd64FunctionTranslator.h>
 #include <city/backend/amd64/container/Amd64Register.h>
 
 using namespace city;
+
+void Amd64Register::Load(Amd64FunctionTranslator &translator, Amd64Register &dst)
+{
+    translator.Load(dst, *this);
+}
+
+void Amd64Register::Store(Amd64FunctionTranslator &translator, Amd64Register &src)
+{
+    translator.Load(*this, src);
+}
 
 Amd64RegisterCode Amd64Register::GetCode() const noexcept
 {
@@ -15,19 +26,4 @@ Amd64RegisterType Amd64Register::GetType() const noexcept
 Amd64RegisterVolatility Amd64Register::GetVolatility() const noexcept
 {
     return this->volatility_;
-}
-
-void Amd64Register::Touch() noexcept
-{
-    this->touched_ = true;
-}
-
-bool Amd64Register::IsTouched() const noexcept
-{
-    return this->touched_;
-}
-
-void Amd64Register::LoadIntoAmd64Register(Amd64RegisterLoader *loader, Amd64Register &target)
-{
-    loader->Load(target, *this);
 }

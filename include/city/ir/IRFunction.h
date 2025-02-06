@@ -2,7 +2,6 @@
 #define CITY_IRFUNCTION_H
 
 #include <city/Value.h>
-#include <city/container/StackAllocationContainer.h>
 #include <city/type/Type.h>
 #include <list>
 #include <memory>
@@ -27,7 +26,6 @@ namespace city
         std::list<IRBlock> blocks_;
 
         std::vector<std::unique_ptr<Value>> local_values_;
-        std::vector<std::unique_ptr<StackAllocationContainer>> stack_allocations_;
 
     public:
         [[nodiscard]] std::string const &GetName() const noexcept;

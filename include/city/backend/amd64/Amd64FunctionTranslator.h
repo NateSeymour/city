@@ -25,13 +25,21 @@ namespace city
 
     class Amd64FunctionTranslator : IRTranslator
     {
-        friend class Amd64RegisterLoader;
+        friend class ConstantDataContainer;
+        friend class StackAllocationContainer;
+        friend class Amd64Register;
 
     protected:
         void TranslateInstruction(AddInst &inst) override;
         void TranslateInstruction(SubInst &inst) override;
         void TranslateInstruction(CallInst &inst) override;
         void TranslateInstruction(RetInst &inst) override;
+
+        void Load(Amd64Register &dst, ConstantDataContainer &src);
+        void Load(Amd64Register &dst, StackAllocationContainer &src);
+        void Load(Amd64Register &dst, Amd64Register &src);
+
+        void Store(StackAllocationContainer &dst, Amd64Register &src);
 
         template<typename IRInstructionType, typename NativeInstructionType>
             requires requires(NativeInstructionType) {
@@ -90,7 +98,6 @@ namespace city
         Amd64Module &module;
         Amd64Function function;
         IRFunction &ir_function;
-        Amd64RegisterLoader register_loader{*this};
         Amd64RegisterBank registers;
         std::size_t stack_depth = 0;
         std::vector<StackAllocationContainer> local_swap_;

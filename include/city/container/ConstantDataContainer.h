@@ -1,7 +1,6 @@
 #ifndef COMPILETIMECONSTANT_H
 #define COMPILETIMECONSTANT_H
 
-#include <vector>
 #include "Container.h"
 
 namespace city
@@ -12,10 +11,11 @@ namespace city
         std::size_t offset_;
 
     public:
+        void Load(Amd64FunctionTranslator &translator, Amd64Register &dst) override;
+        void Store(Amd64FunctionTranslator &translator, Amd64Register &src) override;
+
         [[nodiscard]] std::size_t GetSize() const noexcept;
         [[nodiscard]] std::size_t GetOffset() const noexcept;
-
-        void LoadIntoAmd64Register(Amd64RegisterLoader *loader, Amd64Register &target) override;
 
         ConstantDataContainer(std::size_t size, std::size_t offset);
     };

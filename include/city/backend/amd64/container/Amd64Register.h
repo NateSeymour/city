@@ -51,17 +51,13 @@ namespace city
         Amd64RegisterVolatility volatility_;
         bool is_ext_ = false;
 
-        bool touched_ = false;
-
     public:
+        void Load(Amd64FunctionTranslator &translator, Amd64Register &dst) override;
+        void Store(Amd64FunctionTranslator &translator, Amd64Register &src) override;
+
         [[nodiscard]] Amd64RegisterCode GetCode() const noexcept;
         [[nodiscard]] Amd64RegisterType GetType() const noexcept;
         [[nodiscard]] Amd64RegisterVolatility GetVolatility() const noexcept;
-
-        void Touch() noexcept;
-        [[nodiscard]] bool IsTouched() const noexcept;
-
-        void LoadIntoAmd64Register(Amd64RegisterLoader *loader, Amd64Register &target) override;
 
         constexpr Amd64Register(Amd64RegisterCode code, Amd64RegisterValueType value_type, Amd64RegisterVolatility volatility,
                 Amd64RegisterType type = Amd64RegisterType::GeneralPurpose, bool ext = false) :

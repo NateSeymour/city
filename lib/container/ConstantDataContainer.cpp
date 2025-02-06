@@ -1,10 +1,16 @@
+#include <city/backend/amd64/Amd64FunctionTranslator.h>
 #include <city/container/ConstantDataContainer.h>
 
 using namespace city;
 
-void ConstantDataContainer::LoadIntoAmd64Register(Amd64RegisterLoader *loader, Amd64Register &target)
+void ConstantDataContainer::Load(Amd64FunctionTranslator &translator, Amd64Register &dst)
 {
-    loader->Load(target, *this);
+    translator.Load(dst, *this);
+}
+
+void ConstantDataContainer::Store(Amd64FunctionTranslator &translator, Amd64Register &src)
+{
+    throw std::runtime_error("cannot store value into constant container");
 }
 
 std::size_t ConstantDataContainer::GetOffset() const noexcept

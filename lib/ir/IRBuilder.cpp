@@ -10,13 +10,6 @@ ConstantDataContainer *IRBuilder::CreateConstantDataContainer(std::size_t size, 
     return container.get();
 }
 
-StackAllocationContainer *IRBuilder::CreateStackAllocationContainer(std::size_t size)
-{
-    auto insert_function = this->GetInsertFunction();
-    auto &container = insert_function->stack_allocations_.emplace_back(std::make_unique<StackAllocationContainer>(size));
-    return container.get();
-}
-
 Value *IRBuilder::ReserveLocalValue(Type type)
 {
     auto &function = this->insert_point_->parent_function_;
@@ -87,11 +80,6 @@ Value *IRBuilder::CreateConstant(Type type, std::vector<std::uint8_t> const &dat
     container->AssociateValue(value);
 
     return value;
-}
-
-StackAllocationContainer *IRBuilder::CreateStackAlloc(std::size_t size)
-{
-    return this->CreateStackAllocationContainer(size);
 }
 
 Value *IRBuilder::InsertCallInst(IRFunction *function)

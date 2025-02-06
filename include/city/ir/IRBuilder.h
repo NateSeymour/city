@@ -29,7 +29,6 @@ namespace city
 
     protected:
         [[nodiscard]] ConstantDataContainer *CreateConstantDataContainer(std::size_t size, std::size_t offset);
-        [[nodiscard]] StackAllocationContainer *CreateStackAllocationContainer(std::size_t size);
 
         [[nodiscard]] Value *ReserveLocalValue(Type type);
 
@@ -90,9 +89,6 @@ namespace city
 
             return this->CreateConstant(type, data);
         }
-
-        // Containers
-        [[nodiscard]] StackAllocationContainer *CreateStackAlloc(std::size_t size);
 
         // Instructions - Arithmetic
         [[nodiscard]] Value *InsertAddInst(Value *lhs, Value *rhs)
