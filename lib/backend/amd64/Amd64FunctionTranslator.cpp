@@ -63,11 +63,12 @@ void Amd64FunctionTranslator::TranslateInstruction(RetInst &inst)
     auto return_value = inst.GetReturnValue();
     if (return_value->IsInstantiated())
     {
-        if (return_value->GetType().GetNativeType() == NativeType::Integer)
+        auto native_type = return_value->GetType().GetNativeType();
+        if (native_type == NativeType::Integer)
         {
             this->MoveValue(this->registers.r[0], *return_value, ConflictStrategy::Discard);
         }
-        else
+        else if (native_type == NativeType::FloatingPoint)
         {
             this->MoveValue(this->registers.xmm[0], *return_value, ConflictStrategy::Discard);
         }
