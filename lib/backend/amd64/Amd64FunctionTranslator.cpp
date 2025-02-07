@@ -26,7 +26,7 @@ void Amd64FunctionTranslator::TranslateInstruction(SubInst &inst)
 void Amd64FunctionTranslator::TranslateInstruction(CallInst &inst)
 {
     // Generate address stub
-    auto address_reg = this->AcquireGPRegister();
+    auto &address_reg = this->AcquireGPRegister();
 
     Stub stub{
             .label = inst.GetTargetName(),
@@ -55,7 +55,15 @@ void Amd64FunctionTranslator::TranslateInstruction(CallInst &inst)
 
     this->Insert(Amd64Call::M64(address_reg));
 
-    this->Associate(*inst.GetReturnValue(), this->registers.r[0]);
+    auto native_type = inst.GetReturnValue()->GetType().GetNativeType();
+    if (native_type == NativeType::Integer)
+    {
+        this->Associate(*inst.GetReturnValue(), this->registers.r[0]);
+    }
+    else if (native_type == NativeType::FloatingPoint)
+    {
+        this->Associate(*inst.GetReturnValue(), this->registers.xmm[0]);
+    }
 }
 
 void Amd64FunctionTranslator::TranslateInstruction(RetInst &inst)
@@ -245,8 +253,8 @@ void Amd64FunctionTranslator::HandleConflict(Amd64Register &reg, ConflictStrateg
     {
         case ConflictStrategy::Discard:
         {
-            reg.Disassociate();
             value->Disassociate();
+            reg.Disassociate();
             break;
         }
 

@@ -43,8 +43,8 @@ namespace city
             }
         void TranslateBinaryInstruction(IRInstructionType &inst)
         {
-            auto dsttmp = this->CopyValue(*inst.GetLHS());
-            auto srctmp = this->CopyValue(*inst.GetRHS());
+            auto &dsttmp = this->CopyValue(*inst.GetLHS());
+            auto &srctmp = this->CopyValue(*inst.GetRHS());
 
             Type optype = inst.GetLHS()->GetType();
             if (optype.GetNativeType() == NativeType::Integer)
