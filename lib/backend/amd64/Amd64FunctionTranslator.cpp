@@ -340,7 +340,7 @@ Amd64Function Amd64FunctionTranslator::Translate()
     // Generate Prolog
     if (this->stack_depth > 0)
     {
-        this->InsertProlog(Amd64Push::O64(this->registers.r[5]));
+        this->InsertProlog(Amd64Push::M64(this->registers.r[5]));
         this->InsertProlog(Amd64Mov::MR64(this->registers.r[5], this->registers.r[4]));
         this->InsertProlog(Amd64Sub::MI64(this->registers.r[4], this->stack_depth));
     }

@@ -8,12 +8,12 @@ namespace city
     class Amd64Push : public Amd64Instruction
     {
     public:
-        static constexpr Amd64Push O64(Amd64Register &reg) noexcept
+        static constexpr Amd64Push M64(Amd64Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0) noexcept
         {
             Amd64Push inst{};
 
-            std::uint8_t opcode = 0x50 + reg.GetCode();
-            inst.SetOpcode({opcode});
+            inst.SetOpcode({0xFF});
+            inst.SetModRM(6, src.GetCode(), mod, disp);
 
             return inst;
         }
