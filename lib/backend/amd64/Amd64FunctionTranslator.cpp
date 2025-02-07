@@ -244,8 +244,6 @@ void Amd64FunctionTranslator::HandleConflict(Amd64Register &reg, ConflictStrateg
     auto value = reg.GetValue();
     if (!value->IsUsed())
     {
-        value->Disassociate();
-        reg.Disassociate();
         return;
     }
 
@@ -253,9 +251,7 @@ void Amd64FunctionTranslator::HandleConflict(Amd64Register &reg, ConflictStrateg
     {
         case ConflictStrategy::Discard:
         {
-            value->Disassociate();
-            reg.Disassociate();
-            break;
+            return;
         }
 
         case ConflictStrategy::Save:

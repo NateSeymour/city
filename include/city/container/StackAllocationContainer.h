@@ -28,6 +28,7 @@ namespace city
         [[nodiscard]] std::size_t GetSize() const noexcept override;
 
         StackAllocationContainer(std::size_t size);
+        StackAllocationContainer(StackAllocationContainer const &) = delete;
     };
 } // namespace city
 

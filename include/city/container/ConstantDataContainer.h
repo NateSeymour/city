@@ -18,6 +18,7 @@ namespace city
         [[nodiscard]] std::size_t GetOffset() const noexcept;
 
         ConstantDataContainer(std::size_t size, std::size_t offset);
+        ConstantDataContainer(ConstantDataContainer const &) = delete;
     };
 } // namespace city
 
