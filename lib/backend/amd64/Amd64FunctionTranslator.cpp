@@ -117,11 +117,11 @@ void Amd64FunctionTranslator::Load(Amd64Register &dst, StackAllocationContainer 
 
     if (dst.GetValueType() == Amd64RegisterValueType::Integer)
     {
-        this->Insert(Amd64Mov::RMX(dst, rbp, src.GetSize(), Amd64Mod::Pointer, src.GetOffset() * -1));
+        this->Insert(Amd64Mov::RMX(dst, rbp, src.GetSize(), Amd64Mod::DisplacedPointer, src.GetOffset() * -1));
     }
     else if (dst.GetValueType() == Amd64RegisterValueType::FloatingPoint)
     {
-        this->Insert(Amd64Mov::SDA(dst, rbp, Amd64Mod::Pointer, src.GetOffset() * -1));
+        this->Insert(Amd64Mov::SDA(dst, rbp, Amd64Mod::DisplacedPointer, src.GetOffset() * -1));
     }
 }
 
@@ -149,11 +149,11 @@ void Amd64FunctionTranslator::Store(StackAllocationContainer &dst, Amd64Register
 
     if (src.GetValueType() == Amd64RegisterValueType::Integer)
     {
-        this->Insert(Amd64Mov::MR64(rbp, src, Amd64Mod::Pointer, dst.GetOffset() * -1));
+        this->Insert(Amd64Mov::MR64(rbp, src, Amd64Mod::DisplacedPointer, dst.GetOffset() * -1));
     }
     else if (src.GetValueType() == Amd64RegisterValueType::FloatingPoint)
     {
-        this->Insert(Amd64Mov::SDA(rbp, src, Amd64Mod::Pointer, dst.GetOffset() * -1));
+        this->Insert(Amd64Mov::SDA(rbp, src, Amd64Mod::DisplacedPointer, dst.GetOffset() * -1));
     }
 }
 

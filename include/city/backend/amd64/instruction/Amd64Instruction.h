@@ -32,6 +32,7 @@ namespace city
     enum class Amd64Mod : std::uint8_t
     {
         Pointer = 0x0,
+        DisplacedPointer = 0x2,
         Value = 0x3,
     };
 
@@ -40,6 +41,7 @@ namespace city
         Amd64Prefix prefix_ = {};
         Amd64Opcode opcode_ = {};
 
+        Amd64Mod mod_ = Amd64Mod::Value;
         bool has_mod_rm_ = false;
         std::uint8_t mod_rm_ = 0x0;
 
