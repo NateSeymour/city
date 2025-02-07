@@ -178,7 +178,7 @@ void Amd64FunctionTranslator::MoveValue(StackAllocationContainer &dst, Amd64Regi
         throw std::runtime_error("source has no value to move");
     }
 
-    if (dst.HasValue())
+    if (dst.HasValue() && dst.GetValue()->IsUsed())
     {
         throw std::runtime_error("unresolvable value conflict");
     }
@@ -233,6 +233,13 @@ void Amd64FunctionTranslator::HandleConflict(Amd64Register &reg, ConflictStrateg
     }
 
     auto value = reg.GetValue();
+    if (!value->IsUsed())
+    {
+        value->Disassociate();
+        reg.Disassociate();
+        return;
+    }
+
     switch (strategy)
     {
         case ConflictStrategy::Discard:
@@ -343,7 +350,7 @@ void Amd64FunctionTranslator::Associate(Value &value, Container &container)
         throw std::runtime_error("value is already associated to container");
     }
 
-    if (container.HasValue())
+    if (container.HasValue() && container.GetValue()->IsUsed())
     {
         throw std::runtime_error("cannot associate one value on top of another");
     }
