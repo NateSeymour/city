@@ -10,7 +10,7 @@ void Amd64Register::Load(Amd64FunctionTranslator &translator, Amd64Register &dst
 
 void Amd64Register::Store(Amd64FunctionTranslator &translator, Amd64Register &src)
 {
-    translator.Load(*this, src);
+    translator.Store(*this, src);
 }
 
 Amd64RegisterCode Amd64Register::GetCode() const noexcept
@@ -36,4 +36,20 @@ bool Amd64Register::IsExtension() const noexcept
 Amd64RegisterValueType Amd64Register::GetValueType() const noexcept
 {
     return this->value_type_;
+}
+
+size_t Amd64Register::GetSize() const noexcept
+{
+    switch (this->value_type_)
+    {
+        case Amd64RegisterValueType::Integer:
+        {
+            return 8;
+        }
+
+        case Amd64RegisterValueType::FloatingPoint:
+        {
+            return 16;
+        }
+    }
 }

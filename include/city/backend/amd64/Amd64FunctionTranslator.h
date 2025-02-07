@@ -36,12 +36,6 @@ namespace city
         void TranslateInstruction(CallInst &inst) override;
         void TranslateInstruction(RetInst &inst) override;
 
-        void Load(Amd64Register &dst, ConstantDataContainer &src);
-        void Load(Amd64Register &dst, StackAllocationContainer &src);
-        void Load(Amd64Register &dst, Amd64Register &src);
-
-        void Store(StackAllocationContainer &dst, Amd64Register &src);
-
         template<typename IRInstructionType, typename NativeInstructionType>
             requires requires(NativeInstructionType) {
                 NativeInstructionType::MR64;
@@ -49,49 +43,46 @@ namespace city
             }
         void TranslateBinaryInstruction(IRInstructionType &inst)
         {
-            auto dsttmp = this->LoadValue(inst.GetLHS());
-            auto srctmp = this->LoadValue(inst.GetRHS());
+            auto dsttmp = this->CopyValue(*inst.GetLHS());
+            auto srctmp = this->CopyValue(*inst.GetRHS());
 
             Type optype = inst.GetLHS()->GetType();
             if (optype.GetNativeType() == NativeType::Integer)
             {
-                this->function.text_.push_back(NativeInstructionType::MR64(dsttmp->GetCode(), srctmp->GetCode()));
+                this->Insert(NativeInstructionType::MR64(dsttmp, srctmp));
             }
             else
             {
-                this->function.text_.push_back(NativeInstructionType::SDA(dsttmp->GetCode(), srctmp->GetCode()));
+                this->Insert(NativeInstructionType::SDA(dsttmp, srctmp));
             }
 
-            (void)this->InstantiateValue(*inst.GetReturnValue(), *dsttmp, ConflictStrategy::Discard);
+            srctmp.Disassociate();
+            dsttmp.Disassociate();
+            this->Associate(*inst.GetReturnValue(), dsttmp);
 
             inst.GetLHS()->DecrementReadCount();
             inst.GetRHS()->DecrementReadCount();
         }
 
-        /**
-         * Loads a value into a register without transferring its ownership.
-         * @param value
-         * @param reg
-         * @param strategy
-         * @param load_type
-         * @return
-         */
-        [[nodiscard]] Amd64Register *LoadValue(
-                Value *value, Amd64Register *reg = nullptr, ConflictStrategy strategy = ConflictStrategy::Push, LoadType load_type = LoadType::Value);
+        void Load(Amd64Register &dst, ConstantDataContainer &src);
+        void Load(Amd64Register &dst, StackAllocationContainer &src);
+        void Load(Amd64Register &dst, Amd64Register &src);
 
+        void Store(StackAllocationContainer &dst, Amd64Register &src);
+        void Store(Amd64Register &dst, Amd64Register &src);
 
-        /**
-         * Moves value into container, transferring its ownership.
-         * @param value
-         * @param dst
-         * @param strategy
-         */
-        void MoveValue(Value &value, Container &dst, ConflictStrategy strategy);
+        [[nodiscard]] Amd64Register &CopyValue(Value &value);
 
-        void InstantiateValue(Value &value, Amd64Register &reg);
+        void MoveValue(StackAllocationContainer &dst, Amd64Register &src);
+        void MoveValue(Amd64Register &dst, Amd64Register &src, ConflictStrategy strategy);
+        void MoveValue(Amd64Register &dst, Value &value, ConflictStrategy strategy);
+
+        void HandleConflict(Amd64Register &reg, ConflictStrategy strategy);
 
         [[nodiscard]] StackAllocationContainer &AcquireStackSpace(std::size_t size);
         [[nodiscard]] Amd64Register &AcquireGPRegister(Amd64RegisterValueType value_type = Amd64RegisterValueType::Integer);
+
+        void Associate(Value &value, Container &container);
 
         void Insert(Amd64Instruction &&inst);
         void InsertProlog(Amd64Instruction &&inst);

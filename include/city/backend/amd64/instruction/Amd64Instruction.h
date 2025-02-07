@@ -74,7 +74,7 @@ namespace city
          * @param disp Displacement
          * @return ModR/M
          */
-        void SetModRM(Amd64Register &reg, Amd64Register &rm, Amd64Mod mod, std::int32_t disp = 0);
+        void SetModRM(std::uint8_t reg, std::uint8_t rm, Amd64Mod mod, std::int32_t disp = 0);
 
         void SetImmediate(std::initializer_list<std::uint8_t> bytes);
     };

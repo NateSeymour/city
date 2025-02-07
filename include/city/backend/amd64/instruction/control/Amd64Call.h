@@ -8,12 +8,12 @@ namespace city
     class Amd64Call : public Amd64Instruction
     {
     public:
-        static Amd64Call M64(Amd64RegisterCode reg, Amd64Mod mod) noexcept
+        static Amd64Call M64(Amd64Register &dst, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0) noexcept
         {
             Amd64Call inst;
 
             inst.SetOpcode({0xFF});
-            inst.SetModRM(static_cast<Amd64RegisterCode>(2), reg, mod);
+            inst.SetModRM(2, dst.GetCode(), mod, disp);
 
             return inst;
         }

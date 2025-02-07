@@ -14,7 +14,7 @@ namespace city
         void Load(Amd64FunctionTranslator &translator, Amd64Register &dst) override;
         void Store(Amd64FunctionTranslator &translator, Amd64Register &src) override;
 
-        [[nodiscard]] std::size_t GetSize() const noexcept;
+        [[nodiscard]] std::size_t GetSize() const noexcept override;
         [[nodiscard]] std::size_t GetOffset() const noexcept;
 
         ConstantDataContainer(std::size_t size, std::size_t offset);

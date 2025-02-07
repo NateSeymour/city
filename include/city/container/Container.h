@@ -1,6 +1,7 @@
 #ifndef CITY_CONTAINER_H
 #define CITY_CONTAINER_H
 
+#include <cstddef>
 
 namespace city
 {
@@ -18,6 +19,8 @@ namespace city
         void Disassociate();
         [[nodiscard]] Value *GetValue() const noexcept;
         [[nodiscard]] bool HasValue() const noexcept;
+
+        [[nodiscard]] virtual std::size_t GetSize() const noexcept = 0;
 
         virtual void Load(Amd64FunctionTranslator &translator, Amd64Register &dst) = 0;
         virtual void Store(Amd64FunctionTranslator &translator, Amd64Register &src) = 0;

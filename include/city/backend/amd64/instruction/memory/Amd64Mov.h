@@ -95,7 +95,7 @@ namespace city
             Amd64Mov inst{};
 
             inst.SetOpcode({0x89});
-            inst.SetModRM(src, dst, mod, disp);
+            inst.SetModRM(src.GetCode(), dst.GetCode(), mod, disp);
 
             return inst;
         }
@@ -106,7 +106,7 @@ namespace city
 
             inst.SetREX(&src, &dst);
             inst.SetOpcode({0x89});
-            inst.SetModRM(src, dst, mod, disp);
+            inst.SetModRM(src.GetCode(), dst.GetCode(), mod, disp);
 
             return inst;
         }
@@ -116,7 +116,7 @@ namespace city
             Amd64Mov inst{};
 
             inst.SetOpcode({0x8B});
-            inst.SetModRM(dst, src, mod, disp);
+            inst.SetModRM(dst.GetCode(), src.GetCode(), mod, disp);
 
             return inst;
         }
@@ -127,7 +127,7 @@ namespace city
 
             inst.SetREX(&src, &dst);
             inst.SetOpcode({0x8B});
-            inst.SetModRM(dst, src, mod, disp);
+            inst.SetModRM(dst.GetCode(), src.GetCode(), mod, disp);
 
             return inst;
         }
@@ -152,7 +152,7 @@ namespace city
             Amd64Mov inst{};
 
             inst.SetOpcode({0xF2, 0x0F, 0x10});
-            inst.SetModRM(src, dst, mod, disp);
+            inst.SetModRM(src.GetCode(), dst.GetCode(), mod, disp);
 
             return inst;
         }

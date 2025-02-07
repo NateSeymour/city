@@ -8,24 +8,23 @@ namespace city
     class Amd64Add : public Amd64Instruction
     {
     public:
-        static Amd64Add MR64(Amd64RegisterCode dst, Amd64RegisterCode src)
+        static Amd64Add MR64(Amd64Register &dst, Amd64Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0)
         {
             Amd64Add inst{};
 
-            auto rexw = static_cast<std::uint8_t>(Amd64PrefixCode::REXW);
-            inst.SetPrefix({rexw});
+            inst.SetREX(&src, &dst);
             inst.SetOpcode({0x01});
-            inst.SetModRM(src, dst, Amd64Mod::Value);
+            inst.SetModRM(src.GetCode(), dst.GetCode(), mod, disp);
 
             return inst;
         }
 
-        static Amd64Add SDA(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64Mod mod = Amd64Mod::Value)
+        static Amd64Add SDA(Amd64Register &dst, Amd64Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0)
         {
             Amd64Add inst{};
 
             inst.SetOpcode({0xF2, 0x0F, 0x58});
-            inst.SetModRM(dst, src, mod);
+            inst.SetModRM(dst.GetCode(), src.GetCode(), mod, disp);
 
             return inst;
         }

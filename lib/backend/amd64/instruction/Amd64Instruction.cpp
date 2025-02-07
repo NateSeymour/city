@@ -38,8 +38,11 @@ size_t Amd64Instruction::AppendToBuffer(std::vector<std::uint8_t> &buffer)
         buffer.push_back(this->sib_);
     }
 
-    auto disp_buffer = reinterpret_cast<std::uint8_t *>(&this->displacement_);
-    buffer.insert(buffer.end(), disp_buffer, disp_buffer + 4);
+    if (this->displacement_ != 0)
+    {
+        auto disp_buffer = reinterpret_cast<std::uint8_t *>(&this->displacement_);
+        buffer.insert(buffer.end(), disp_buffer, disp_buffer + 4);
+    }
 
     buffer.insert(buffer.end(), this->immediate_.begin(), this->immediate_.end());
 
@@ -84,12 +87,12 @@ void Amd64Instruction::SetImmediate(std::initializer_list<std::uint8_t> bytes)
     this->immediate_ = bytes;
 }
 
-void Amd64Instruction::SetModRM(Amd64Register &reg, Amd64Register &rm, Amd64Mod mod, std::int32_t disp)
+void Amd64Instruction::SetModRM(std::uint8_t reg, std::uint8_t rm, Amd64Mod mod, std::int32_t disp)
 {
     this->displacement_ = disp;
 
-    auto breg = reg.GetCode();
-    auto brm = rm.GetCode();
+    auto breg = reg;
+    auto brm = rm;
     auto bmod = static_cast<std::uint8_t>(mod);
 
     // If displacement has been provided, then access type must be [REG]+disp32
