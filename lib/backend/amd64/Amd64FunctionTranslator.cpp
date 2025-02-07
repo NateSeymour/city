@@ -314,8 +314,8 @@ StackAllocationContainer &Amd64FunctionTranslator::AcquireStackSpace(std::size_t
     }
 
     auto &stack_allocation = this->local_swap_.emplace_back(std::make_unique<StackAllocationContainer>(size));
-    stack_allocation->SetOffset(this->stack_depth);
     this->stack_depth += static_cast<std::int64_t>(size);
+    stack_allocation->SetOffset(this->stack_depth);
 
     return *stack_allocation;
 }
