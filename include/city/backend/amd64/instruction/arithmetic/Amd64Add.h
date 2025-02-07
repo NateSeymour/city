@@ -15,12 +15,12 @@ namespace city
             auto rexw = static_cast<std::uint8_t>(Amd64PrefixCode::REXW);
             inst.SetPrefix({rexw});
             inst.SetOpcode({0x01});
-            inst.SetModRM(src, dst, Amd64RegisterAccessType::Value);
+            inst.SetModRM(src, dst, Amd64Mod::Value);
 
             return inst;
         }
 
-        static Amd64Add SDA(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64RegisterAccessType mod = Amd64RegisterAccessType::Value)
+        static Amd64Add SDA(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64Mod mod = Amd64Mod::Value)
         {
             Amd64Add inst{};
 

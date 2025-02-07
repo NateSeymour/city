@@ -16,14 +16,14 @@ namespace city
         /**
          * Offset to the stack base of the current frame.
          */
-        std::size_t base_offset_ = 0;
+        std::int64_t base_offset_ = 0;
 
     public:
         void Load(Amd64FunctionTranslator &translator, Amd64Register &dst) override;
         void Store(Amd64FunctionTranslator &translator, Amd64Register &src) override;
 
-        void SetOffset(std::size_t offset);
-        [[nodiscard]] std::size_t GetOffset() const noexcept;
+        void SetOffset(std::int64_t offset);
+        [[nodiscard]] std::int64_t GetOffset() const noexcept;
         [[nodiscard]] std::size_t GetSize() const noexcept;
 
         StackAllocationContainer(std::size_t size);

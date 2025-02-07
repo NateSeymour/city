@@ -13,7 +13,7 @@ void StackAllocationContainer::Store(Amd64FunctionTranslator &translator, Amd64R
     translator.Store(*this, src);
 }
 
-void StackAllocationContainer::SetOffset(std::size_t offset)
+void StackAllocationContainer::SetOffset(std::int64_t offset)
 {
     this->base_offset_ = offset;
 }
@@ -23,7 +23,7 @@ std::size_t StackAllocationContainer::GetSize() const noexcept
     return this->size_;
 }
 
-std::size_t StackAllocationContainer::GetOffset() const noexcept
+std::int64_t StackAllocationContainer::GetOffset() const noexcept
 {
     return this->base_offset_;
 }

@@ -17,7 +17,7 @@ namespace city
             auto rexw = static_cast<std::uint8_t>(Amd64PrefixCode::REXW);
             inst.SetPrefix({rexw});
             inst.SetOpcode({0x81});
-            inst.SetModRM(5, dst, Amd64RegisterAccessType::Value);
+            inst.SetModRM(5, dst, Amd64Mod::Value);
             inst.SetImmediate({
                     buffer[0],
                     buffer[1],
@@ -35,12 +35,12 @@ namespace city
             auto rexw = static_cast<std::uint8_t>(Amd64PrefixCode::REXW);
             inst.SetPrefix({rexw});
             inst.SetOpcode({0x29});
-            inst.SetModRM(src, dst, Amd64RegisterAccessType::Value);
+            inst.SetModRM(src, dst, Amd64Mod::Value);
 
             return inst;
         }
 
-        static Amd64Sub SDA(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64RegisterAccessType mod = Amd64RegisterAccessType::Value)
+        static Amd64Sub SDA(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64Mod mod = Amd64Mod::Value)
         {
             Amd64Sub inst{};
 

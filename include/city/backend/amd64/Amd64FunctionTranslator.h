@@ -2,7 +2,7 @@
 #define X86_64TRANSLATIONINTERFACE_H
 
 #include <city/backend/IRTranslator.h>
-#include <city/backend/amd64/container/Amd64RegisterLoader.h>
+#include <city/container/StackAllocationContainer.h>
 #include "Amd64Function.h"
 #include "Amd64Module.h"
 #include "container/Amd64RegisterBank.h"
@@ -11,8 +11,7 @@ namespace city
 {
     enum class ConflictStrategy
     {
-        Push,
-        PreferMoveToUnused,
+        Save,
         Discard,
     };
 
@@ -28,6 +27,8 @@ namespace city
         friend class ConstantDataContainer;
         friend class StackAllocationContainer;
         friend class Amd64Register;
+
+        std::uint64_t register_dislocation_count_ = 0;
 
     protected:
         void TranslateInstruction(AddInst &inst) override;
@@ -78,18 +79,19 @@ namespace city
         [[nodiscard]] Amd64Register *LoadValue(
                 Value *value, Amd64Register *reg = nullptr, ConflictStrategy strategy = ConflictStrategy::Push, LoadType load_type = LoadType::Value);
 
+
         /**
-         * Moves value and transfers its ownership.
+         * Moves value into container, transferring its ownership.
          * @param value
-         * @param reg
+         * @param dst
          * @param strategy
-         * @return
          */
-        [[nodiscard]] Amd64Register *MoveValue(Value &value, Amd64Register &reg, ConflictStrategy strategy);
+        void MoveValue(Value &value, Container &dst, ConflictStrategy strategy);
 
-        [[nodiscard]] Amd64Register *InstantiateValue(Value &value, Amd64Register &reg, ConflictStrategy strategy);
+        void InstantiateValue(Value &value, Amd64Register &reg);
 
-        [[nodiscard]] Amd64Register &FindUnusedGPRegister(Amd64RegisterValueType value_type = Amd64RegisterValueType::Integer);
+        [[nodiscard]] StackAllocationContainer &AcquireStackSpace(std::size_t size);
+        [[nodiscard]] Amd64Register &AcquireGPRegister(Amd64RegisterValueType value_type = Amd64RegisterValueType::Integer);
 
         void Insert(Amd64Instruction &&inst);
         void InsertProlog(Amd64Instruction &&inst);
@@ -99,8 +101,8 @@ namespace city
         Amd64Function function;
         IRFunction &ir_function;
         Amd64RegisterBank registers;
-        std::size_t stack_depth = 0;
-        std::vector<StackAllocationContainer> local_swap_;
+        std::int64_t stack_depth = 0;
+        std::vector<std::unique_ptr<StackAllocationContainer>> local_swap_;
 
         [[nodiscard]] Amd64Function Translate();
 

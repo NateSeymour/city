@@ -14,6 +14,6 @@ Object Amd64::BuildIRModule(IRModule &&ir_module)
     }
 
     amd64_module.data_ = std::move(ir_module.data_);
-    
+
     return amd64_module.Compile();
 }

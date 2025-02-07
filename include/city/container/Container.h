@@ -1,11 +1,12 @@
 #ifndef CITY_CONTAINER_H
 #define CITY_CONTAINER_H
 
-#include <city/backend/amd64/container/Amd64RegisterLoader.h>
 
 namespace city
 {
     class Value;
+    class Amd64FunctionTranslator;
+    class Amd64Register;
 
     class Container
     {

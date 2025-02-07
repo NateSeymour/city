@@ -10,42 +10,40 @@ namespace city
     class Amd64Mov : public Amd64Instruction
     {
     public:
-        static Amd64Mov OI16(Amd64RegisterCode dst, std::uint16_t data) noexcept
+        static Amd64Mov OI16(Amd64Register &dst, std::uint16_t data) noexcept
         {
             Amd64Mov inst;
 
             auto buffer = reinterpret_cast<std::uint8_t *>(&data);
 
-            std::uint8_t opcode = 0xB8 + static_cast<uint8_t>(dst);
+            std::uint8_t opcode = 0xB8 + dst.GetCode();
             inst.SetOpcode({opcode});
             inst.SetImmediate({buffer[0], buffer[1]});
 
             return inst;
         }
 
-        static Amd64Mov OI32(Amd64RegisterCode dst, std::uint32_t data) noexcept
+        static Amd64Mov OI32(Amd64Register &dst, std::uint32_t data) noexcept
         {
             Amd64Mov inst;
 
             auto buffer = reinterpret_cast<std::uint8_t *>(&data);
 
-            std::uint8_t opcode = 0xB8 + static_cast<uint8_t>(dst);
+            std::uint8_t opcode = 0xB8 + dst.GetCode();
             inst.SetOpcode({opcode});
             inst.SetImmediate({buffer[0], buffer[1], buffer[2], buffer[3]});
 
             return inst;
         }
 
-        static Amd64Mov OI64(Amd64RegisterCode dst, std::uint64_t data) noexcept
+        static Amd64Mov OI64(Amd64Register &dst, std::uint64_t data) noexcept
         {
             Amd64Mov inst;
 
             auto buffer = reinterpret_cast<std::uint8_t *>(&data);
 
-            auto rexw = static_cast<std::uint8_t>(Amd64PrefixCode::REXW);
-            inst.SetPrefix({rexw});
-
-            std::uint8_t opcode = 0xB8 + static_cast<uint8_t>(dst);
+            inst.SetREX(nullptr, &dst);
+            std::uint8_t opcode = 0xB8 + dst.GetCode();
             inst.SetOpcode({opcode});
             inst.SetImmediate({
                     buffer[0],
@@ -61,7 +59,7 @@ namespace city
             return inst;
         }
 
-        static Amd64Mov OIX(Amd64RegisterCode dst, std::vector<std::byte> const &buffer)
+        static Amd64Mov OIX(Amd64Register &dst, std::vector<std::byte> const &buffer)
         {
             if (buffer.size() <= 2)
             {
@@ -84,7 +82,7 @@ namespace city
             throw std::runtime_error("data buffer is too big to fit into immediate value");
         }
 
-        static Amd64Mov OIS(Amd64RegisterCode dst, Stub stub)
+        static Amd64Mov OIS(Amd64Register &dst, Stub stub)
         {
             auto inst = Amd64Mov::OI64(dst, kLinkerCanary64);
             inst.SetStub(std::move(stub));
@@ -92,71 +90,69 @@ namespace city
             return inst;
         }
 
-        static Amd64Mov MR32(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64RegisterAccessType mod = Amd64RegisterAccessType::Value) noexcept
+        static Amd64Mov MR32(Amd64Register &dst, Amd64Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0) noexcept
         {
             Amd64Mov inst{};
 
             inst.SetOpcode({0x89});
-            inst.SetModRM(src, dst, mod);
+            inst.SetModRM(src, dst, mod, disp);
 
             return inst;
         }
 
-        static Amd64Mov MR64(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64RegisterAccessType mod = Amd64RegisterAccessType::Value) noexcept
+        static Amd64Mov MR64(Amd64Register &dst, Amd64Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0) noexcept
         {
             Amd64Mov inst{};
 
-            auto rexw = static_cast<std::uint8_t>(Amd64PrefixCode::REXW);
-            inst.SetPrefix({rexw});
+            inst.SetREX(&src, &dst);
             inst.SetOpcode({0x89});
-            inst.SetModRM(src, dst, mod);
+            inst.SetModRM(src, dst, mod, disp);
 
             return inst;
         }
 
-        static Amd64Mov RM32(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64RegisterAccessType mod = Amd64RegisterAccessType::Value) noexcept
+        static Amd64Mov RM32(Amd64Register &dst, Amd64Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0) noexcept
         {
             Amd64Mov inst{};
 
             inst.SetOpcode({0x8B});
-            inst.SetModRM(src, dst, mod);
+            inst.SetModRM(dst, src, mod, disp);
 
             return inst;
         }
 
-        static Amd64Mov RM64(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64RegisterAccessType mod = Amd64RegisterAccessType::Value) noexcept
+        static Amd64Mov RM64(Amd64Register &dst, Amd64Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0) noexcept
         {
             Amd64Mov inst{};
 
-            auto rexw = static_cast<std::uint8_t>(Amd64PrefixCode::REXW);
-            inst.SetPrefix({rexw});
+            inst.SetREX(&src, &dst);
             inst.SetOpcode({0x8B});
-            inst.SetModRM(src, dst, mod);
+            inst.SetModRM(dst, src, mod, disp);
 
             return inst;
         }
 
-        static Amd64Mov RMX(Amd64RegisterCode dst, Amd64RegisterCode src, std::size_t size, Amd64RegisterAccessType mod = Amd64RegisterAccessType::Value)
+        static Amd64Mov RMX(Amd64Register &dst, Amd64Register &src, std::size_t size, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0)
         {
             if (size <= 4)
             {
-                return Amd64Mov::RM32(dst, src, mod);
+                return Amd64Mov::RM32(dst, src, mod, disp);
             }
 
             if (size <= 8)
             {
-                return Amd64Mov::RM64(dst, src, mod);
+                return Amd64Mov::RM64(dst, src, mod, disp);
             }
 
             throw std::runtime_error("data is too big to fit into single register");
         }
 
-        static Amd64Mov SDA(Amd64RegisterCode dst, Amd64RegisterCode src, Amd64RegisterAccessType mod = Amd64RegisterAccessType::Value)
+        static Amd64Mov SDA(Amd64Register &dst, Amd64Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0)
         {
             Amd64Mov inst{};
 
             inst.SetOpcode({0xF2, 0x0F, 0x10});
-            inst.SetModRM(src, dst, mod);
+            inst.SetModRM(src, dst, mod, disp);
 
             return inst;
         }

@@ -29,17 +29,6 @@ namespace city
         NonVolatile,
     };
 
-    /**
-     * Determines the type of access made to into the register.
-     * If Pointer, then the value in the register will be treated as a pointer. Instructions will load value from memory location held in pointer.
-     * If Value, then the value in the register will be treated as a value.
-     */
-    enum class Amd64RegisterAccessType : std::uint8_t
-    {
-        Pointer = 0x0,
-        Value = 0x3,
-    };
-
     using Amd64RegisterCode = std::uint8_t;
 
     class Amd64Register : public Container
@@ -56,8 +45,10 @@ namespace city
         void Store(Amd64FunctionTranslator &translator, Amd64Register &src) override;
 
         [[nodiscard]] Amd64RegisterCode GetCode() const noexcept;
+        [[nodiscard]] Amd64RegisterValueType GetValueType() const noexcept;
         [[nodiscard]] Amd64RegisterType GetType() const noexcept;
         [[nodiscard]] Amd64RegisterVolatility GetVolatility() const noexcept;
+        [[nodiscard]] bool IsExtension() const noexcept;
 
         constexpr Amd64Register(Amd64RegisterCode code, Amd64RegisterValueType value_type, Amd64RegisterVolatility volatility,
                 Amd64RegisterType type = Amd64RegisterType::GeneralPurpose, bool ext = false) :

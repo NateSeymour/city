@@ -12,6 +12,12 @@ size_t Amd64Instruction::GetBinarySize() const noexcept
     size += this->opcode_.GetSize();
     size += this->has_mod_rm_ ? 1 : 0;
     size += this->has_sib_ ? 1 : 0;
+
+    if (this->displacement_ != 0)
+    {
+        size += 4;
+    }
+
     size += this->immediate_.GetSize();
 
     return size;
@@ -32,6 +38,9 @@ size_t Amd64Instruction::AppendToBuffer(std::vector<std::uint8_t> &buffer)
         buffer.push_back(this->sib_);
     }
 
+    auto disp_buffer = reinterpret_cast<std::uint8_t *>(&this->displacement_);
+    buffer.insert(buffer.end(), disp_buffer, disp_buffer + 4);
+
     buffer.insert(buffer.end(), this->immediate_.begin(), this->immediate_.end());
 
     return this->GetBinarySize();
@@ -40,6 +49,24 @@ size_t Amd64Instruction::AppendToBuffer(std::vector<std::uint8_t> &buffer)
 std::size_t Amd64Instruction::GetStubOffset()
 {
     return this->GetBinarySize() - this->immediate_.GetSize();
+}
+
+void Amd64Instruction::SetREX(Amd64Register *reg, Amd64Register *rm)
+{
+    std::uint8_t prefix = Amd64Instruction::REX_0;
+    prefix |= Amd64Instruction::REX_W;
+
+    if (reg && reg->IsExtension())
+    {
+        prefix |= Amd64Instruction::REX_R;
+    }
+
+    if (rm && rm->IsExtension())
+    {
+        prefix |= Amd64Instruction::REX_B;
+    }
+
+    this->SetPrefix({prefix});
 }
 
 void Amd64Instruction::SetPrefix(std::initializer_list<std::uint8_t> bytes)
@@ -57,12 +84,20 @@ void Amd64Instruction::SetImmediate(std::initializer_list<std::uint8_t> bytes)
     this->immediate_ = bytes;
 }
 
-void Amd64Instruction::SetModRM(Amd64RegisterCode reg, Amd64RegisterCode r_m, Amd64RegisterAccessType mod)
+void Amd64Instruction::SetModRM(Amd64Register &reg, Amd64Register &rm, Amd64Mod mod, std::int32_t disp)
 {
-    auto breg = static_cast<std::uint8_t>(reg);
-    auto br_m = static_cast<std::uint8_t>(r_m);
+    this->displacement_ = disp;
+
+    auto breg = reg.GetCode();
+    auto brm = rm.GetCode();
     auto bmod = static_cast<std::uint8_t>(mod);
 
+    // If displacement has been provided, then access type must be [REG]+disp32
+    if (this->displacement_ != 0)
+    {
+        bmod = 0x2;
+    }
+
     this->has_mod_rm_ = true;
-    this->mod_rm_ = (0 | (bmod << 6) | (breg << 3) | br_m);
+    this->mod_rm_ = (0 | (bmod << 6) | (breg << 3) | brm);
 }

@@ -27,3 +27,13 @@ Amd64RegisterVolatility Amd64Register::GetVolatility() const noexcept
 {
     return this->volatility_;
 }
+
+bool Amd64Register::IsExtension() const noexcept
+{
+    return this->is_ext_;
+}
+
+Amd64RegisterValueType Amd64Register::GetValueType() const noexcept
+{
+    return this->value_type_;
+}

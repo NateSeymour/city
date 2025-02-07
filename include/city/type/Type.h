@@ -52,6 +52,11 @@ namespace city
             return type;
         }
 
+        [[nodiscard]] std::size_t GetSize() const noexcept
+        {
+            return this->size_;
+        }
+
         [[nodiscard]] NativeType GetNativeType() const noexcept
         {
             return this->native_type_;
