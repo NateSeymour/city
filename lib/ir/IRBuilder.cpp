@@ -39,16 +39,17 @@ IRFunction *IRBuilder::CreateFunction(std::string const &name, Type ret)
 
 IRFunction *IRBuilder::CreateFunction(std::string const &name, Type ret, std::vector<Type> const &arg_types)
 {
+    auto [it, _] = this->module_.functions_.insert({name, std::make_unique<IRFunction>(name, ret)});
+    auto function = it->second.get();
+
+    this->SetInsertPoint(function->GetLastBlock());
+
     std::vector<Value *> args(arg_types.size());
     for (auto const &type : arg_types)
     {
         args.push_back(this->ReserveLocalValue(type));
     }
-
-    auto [it, _] = this->module_.functions_.insert({name, std::make_unique<IRFunction>(name, ret, args)});
-    auto function = it->second.get();
-
-    this->SetInsertPoint(function->GetLastBlock());
+    function->SetArgs(args);
 
     return function;
 }

@@ -27,6 +27,8 @@ namespace city
 
         std::vector<std::unique_ptr<Value>> local_values_;
 
+        void SetArgs(std::vector<Value *> const &args);
+
     public:
         [[nodiscard]] std::string const &GetName() const noexcept;
         [[nodiscard]] IRBlock &GetFirstBlock() noexcept;
@@ -35,7 +37,7 @@ namespace city
 
         [[nodiscard]] IRBlock &AppendBlock();
 
-        IRFunction(std::string name, Type ret, std::vector<Value *> const &args);
+        IRFunction(std::string name, Type ret);
     };
 } // namespace city
 
