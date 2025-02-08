@@ -9,13 +9,15 @@ namespace city
     class CallInst : public IRInstruction
     {
         std::string target_name_;
+        std::vector<Value *> args_;
 
     public:
         [[nodiscard]] std::string const &GetTargetName() const noexcept;
+        [[nodiscard]] std::vector<Value *> const &GetArgs() const noexcept;
 
         void Apply(IRTranslator *interface) override;
 
-        CallInst(Value *return_value, IRFunction *ir_function);
+        CallInst(Value *return_value, IRFunction *ir_function, std::vector<Value *> const &args);
     };
 } // namespace city
 

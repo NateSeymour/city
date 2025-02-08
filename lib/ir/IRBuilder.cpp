@@ -90,10 +90,10 @@ Value *IRBuilder::CreateConstant(Type type, std::vector<std::uint8_t> const &dat
     return value;
 }
 
-Value *IRBuilder::InsertCallInst(IRFunction *function)
+Value *IRBuilder::InsertCallInst(IRFunction *function, std::vector<Value *> const &args)
 {
     auto retval = this->ReserveLocalValue(function->ret_type_);
-    (void)this->ReserveInstruction<CallInst>(retval, function);
+    (void)this->ReserveInstruction<CallInst>(retval, function, args);
 
     return retval;
 }

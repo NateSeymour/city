@@ -53,8 +53,33 @@ void Amd64FunctionTranslator::TranslateInstruction(CallInst &inst)
         }
     }
 
+    // Load arguments
+    auto const &args = inst.GetArgs();
+    for (int i = 0; i < args.size(); i++)
+    {
+        auto value = args[i];
+        auto const &value_type = value->GetType();
+
+        if (!value->IsInstantiated())
+        {
+            throw std::runtime_error("attempted to pass uninstantiated value");
+        }
+
+        auto container = value->GetContainer();
+        if (value_type.GetNativeType() == NativeType::Integer)
+        {
+            container->Load(*this, *this->registers.r_args[i]);
+        }
+        else if (value_type.GetNativeType() == NativeType::FloatingPoint)
+        {
+            container->Load(*this, *this->registers.xmm_args[i]);
+        }
+    }
+
+    // Make call
     this->Insert(Amd64Call::M64(address_reg));
 
+    // Instantiate retval
     auto native_type = inst.GetReturnValue()->GetType().GetNativeType();
     if (native_type == NativeType::Integer)
     {
