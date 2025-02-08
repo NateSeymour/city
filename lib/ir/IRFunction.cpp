@@ -32,7 +32,7 @@ std::vector<Value *> const &IRFunction::GetArgs() const noexcept
     return this->arg_values_;
 }
 
-IRFunction::IRFunction(std::string name, Type ret) : name_(std::move(name)), ret_type_(ret)
+IRFunction::IRFunction(std::string name, Type return_value, std::vector<Type> arg_types) : Function(std::move(name), return_value, std::move(arg_types))
 {
     (void)this->AppendBlock();
 }

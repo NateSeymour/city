@@ -18,7 +18,7 @@ void CallInst::Apply(IRTranslator *interface)
     interface->TranslateInstruction(*this);
 }
 
-CallInst::CallInst(Value *return_value, IRFunction *ir_function, std::vector<Value *> const &args) : IRInstruction(return_value), args_(args)
+CallInst::CallInst(Value *return_value, Function *ir_function, std::vector<Value *> const &args) : IRInstruction(return_value), args_(args)
 {
     this->target_name_ = ir_function->GetName();
 }

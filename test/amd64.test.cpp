@@ -27,7 +27,7 @@ TEST_F(Amd64TestRunner, AddConstantFunction)
     builder.InsertRetInst(retval);
 
     this->jit.InsertIRModule(std::move(module));
-    auto assembly = this->jit.CompileAndLink();
+    auto assembly = this->jit.Link();
 
     auto test = assembly["add_constants"].ToPointer<int()>();
 

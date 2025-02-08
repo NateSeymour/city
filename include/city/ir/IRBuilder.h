@@ -102,7 +102,7 @@ namespace city
         }
 
         // Instructions - Control
-        [[nodiscard]] Value *InsertCallInst(IRFunction *function, std::vector<Value *> const &args = {});
+        [[nodiscard]] Value *InsertCallInst(Function *function, std::vector<Value *> const &args = {});
         Value *InsertRetInst(Value *retval = nullptr);
 
         // Constructors

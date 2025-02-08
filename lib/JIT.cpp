@@ -1,10 +1,27 @@
 #include <city/JIT.h>
+#include <city/interface/InterfaceFunction.h>
 #include <city/runtime/NativeMemoryHandle.h>
 #include <stdexcept>
 
 using namespace city;
 
-Assembly JIT::LinkObjects() const
+void JIT::InsertInterfaceModule(InterfaceModule &&module)
+{
+    this->interfaces_.insert({module.GetName(), std::move(module)});
+}
+
+void JIT::InsertIRModule(IRModule &&module)
+{
+    this->objects_.insert({module.GetName(), this->backend_->BuildIRModule(std::move(module))});
+}
+
+void JIT::RemoveModule(std::string const &name)
+{
+    this->interfaces_.erase(name);
+    this->objects_.erase(name);
+}
+
+Assembly JIT::Link() const
 {
     // Create memory allocations
     std::size_t assembly_data_size = 0;
@@ -19,6 +36,19 @@ Assembly JIT::LinkObjects() const
 
     Assembly assembly{std::move(data), std::move(text)};
 
+    // Process Interfaces
+    for (auto const &[name, interface] : this->interfaces_)
+    {
+        for (auto const &function : interface.functions_)
+        {
+            assembly.symtab_[function->name_] = {
+                    .location = reinterpret_cast<std::byte *>(function->address_),
+                    .flags = SymbolFlags::Executable,
+            };
+        }
+    }
+
+    // Process Objects
     StubList stubs;
     std::size_t data_offset = 0;
     std::size_t text_offset = 0;
@@ -102,21 +132,6 @@ Assembly JIT::LinkObjects() const
     assembly.text_.SetProtection(MemoryProtection::Read | MemoryProtection::Execute);
 
     return assembly;
-}
-
-void JIT::InsertIRModule(IRModule &&module)
-{
-    this->objects_.insert({module.GetName(), this->backend_->BuildIRModule(std::move(module))});
-}
-
-void JIT::RemoveModule(std::string const &name)
-{
-    this->objects_.erase(name);
-}
-
-Assembly JIT::CompileAndLink()
-{
-    return this->LinkObjects();
 }
 
 JIT::JIT()

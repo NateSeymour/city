@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.29)
-project(city VERSION 0.2.3)
+project(city VERSION 0.3.0)
 
 set(CMAKE_CXX_STANDARD 23)
 
@@ -70,6 +70,12 @@ add_library(city
         include/city/container/StackAllocationContainer.h
         lib/container/StackAllocationContainer.cpp
         include/city/ABI.h
+        include/city/interface/InterfaceModule.h
+        include/city/Function.h
+        lib/Function.cpp
+        include/city/interface/InterfaceFunction.h
+        lib/interface/InterfaceFunction.cpp
+        lib/interface/InterfaceModule.cpp
 )
 target_include_directories(city PUBLIC include)
 

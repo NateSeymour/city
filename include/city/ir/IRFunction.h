@@ -1,6 +1,7 @@
 #ifndef CITY_IRFUNCTION_H
 #define CITY_IRFUNCTION_H
 
+#include <city/Function.h>
 #include <city/Value.h>
 #include <city/type/Type.h>
 #include <list>
@@ -13,14 +14,12 @@ namespace city
     class IRBuilder;
     struct Amd64FunctionTranslator;
 
-    class IRFunction
+    class IRFunction : public Function
     {
         friend class IRBuilder;
         friend struct Amd64FunctionTranslator;
 
     protected:
-        std::string name_;
-        Type ret_type_;
         std::vector<Value *> arg_values_;
 
         std::list<IRBlock> blocks_;
@@ -37,7 +36,7 @@ namespace city
 
         [[nodiscard]] IRBlock &AppendBlock();
 
-        IRFunction(std::string name, Type ret);
+        IRFunction(std::string name, Type return_type, std::vector<Type> arg_types);
     };
 } // namespace city
 

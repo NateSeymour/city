@@ -7,6 +7,7 @@
 #include "Assembly.h"
 #include "Object.h"
 #include "backend/Backend.h"
+#include "interface/InterfaceModule.h"
 #include "ir/IRModule.h"
 
 namespace city
@@ -18,17 +19,18 @@ namespace city
     {
         std::unique_ptr<Backend> backend_;
 
+        std::unordered_map<std::string, InterfaceModule> interfaces_;
         std::unordered_map<std::string, Object> objects_;
-
-        /**
-         * Links all objects together (non-destructively) and returns the final linked Assembly.
-         * @return Linked Assembly of all stored Objects
-         */
-        [[nodiscard]] Assembly LinkObjects() const;
 
     public:
         /**
-         * Adds a module to the compiler and compiles it directly to Object.
+         * Adds an interface module to the compiler.
+         * @param module Module to transfer to the compiler
+         */
+        void InsertInterfaceModule(InterfaceModule &&module);
+
+        /**
+         * Adds an IR module to the compiler and compiles it directly to Object.
          * @param module Module to transfer to the compiler
          */
         void InsertIRModule(IRModule &&module);
@@ -41,11 +43,10 @@ namespace city
         void RemoveModule(std::string const &name);
 
         /**
-         * Compiles all IR modules to objects and links all objects to one Assembly.
-         * Compiled modules are then released. Objects persist until removed (may cause linker errors).
-         * @return Compiled Assembly
+         * Links all objects together (non-destructively) and returns the final linked Assembly.
+         * @return Linked Assembly of all stored Objects
          */
-        [[nodiscard]] Assembly CompileAndLink();
+        [[nodiscard]] Assembly Link() const;
 
         JIT();
     };

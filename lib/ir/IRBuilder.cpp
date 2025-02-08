@@ -39,7 +39,7 @@ IRFunction *IRBuilder::CreateFunction(std::string const &name, Type ret)
 
 IRFunction *IRBuilder::CreateFunction(std::string const &name, Type ret, std::vector<Type> const &arg_types)
 {
-    auto [it, _] = this->module_.functions_.insert({name, std::make_unique<IRFunction>(name, ret)});
+    auto [it, _] = this->module_.functions_.insert({name, std::make_unique<IRFunction>(name, ret, arg_types)});
     auto function = it->second.get();
 
     this->SetInsertPoint(function->GetLastBlock());
@@ -90,9 +90,9 @@ Value *IRBuilder::CreateConstant(Type type, std::vector<std::uint8_t> const &dat
     return value;
 }
 
-Value *IRBuilder::InsertCallInst(IRFunction *function, std::vector<Value *> const &args)
+Value *IRBuilder::InsertCallInst(Function *function, std::vector<Value *> const &args)
 {
-    auto retval = this->ReserveLocalValue(function->ret_type_);
+    auto retval = this->ReserveLocalValue(function->return_type_);
     (void)this->ReserveInstruction<CallInst>(retval, function, args);
 
     return retval;

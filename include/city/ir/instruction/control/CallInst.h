@@ -1,7 +1,7 @@
 #ifndef CITY_CALLINST_H
 #define CITY_CALLINST_H
 
-#include <city/ir/IRFunction.h>
+#include <city/Function.h>
 #include <city/ir/instruction/IRInstruction.h>
 
 namespace city
@@ -17,7 +17,7 @@ namespace city
 
         void Apply(IRTranslator *interface) override;
 
-        CallInst(Value *return_value, IRFunction *ir_function, std::vector<Value *> const &args);
+        CallInst(Value *return_value, Function *function, std::vector<Value *> const &args);
     };
 } // namespace city
 
