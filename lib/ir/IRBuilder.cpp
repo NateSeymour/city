@@ -44,7 +44,8 @@ IRFunction *IRBuilder::CreateFunction(std::string const &name, Type ret, std::ve
 
     this->SetInsertPoint(function->GetLastBlock());
 
-    std::vector<Value *> args(arg_types.size());
+    std::vector<Value *> args;
+    args.reserve(arg_types.size());
     for (auto const &type : arg_types)
     {
         args.push_back(this->ReserveLocalValue(type));
