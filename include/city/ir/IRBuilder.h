@@ -73,7 +73,7 @@ namespace city
         // Functions
         [[nodiscard]] IRFunction *CreateFunction(std::string const &name);
         [[nodiscard]] IRFunction *CreateFunction(std::string const &name, Type ret);
-        [[nodiscard]] IRFunction *CreateFunction(std::string const &name, Type ret, std::vector<Type> const &args);
+        [[nodiscard]] IRFunction *CreateFunction(std::string const &name, Type ret, std::vector<Type> const &arg_types);
 
         // Values
         [[nodiscard]] Value *CreateConstant(Type type, std::vector<std::uint8_t> const &data);

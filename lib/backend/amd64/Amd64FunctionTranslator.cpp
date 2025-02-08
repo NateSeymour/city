@@ -322,6 +322,22 @@ StackAllocationContainer &Amd64FunctionTranslator::AcquireStackSpace(std::size_t
 
 Amd64Function Amd64FunctionTranslator::Translate()
 {
+    // Instantiate arguments
+    for (int i = 0; i < this->ir_function.arg_values_.size(); i++)
+    {
+        auto value = this->ir_function.arg_values_[i];
+        auto const &value_type = value->GetType();
+
+        if (value_type.GetNativeType() == NativeType::Integer)
+        {
+            this->Associate(*value, *this->registers.r_args[i]);
+        }
+        else if (value_type.GetNativeType() == NativeType::FloatingPoint)
+        {
+            this->Associate(*value, *this->registers.xmm_args[i]);
+        }
+    }
+
     // Function Body
     for (auto &block : this->ir_function.blocks_)
     {

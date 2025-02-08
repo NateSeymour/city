@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.29)
-project(city VERSION 0.1.9)
+project(city VERSION 0.2.0)
 
 set(CMAKE_CXX_STANDARD 23)
 
@@ -69,6 +69,7 @@ add_library(city
         lib/backend/amd64/Amd64Function.cpp
         include/city/container/StackAllocationContainer.h
         lib/container/StackAllocationContainer.cpp
+        include/city/ABI.h
 )
 target_include_directories(city PUBLIC include)
 

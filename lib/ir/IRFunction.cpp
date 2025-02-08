@@ -22,7 +22,12 @@ IRBlock &IRFunction::AppendBlock()
     return this->blocks_.emplace_back(*this);
 }
 
-IRFunction::IRFunction(std::string name, Type ret, std::vector<Type> const &args) : name_(std::move(name)), ret_type_(ret), arg_types_(args)
+std::vector<Value *> const &IRFunction::GetArgs() const noexcept
+{
+    return this->arg_values_;
+}
+
+IRFunction::IRFunction(std::string name, Type ret, std::vector<Value *> const &args) : name_(std::move(name)), ret_type_(ret), arg_values_(args)
 {
     (void)this->AppendBlock();
 }

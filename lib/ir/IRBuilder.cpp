@@ -37,8 +37,14 @@ IRFunction *IRBuilder::CreateFunction(std::string const &name, Type ret)
     return this->CreateFunction(name, ret, {});
 }
 
-IRFunction *IRBuilder::CreateFunction(std::string const &name, Type ret, std::vector<Type> const &args)
+IRFunction *IRBuilder::CreateFunction(std::string const &name, Type ret, std::vector<Type> const &arg_types)
 {
+    std::vector<Value *> args(arg_types.size());
+    for (auto const &type : arg_types)
+    {
+        args.push_back(this->ReserveLocalValue(type));
+    }
+
     auto [it, _] = this->module_.functions_.insert({name, std::make_unique<IRFunction>(name, ret, args)});
     auto function = it->second.get();
 
