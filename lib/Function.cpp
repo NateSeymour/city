@@ -7,4 +7,9 @@ std::string const &Function::GetName() const noexcept
     return this->name_;
 }
 
-Function::Function(std::string name, Type return_type, std::vector<Type> arg_types) : name_(std::move(name)), return_type_(return_type), arg_types_(std::move(arg_types)) {}
+std::vector<Type> const &Function::GetArgumentTypes() const noexcept
+{
+    return this->argument_types_;
+}
+
+Function::Function(std::string name, Type return_type, std::vector<Type> arg_types) : Value(return_type), name_(std::move(name)), argument_types_(std::move(arg_types)) {}

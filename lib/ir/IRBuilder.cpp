@@ -10,11 +10,9 @@ ConstantDataContainer *IRBuilder::CreateConstantDataContainer(std::size_t size, 
     return container.get();
 }
 
-Value *IRBuilder::ReserveLocalValue(Type type)
+Value *IRBuilder::ReserveValue(Type type)
 {
-    auto &function = this->insert_point_->parent_function_;
-    auto &locals = function.local_values_;
-    auto &value = locals.emplace_back(std::make_unique<Value>(type));
+    auto &value = this->module_.values_.emplace_back(std::make_unique<Value>(type));
 
     return value.get();
 }
@@ -37,20 +35,19 @@ IRFunction *IRBuilder::CreateFunction(std::string const &name, Type ret)
     return this->CreateFunction(name, ret, {});
 }
 
-IRFunction *IRBuilder::CreateFunction(std::string const &name, Type ret, std::vector<Type> const &arg_types)
+IRFunction *IRBuilder::CreateFunction(std::string const &name, Type ret, std::vector<Type> const &argument_types)
 {
-    auto [it, _] = this->module_.functions_.insert({name, std::make_unique<IRFunction>(name, ret, arg_types)});
+    std::vector<Value *> argument_values;
+    argument_values.reserve(argument_types.size());
+    for (auto const &type : argument_types)
+    {
+        argument_values.push_back(this->ReserveValue(type));
+    }
+
+    auto [it, _] = this->module_.functions_.insert({name, std::make_unique<IRFunction>(name, ret, argument_types, std::move(argument_values))});
     auto function = it->second.get();
 
     this->SetInsertPoint(function->GetLastBlock());
-
-    std::vector<Value *> args;
-    args.reserve(arg_types.size());
-    for (auto const &type : arg_types)
-    {
-        args.push_back(this->ReserveLocalValue(type));
-    }
-    function->SetArgs(args);
 
     return function;
 }
@@ -82,7 +79,7 @@ Value *IRBuilder::CreateConstant(Type type, std::vector<std::uint8_t> const &dat
     this->module_.data_.insert(this->module_.data_.end(), data.begin(), data.end());
 
     auto container = this->CreateConstantDataContainer(data.size(), offset);
-    auto value = this->ReserveLocalValue(type);
+    auto value = this->ReserveValue(type);
 
     value->AssociateContainer(container);
     container->AssociateValue(value);
@@ -90,22 +87,17 @@ Value *IRBuilder::CreateConstant(Type type, std::vector<std::uint8_t> const &dat
     return value;
 }
 
-Value *IRBuilder::InsertCallInst(Function *function, std::vector<Value *> const &args)
+CallInst *IRBuilder::InsertCallInst(Function *function, std::vector<Value *> const &args)
 {
-    auto retval = this->ReserveLocalValue(function->return_type_);
-    (void)this->ReserveInstruction<CallInst>(retval, function, args);
-
-    return retval;
+    return this->ReserveInstruction<CallInst>(function, args);
 }
 
-Value *IRBuilder::InsertRetInst(Value *retval)
+RetInst *IRBuilder::InsertRetInst(Value *retval)
 {
     if (!retval)
     {
-        retval = this->ReserveLocalValue(Type::Get<void>());
+        retval = this->ReserveValue(Type::Get<void>());
     }
 
-    (void)this->ReserveInstruction<RetInst>(retval);
-
-    return retval;
+    return this->ReserveInstruction<RetInst>(retval);
 }

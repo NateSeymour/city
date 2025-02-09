@@ -8,6 +8,8 @@
 
 namespace city
 {
+    class Function;
+
     class Value
     {
         Type type_;
@@ -17,6 +19,8 @@ namespace city
         std::size_t read_count_ = 0;
 
     public:
+        [[nodiscard]] Function *ToFunction() noexcept;
+
         void IncrementReadCount() noexcept;
         void DecrementReadCount() noexcept;
 
@@ -25,12 +29,13 @@ namespace city
 
         [[nodiscard]] Container *GetContainer() const noexcept;
 
-        [[nodiscard]] Type GetType() const noexcept;
+        [[nodiscard]] Type const &GetType() const noexcept;
 
         [[nodiscard]] bool IsInstantiated() const noexcept;
         [[nodiscard]] bool IsUsed() const noexcept;
 
         explicit Value(Type type);
+        virtual ~Value() = default;
     };
 } // namespace city
 

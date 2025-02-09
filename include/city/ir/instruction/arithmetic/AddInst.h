@@ -10,7 +10,7 @@ namespace city
     public:
         void Apply(IRTranslator *interface) override;
 
-        AddInst(Value *return_value, Value *lhs, Value *rhs);
+        AddInst(Type type, Value *lhs, Value *rhs);
     };
 } // namespace city
 

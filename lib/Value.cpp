@@ -1,6 +1,12 @@
+#include <city/Function.h>
 #include <city/Value.h>
 
 using namespace city;
+
+Function *Value::ToFunction() noexcept
+{
+    return dynamic_cast<Function *>(this);
+}
 
 void Value::IncrementReadCount() noexcept
 {
@@ -37,7 +43,7 @@ bool Value::IsUsed() const noexcept
     return this->read_count_ > 0;
 }
 
-Type Value::GetType() const noexcept
+Type const &Value::GetType() const noexcept
 {
     return this->type_;
 }

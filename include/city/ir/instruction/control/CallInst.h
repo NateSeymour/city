@@ -8,16 +8,16 @@ namespace city
 {
     class CallInst : public IRInstruction
     {
-        std::string target_name_;
-        std::vector<Value *> args_;
+        Function *target_;
+        std::vector<Value *> arguments_;
 
     public:
-        [[nodiscard]] std::string const &GetTargetName() const noexcept;
-        [[nodiscard]] std::vector<Value *> const &GetArgs() const noexcept;
+        [[nodiscard]] Function *GetTarget() const noexcept;
+        [[nodiscard]] std::vector<Value *> const &GetArguments() const noexcept;
 
         void Apply(IRTranslator *interface) override;
 
-        CallInst(Value *return_value, Function *function, std::vector<Value *> const &args);
+        CallInst(Function *target, std::vector<Value *> arguments);
     };
 } // namespace city
 

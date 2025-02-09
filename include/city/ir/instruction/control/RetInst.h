@@ -9,6 +9,8 @@ namespace city
 
     class RetInst : public IRInstruction
     {
+        Value *return_value_ = nullptr;
+
     public:
         void Apply(IRTranslator *interface) override;
 

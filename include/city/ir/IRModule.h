@@ -22,7 +22,9 @@ namespace city
     protected:
         std::vector<std::uint8_t> data_;
         std::unordered_map<std::string, std::unique_ptr<IRFunction>> functions_;
-        std::unordered_map<std::string, std::unique_ptr<Value>> global_values_;
+        std::unordered_map<std::string, std::unique_ptr<Value>> named_global_values_;
+
+        std::vector<std::unique_ptr<Value>> values_;
         std::vector<std::unique_ptr<ConstantDataContainer>> global_constants_;
 
     public:

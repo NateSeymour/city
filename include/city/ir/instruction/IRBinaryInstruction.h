@@ -16,7 +16,7 @@ namespace city
         [[nodiscard]] Value *GetLHS() const noexcept;
         [[nodiscard]] Value *GetRHS() const noexcept;
 
-        IRBinaryInstruction(Value *return_value, Value *lhs, Value *rhs);
+        IRBinaryInstruction(Type type, Value *lhs, Value *rhs);
     };
 } // namespace city
 

@@ -1,6 +1,7 @@
 #ifndef CITY_FUNCTION_H
 #define CITY_FUNCTION_H
 
+#include <city/Value.h>
 #include <string>
 #include <vector>
 #include "type/Type.h"
@@ -9,17 +10,17 @@ namespace city
 {
     class IRBuilder;
 
-    class Function
+    class Function : public Value
     {
         friend class IRBuilder;
 
     protected:
         std::string name_;
-        Type return_type_;
-        std::vector<Type> arg_types_;
+        std::vector<Type> argument_types_;
 
     public:
         [[nodiscard]] std::string const &GetName() const noexcept;
+        [[nodiscard]] std::vector<Type> const &GetArgumentTypes() const noexcept;
 
         Function(std::string name, Type return_type, std::vector<Type> arg_types);
     };

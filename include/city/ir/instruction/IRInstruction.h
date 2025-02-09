@@ -8,19 +8,14 @@ namespace city
     class IRTranslator;
     class IRBuilder;
 
-    class IRInstruction
+    class IRInstruction : public Value
     {
         friend class IRBuilder;
-
-        Value *return_value_ = nullptr;
 
     public:
         virtual void Apply(IRTranslator *interface) = 0;
 
-        [[nodiscard]] Value *GetReturnValue() const;
-
-        IRInstruction(Value *return_value);
-        virtual ~IRInstruction() = default;
+        IRInstruction(Type type);
     };
 } // namespace city
 

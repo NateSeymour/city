@@ -6,6 +6,7 @@
 #include <city/type/Type.h>
 #include <list>
 #include <memory>
+#include <ranges>
 #include <string>
 #include "block/IRBlock.h"
 
@@ -21,22 +22,16 @@ namespace city
 
     protected:
         std::vector<Value *> arg_values_;
-
         std::list<IRBlock> blocks_;
 
-        std::vector<std::unique_ptr<Value>> local_values_;
-
-        void SetArgs(std::vector<Value *> const &args);
-
     public:
-        [[nodiscard]] std::string const &GetName() const noexcept;
         [[nodiscard]] IRBlock &GetFirstBlock() noexcept;
         [[nodiscard]] IRBlock &GetLastBlock() noexcept;
-        [[nodiscard]] std::vector<Value *> const &GetArgs() const noexcept;
+        [[nodiscard]] std::vector<Value *> const &GetArgumentValues() const noexcept;
 
         [[nodiscard]] IRBlock &AppendBlock();
 
-        IRFunction(std::string name, Type return_type, std::vector<Type> arg_types);
+        IRFunction(std::string name, Type return_type, std::vector<Type> argument_types, std::vector<Value *> argument_values);
     };
 } // namespace city
 

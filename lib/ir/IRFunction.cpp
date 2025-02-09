@@ -2,11 +2,6 @@
 
 using namespace city;
 
-std::string const &IRFunction::GetName() const noexcept
-{
-    return this->name_;
-}
-
 IRBlock &IRFunction::GetFirstBlock() noexcept
 {
     return this->blocks_.front();
@@ -22,17 +17,13 @@ IRBlock &IRFunction::AppendBlock()
     return this->blocks_.emplace_back(*this);
 }
 
-void IRFunction::SetArgs(std::vector<Value *> const &args)
-{
-    this->arg_values_ = args;
-}
-
-std::vector<Value *> const &IRFunction::GetArgs() const noexcept
+std::vector<Value *> const &IRFunction::GetArgumentValues() const noexcept
 {
     return this->arg_values_;
 }
 
-IRFunction::IRFunction(std::string name, Type return_value, std::vector<Type> arg_types) : Function(std::move(name), return_value, std::move(arg_types))
+IRFunction::IRFunction(std::string name, Type return_type, std::vector<Type> argument_types, std::vector<Value *> argument_values) :
+    Function(std::move(name), return_type, std::move(argument_types)), arg_values_(std::move(argument_values))
 {
     (void)this->AppendBlock();
 }

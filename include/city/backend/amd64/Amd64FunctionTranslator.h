@@ -58,7 +58,7 @@ namespace city
 
             srctmp.Disassociate();
             dsttmp.Disassociate();
-            this->Associate(*inst.GetReturnValue(), dsttmp);
+            this->Associate(inst, dsttmp);
 
             inst.GetLHS()->DecrementReadCount();
             inst.GetRHS()->DecrementReadCount();

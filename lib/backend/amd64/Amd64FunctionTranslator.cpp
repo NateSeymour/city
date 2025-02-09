@@ -29,7 +29,7 @@ void Amd64FunctionTranslator::TranslateInstruction(CallInst &inst)
     auto &address_reg = this->AcquireGPRegister();
 
     Stub stub{
-            .label = inst.GetTargetName(),
+            .label = inst.GetTarget()->GetName(),
             .type = StubSourceLocation::Text,
     };
     this->Insert(Amd64Mov::OIS(address_reg, std::move(stub)));
@@ -54,7 +54,7 @@ void Amd64FunctionTranslator::TranslateInstruction(CallInst &inst)
     }
 
     // Load arguments
-    auto const &args = inst.GetArgs();
+    auto const &args = inst.GetArguments();
     for (int i = 0; i < args.size(); i++)
     {
         auto value = args[i];
@@ -80,30 +80,29 @@ void Amd64FunctionTranslator::TranslateInstruction(CallInst &inst)
     this->Insert(Amd64Call::M64(address_reg));
 
     // Instantiate retval
-    auto native_type = inst.GetReturnValue()->GetType().GetNativeType();
+    auto native_type = inst.GetType().GetNativeType();
     if (native_type == NativeType::Integer)
     {
-        this->Associate(*inst.GetReturnValue(), this->registers.r[0]);
+        this->Associate(inst, this->registers.r[0]);
     }
     else if (native_type == NativeType::FloatingPoint)
     {
-        this->Associate(*inst.GetReturnValue(), this->registers.xmm[0]);
+        this->Associate(inst, this->registers.xmm[0]);
     }
 }
 
 void Amd64FunctionTranslator::TranslateInstruction(RetInst &inst)
 {
-    auto return_value = inst.GetReturnValue();
-    if (return_value->IsInstantiated())
+    if (inst.IsInstantiated())
     {
-        auto native_type = return_value->GetType().GetNativeType();
+        auto native_type = inst.GetType().GetNativeType();
         if (native_type == NativeType::Integer)
         {
-            this->MoveValue(this->registers.r[0], *return_value, ConflictStrategy::Discard);
+            this->MoveValue(this->registers.r[0], inst, ConflictStrategy::Discard);
         }
         else if (native_type == NativeType::FloatingPoint)
         {
-            this->MoveValue(this->registers.xmm[0], *return_value, ConflictStrategy::Discard);
+            this->MoveValue(this->registers.xmm[0], inst, ConflictStrategy::Discard);
         }
     }
 

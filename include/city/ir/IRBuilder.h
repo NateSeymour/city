@@ -30,7 +30,7 @@ namespace city
     protected:
         [[nodiscard]] ConstantDataContainer *CreateConstantDataContainer(std::size_t size, std::size_t offset);
 
-        [[nodiscard]] Value *ReserveLocalValue(Type type);
+        [[nodiscard]] Value *ReserveValue(Type type);
 
         template<typename T, typename... Args>
             requires std::derived_from<T, IRInstruction>
@@ -43,7 +43,7 @@ namespace city
 
         template<typename BinaryInstructionType>
             requires std::derived_from<BinaryInstructionType, IRBinaryInstruction>
-        [[nodiscard]] Value *InsertBinaryInst(Value *lhs, Value *rhs)
+        [[nodiscard]] BinaryInstructionType *InsertBinaryInst(Value *lhs, Value *rhs)
         {
             auto lhs_type = lhs->GetType();
             auto rhs_type = rhs->GetType();
@@ -53,10 +53,7 @@ namespace city
                 throw std::runtime_error("incompatible types");
             }
 
-            auto retval = this->ReserveLocalValue(lhs_type);
-            (void)this->ReserveInstruction<BinaryInstructionType>(retval, lhs, rhs);
-
-            return retval;
+            return this->ReserveInstruction<BinaryInstructionType>(lhs_type, lhs, rhs);
         }
 
         explicit IRBuilder(IRModule &module);
@@ -73,7 +70,7 @@ namespace city
         // Functions
         [[nodiscard]] IRFunction *CreateFunction(std::string const &name);
         [[nodiscard]] IRFunction *CreateFunction(std::string const &name, Type ret);
-        [[nodiscard]] IRFunction *CreateFunction(std::string const &name, Type ret, std::vector<Type> const &arg_types);
+        [[nodiscard]] IRFunction *CreateFunction(std::string const &name, Type ret, std::vector<Type> const &argument_types);
 
         // Values
         [[nodiscard]] Value *CreateConstant(Type type, std::vector<std::uint8_t> const &data);
@@ -91,19 +88,19 @@ namespace city
         }
 
         // Instructions - Arithmetic
-        [[nodiscard]] Value *InsertAddInst(Value *lhs, Value *rhs)
+        [[nodiscard]] AddInst *InsertAddInst(Value *lhs, Value *rhs)
         {
             return this->InsertBinaryInst<AddInst>(lhs, rhs);
         }
 
-        [[nodiscard]] Value *InsertSubInst(Value *lhs, Value *rhs)
+        [[nodiscard]] SubInst *InsertSubInst(Value *lhs, Value *rhs)
         {
             return this->InsertBinaryInst<SubInst>(lhs, rhs);
         }
 
         // Instructions - Control
-        [[nodiscard]] Value *InsertCallInst(Function *function, std::vector<Value *> const &args = {});
-        Value *InsertRetInst(Value *retval = nullptr);
+        [[nodiscard]] CallInst *InsertCallInst(Function *function, std::vector<Value *> const &args = {});
+        RetInst *InsertRetInst(Value *retval = nullptr);
 
         // Constructors
         IRBuilder() = delete;

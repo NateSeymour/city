@@ -3,14 +3,14 @@
 
 using namespace city;
 
-std::string const &CallInst::GetTargetName() const noexcept
+Function *CallInst::GetTarget() const noexcept
 {
-    return this->target_name_;
+    return this->target_;
 }
 
-std::vector<Value *> const &CallInst::GetArgs() const noexcept
+std::vector<Value *> const &CallInst::GetArguments() const noexcept
 {
-    return this->args_;
+    return this->arguments_;
 }
 
 void CallInst::Apply(IRTranslator *interface)
@@ -18,7 +18,4 @@ void CallInst::Apply(IRTranslator *interface)
     interface->TranslateInstruction(*this);
 }
 
-CallInst::CallInst(Value *return_value, Function *ir_function, std::vector<Value *> const &args) : IRInstruction(return_value), args_(args)
-{
-    this->target_name_ = ir_function->GetName();
-}
+CallInst::CallInst(Function *target, std::vector<Value *> arguments) : IRInstruction(target->GetType()), target_(target), arguments_(std::move(arguments)) {}

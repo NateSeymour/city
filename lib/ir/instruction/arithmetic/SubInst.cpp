@@ -8,4 +8,4 @@ void SubInst::Apply(IRTranslator *interface)
     interface->TranslateInstruction(*this);
 }
 
-SubInst::SubInst(Value *return_value, Value *lhs, Value *rhs) : IRBinaryInstruction(return_value, lhs, rhs) {}
+SubInst::SubInst(Type type, Value *lhs, Value *rhs) : IRBinaryInstruction(type, lhs, rhs) {}

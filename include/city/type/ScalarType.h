@@ -1,5 +1,0 @@
-
-#ifndef CITY_SCALARTYPE_H
-#define CITY_SCALARTYPE_H
-
-#endif // CITY_SCALARTYPE_H

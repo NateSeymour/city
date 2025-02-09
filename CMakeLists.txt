@@ -57,10 +57,6 @@ add_library(city
         lib/runtime/Windows.cpp
         lib/Value.cpp
         lib/Symbol.cpp
-        include/city/type/PointerType.h
-        include/city/type/FunctionType.h
-        include/city/type/ScalarType.h
-        include/city/type/FloatingPointType.h
         include/city/backend/amd64/Amd64Module.h
         lib/backend/amd64/Amd64Module.cpp
         include/city/backend/amd64/container/Amd64RegisterBank.h
