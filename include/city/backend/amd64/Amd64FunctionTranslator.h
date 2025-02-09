@@ -3,6 +3,7 @@
 
 #include <city/backend/IRTranslator.h>
 #include <city/container/StackAllocationContainer.h>
+#include <city/overload.h>
 #include "Amd64Function.h"
 #include "Amd64Module.h"
 #include "container/Amd64RegisterBank.h"
@@ -22,6 +23,12 @@ namespace city
         Optimal,
     };
 
+    template<typename IRInstructionType, typename NativeInstructionType>
+    concept Amd64TranslationPair = requires {
+        std::is_base_of_v<IRInstructionType, IRInstruction>;
+        std::is_base_of_v<NativeInstructionType, Amd64Instruction>;
+    };
+
     class Amd64FunctionTranslator : IRTranslator
     {
         friend class ConstantDataContainer;
@@ -32,36 +39,91 @@ namespace city
 
     protected:
         void TranslateInstruction(AddInst &inst) override;
+        void TranslateInstruction(DivInst &inst) override;
+        void TranslateInstruction(MulInst &inst) override;
         void TranslateInstruction(SubInst &inst) override;
         void TranslateInstruction(CallInst &inst) override;
         void TranslateInstruction(RetInst &inst) override;
 
-        template<typename IRInstructionType, typename NativeInstructionType>
-            requires requires(NativeInstructionType) {
-                NativeInstructionType::MR64;
-                NativeInstructionType::SDA;
-            }
-        void TranslateBinaryInstruction(IRInstructionType &inst)
-        {
-            auto &dsttmp = this->CopyValue(*inst.GetLHS());
-            auto &srctmp = this->CopyValue(*inst.GetRHS());
+        [[nodiscard]] Amd64Register &PrepareDestinationValue(Value &value);
+        [[nodiscard]] std::tuple<Amd64Register &, Amd64Mod, std::int32_t> PrepareSourceValue(Value &value);
 
-            Type optype = inst.GetLHS()->GetType();
-            if (optype.GetNativeType() == NativeType::Integer)
+        template<typename IRInstructionType, typename NativeInstructionType>
+            requires CInstSDA<NativeInstructionType>
+        void TranslateFPBinaryInstruction(IRInstructionType &inst)
+        {
+            auto lhs = *inst.GetLHS();
+            auto rhs = *inst.GetRHS();
+
+            Amd64Register &dsttmp = this->PrepareDestinationValue(lhs);
+            auto [srctmp, mod, disp] = this->PrepareSourceValue(rhs);
+
+            this->Insert(NativeInstructionType::SDA(dsttmp, srctmp, mod, disp));
+
+            lhs.DecrementReadCount();
+            rhs.DecrementReadCount();
+
+            this->Associate(inst, dsttmp);
+        }
+
+        template<typename IRInstructionType, typename NativeInstructionType>
+        void TranslateIntegerBinaryInstruction(IRInstructionType &inst)
+        {
+            auto const &type = inst.GetType();
+
+            auto lhs = *inst.GetLHS();
+            auto rhs = *inst.GetRHS();
+
+            if constexpr (CInstRM<NativeInstructionType>::value)
             {
-                this->Insert(NativeInstructionType::MR64(dsttmp, srctmp));
+                Amd64Register &dsttmp = this->PrepareDestinationValue(lhs);
+                auto [srctmp, mod, disp] = this->PrepareSourceValue(rhs);
+
+                this->Insert(NativeInstructionType::RMX(dsttmp, srctmp, type.GetSize(), mod, disp));
+
+                lhs.DecrementReadCount();
+                rhs.DecrementReadCount();
+
+                this->Associate(inst, dsttmp);
+            }
+            else if constexpr (CInstM<NativeInstructionType>::value)
+            {
             }
             else
             {
-                this->Insert(NativeInstructionType::SDA(dsttmp, srctmp));
+                static_assert("impossible to encode operation");
+            }
+        }
+
+        template<typename IRInstructionType, typename NativeInstructionType>
+            requires Amd64TranslationPair<IRInstructionType, NativeInstructionType>
+        void TranslateBinaryInstruction(IRInstructionType &inst)
+        {
+            auto const &type = inst.GetType();
+            if (type.GetSize() > 8)
+            {
+                throw std::runtime_error("operand is too big");
             }
 
-            srctmp.Disassociate();
-            dsttmp.Disassociate();
-            this->Associate(inst, dsttmp);
+            switch (type.GetNativeType())
+            {
+                case NativeType::Integer:
+                {
+                    this->TranslateIntegerBinaryInstruction<IRInstructionType, NativeInstructionType>(inst);
+                    break;
+                }
 
-            inst.GetLHS()->DecrementReadCount();
-            inst.GetRHS()->DecrementReadCount();
+                case NativeType::FloatingPoint:
+                {
+                    this->TranslateFPBinaryInstruction<IRInstructionType, NativeInstructionType>(inst);
+                    break;
+                }
+
+                case NativeType::Void:
+                {
+                    throw std::runtime_error("unable to perform binary operation on void");
+                }
+            }
         }
 
         void Load(Amd64Register &dst, ConstantDataContainer &src);

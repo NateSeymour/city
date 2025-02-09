@@ -48,4 +48,9 @@ Type const &Value::GetType() const noexcept
     return this->type_;
 }
 
+std::size_t Value::GetReadCount() const noexcept
+{
+    return this->read_count_;
+}
+
 Value::Value(Type type) : type_(type) {}

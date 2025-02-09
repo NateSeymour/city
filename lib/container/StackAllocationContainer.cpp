@@ -28,4 +28,9 @@ std::int64_t StackAllocationContainer::GetOffset() const noexcept
     return this->base_offset_;
 }
 
+ContainerType StackAllocationContainer::GetType() const noexcept
+{
+    return ContainerType::StackAllocation;
+}
+
 StackAllocationContainer::StackAllocationContainer(std::size_t size) : size_(size) {}

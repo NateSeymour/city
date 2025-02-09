@@ -26,7 +26,8 @@ namespace city
         void SetOffset(std::int64_t offset);
         [[nodiscard]] std::int64_t GetOffset() const noexcept;
         [[nodiscard]] std::size_t GetSize() const noexcept override;
-
+        [[nodiscard]] ContainerType GetType() const noexcept override;
+        
         StackAllocationContainer(std::size_t size);
         StackAllocationContainer(StackAllocationContainer const &) = delete;
     };

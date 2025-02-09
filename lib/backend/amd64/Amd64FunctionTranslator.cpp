@@ -4,6 +4,8 @@
 #include <stack>
 
 #include <city/backend/amd64/instruction/arithmetic/Amd64Add.h>
+#include <city/backend/amd64/instruction/arithmetic/Amd64Div.h>
+#include <city/backend/amd64/instruction/arithmetic/Amd64Mul.h>
 #include <city/backend/amd64/instruction/arithmetic/Amd64Sub.h>
 #include <city/backend/amd64/instruction/control/Amd64Call.h>
 #include <city/backend/amd64/instruction/control/Amd64Leave.h>
@@ -16,6 +18,16 @@ using namespace city;
 void Amd64FunctionTranslator::TranslateInstruction(AddInst &inst)
 {
     this->TranslateBinaryInstruction<AddInst, Amd64Add>(inst);
+}
+
+void Amd64FunctionTranslator::TranslateInstruction(DivInst &inst)
+{
+    this->TranslateBinaryInstruction<DivInst, Amd64Div>(inst);
+}
+
+void Amd64FunctionTranslator::TranslateInstruction(MulInst &inst)
+{
+    this->TranslateBinaryInstruction<MulInst, Amd64Mul>(inst);
 }
 
 void Amd64FunctionTranslator::TranslateInstruction(SubInst &inst)
@@ -93,16 +105,17 @@ void Amd64FunctionTranslator::TranslateInstruction(CallInst &inst)
 
 void Amd64FunctionTranslator::TranslateInstruction(RetInst &inst)
 {
-    if (inst.IsInstantiated())
+    auto retval = inst.GetReturnValue();
+    if (retval && retval->IsInstantiated())
     {
         auto native_type = inst.GetType().GetNativeType();
         if (native_type == NativeType::Integer)
         {
-            this->MoveValue(this->registers.r[0], inst, ConflictStrategy::Discard);
+            this->MoveValue(this->registers.r[0], *retval, ConflictStrategy::Discard);
         }
         else if (native_type == NativeType::FloatingPoint)
         {
-            this->MoveValue(this->registers.xmm[0], inst, ConflictStrategy::Discard);
+            this->MoveValue(this->registers.xmm[0], *retval, ConflictStrategy::Discard);
         }
     }
 
@@ -112,6 +125,54 @@ void Amd64FunctionTranslator::TranslateInstruction(RetInst &inst)
     }
 
     this->function.text_.push_back(Amd64Ret::ZONear());
+}
+
+Amd64Register &Amd64FunctionTranslator::PrepareDestinationValue(Value &value)
+{
+    if (!value.IsInstantiated())
+    {
+        throw std::runtime_error("cannot prepare uninstantiated value");
+    }
+
+    Container *container = value.GetContainer();
+
+    // If this is the last read then we can store the new value there.
+    if (container->GetType() == ContainerType::Register && value.GetReadCount() == 1)
+    {
+        return *dynamic_cast<Amd64Register *>(container);
+    }
+
+    // Otherwise it needs to be copied into a new register.
+    return this->CopyValue(value);
+}
+
+std::tuple<Amd64Register &, Amd64Mod, std::int32_t> Amd64FunctionTranslator::PrepareSourceValue(Value &value)
+{
+    if (!value.IsInstantiated())
+    {
+        throw std::runtime_error("cannot prepare uninstantiated value");
+    }
+
+    Container *container = value.GetContainer();
+
+    switch (container->GetType())
+    {
+        case ContainerType::Constant:
+        {
+            return {this->CopyValue(value), Amd64Mod::Value, 0};
+        }
+
+        case ContainerType::StackAllocation:
+        {
+            auto stack_allocation = dynamic_cast<StackAllocationContainer *>(container);
+            return {this->registers.r[5], Amd64Mod::DisplacedPointer, stack_allocation->GetOffset() * -1};
+        }
+
+        case ContainerType::Register:
+        {
+            return {*dynamic_cast<Amd64Register *>(container), Amd64Mod::Value, 0};
+        }
+    }
 }
 
 void Amd64FunctionTranslator::Load(Amd64Register &dst, ConstantDataContainer &src)
@@ -293,7 +354,7 @@ Amd64Register &Amd64FunctionTranslator::AcquireGPRegister(Amd64RegisterValueType
 
     for (auto &reg : available_registers)
     {
-        if (reg.GetType() != Amd64RegisterType::GeneralPurpose)
+        if (reg.GetRegisterType() != Amd64RegisterType::GeneralPurpose)
         {
             continue;
         }
@@ -314,7 +375,7 @@ Amd64Register &Amd64FunctionTranslator::AcquireGPRegister(Amd64RegisterValueType
     for (int i = 0; i < available_registers.size(); i++)
     {
         auto &victim = available_registers[(i + this->register_dislocation_count_) % available_registers.size()];
-        if (victim.GetType() != Amd64RegisterType::GeneralPurpose || victim.GetVolatility() != Amd64RegisterVolatility::Volatile)
+        if (victim.GetRegisterType() != Amd64RegisterType::GeneralPurpose || victim.GetVolatility() != Amd64RegisterVolatility::Volatile)
         {
             continue;
         }

@@ -14,6 +14,8 @@ namespace city
     public:
         void Apply(IRTranslator *interface) override;
 
+        [[nodiscard]] Value *GetReturnValue() const noexcept;
+
         RetInst(Value *value);
     };
 } // namespace city

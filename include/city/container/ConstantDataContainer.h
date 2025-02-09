@@ -16,7 +16,7 @@ namespace city
 
         [[nodiscard]] std::size_t GetSize() const noexcept override;
         [[nodiscard]] std::size_t GetOffset() const noexcept;
-
+        [[nodiscard]] ContainerType GetType() const noexcept override;
         ConstantDataContainer(std::size_t size, std::size_t offset);
         ConstantDataContainer(ConstantDataContainer const &) = delete;
     };

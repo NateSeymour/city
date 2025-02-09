@@ -18,7 +18,7 @@ Amd64RegisterCode Amd64Register::GetCode() const noexcept
     return this->code_;
 }
 
-Amd64RegisterType Amd64Register::GetType() const noexcept
+Amd64RegisterType Amd64Register::GetRegisterType() const noexcept
 {
     return this->type_;
 }
@@ -52,4 +52,9 @@ size_t Amd64Register::GetSize() const noexcept
             return 16;
         }
     }
+}
+
+ContainerType Amd64Register::GetType() const noexcept
+{
+    return ContainerType::Register;
 }

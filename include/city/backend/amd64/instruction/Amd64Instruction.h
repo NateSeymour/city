@@ -80,6 +80,31 @@ namespace city
 
         void SetImmediate(std::initializer_list<std::uint8_t> bytes);
     };
+
+    template<typename InstructionType>
+            struct CInstRM : std::bool_constant < requires()
+    {
+        InstructionType::RMX;
+    } > {};
+
+    template<typename InstructionType>
+            struct CInstM : std::bool_constant < requires()
+    {
+        InstructionType::MX;
+    } > {};
+
+    template<typename InstructionType>
+            struct CInstMI : std::bool_constant < requires()
+    {
+        InstructionType::MI64;
+    } > {};
+
+    template<typename InstructionType>
+    concept CInstSDA = requires(InstructionType &inst) { InstructionType::SDA; };
+
+    template<typename InstructionType>
+        requires CInstSDA<InstructionType>
+    constexpr bool InstHasSDA = true;
 } // namespace city
 
 #endif // X86_64INSTRUCTION_H

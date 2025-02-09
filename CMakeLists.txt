@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.29)
-project(city VERSION 0.3.0)
+project(city VERSION 0.3.1)
 
 set(CMAKE_CXX_STANDARD 23)
 
@@ -72,6 +72,13 @@ add_library(city
         include/city/interface/InterfaceFunction.h
         lib/interface/InterfaceFunction.cpp
         lib/interface/InterfaceModule.cpp
+        include/city/ir/instruction/arithmetic/MulInst.h
+        lib/ir/instruction/arithmetic/MulInst.cpp
+        include/city/ir/instruction/arithmetic/DivInst.h
+        lib/ir/instruction/arithmetic/DivInst.cpp
+        include/city/backend/amd64/instruction/arithmetic/Amd64Mul.h
+        include/city/overload.h
+        include/city/backend/amd64/instruction/arithmetic/Amd64Div.h
 )
 target_include_directories(city PUBLIC include)
 

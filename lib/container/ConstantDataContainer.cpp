@@ -23,4 +23,9 @@ std::size_t ConstantDataContainer::GetSize() const noexcept
     return this->size_;
 }
 
+ContainerType ConstantDataContainer::GetType() const noexcept
+{
+    return ContainerType::Constant;
+}
+
 ConstantDataContainer::ConstantDataContainer(std::size_t size, std::size_t offset) : size_(size), offset_(offset) {}

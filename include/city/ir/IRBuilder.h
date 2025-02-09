@@ -12,6 +12,8 @@
 #include "IRFunction.h"
 #include "block/IRBlock.h"
 #include "instruction/arithmetic/AddInst.h"
+#include "instruction/arithmetic/DivInst.h"
+#include "instruction/arithmetic/MulInst.h"
 #include "instruction/arithmetic/SubInst.h"
 #include "instruction/control/CallInst.h"
 #include "instruction/control/RetInst.h"
@@ -96,6 +98,16 @@ namespace city
         [[nodiscard]] SubInst *InsertSubInst(Value *lhs, Value *rhs)
         {
             return this->InsertBinaryInst<SubInst>(lhs, rhs);
+        }
+
+        [[nodiscard]] MulInst *InsertMulInst(Value *lhs, Value *rhs)
+        {
+            return this->InsertBinaryInst<MulInst>(lhs, rhs);
+        }
+
+        [[nodiscard]] DivInst *InsertDivInst(Value *lhs, Value *rhs)
+        {
+            return this->InsertBinaryInst<DivInst>(lhs, rhs);
         }
 
         // Instructions - Control

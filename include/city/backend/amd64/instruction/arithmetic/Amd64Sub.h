@@ -27,15 +27,40 @@ namespace city
             return inst;
         }
 
-        static Amd64Sub MR64(Amd64Register &dst, Amd64Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0)
+        static Amd64Sub RM32(Amd64Register &dst, Amd64Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0)
         {
-            Amd64Sub inst;
+            Amd64Sub inst{};
 
-            inst.SetREX(&src, &dst);
-            inst.SetOpcode({0x29});
-            inst.SetModRM(src.GetCode(), dst.GetCode(), mod, disp);
+            inst.SetOpcode({0x2B});
+            inst.SetModRM(dst.GetCode(), src.GetCode(), mod, disp);
 
             return inst;
+        }
+
+        static Amd64Sub RM64(Amd64Register &dst, Amd64Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0)
+        {
+            Amd64Sub inst{};
+
+            inst.SetREX(&src, &dst);
+            inst.SetOpcode({0x2B});
+            inst.SetModRM(dst.GetCode(), src.GetCode(), mod, disp);
+
+            return inst;
+        }
+
+        static Amd64Sub RMX(Amd64Register &dst, Amd64Register &src, std::size_t size, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0)
+        {
+            if (size <= 4)
+            {
+                return Amd64Sub::RM32(dst, src, mod, disp);
+            }
+
+            if (size <= 8)
+            {
+                return Amd64Sub::RM64(dst, src, mod, disp);
+            }
+
+            throw std::runtime_error("operands too large");
         }
 
         static Amd64Sub SDA(Amd64Register &dst, Amd64Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0)

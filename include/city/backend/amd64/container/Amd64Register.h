@@ -47,7 +47,8 @@ namespace city
         [[nodiscard]] Amd64RegisterCode GetCode() const noexcept;
         [[nodiscard]] Amd64RegisterValueType GetValueType() const noexcept;
         [[nodiscard]] std::size_t GetSize() const noexcept override;
-        [[nodiscard]] Amd64RegisterType GetType() const noexcept;
+        [[nodiscard]] Amd64RegisterType GetRegisterType() const noexcept;
+        [[nodiscard]] ContainerType GetType() const noexcept override;
         [[nodiscard]] Amd64RegisterVolatility GetVolatility() const noexcept;
         [[nodiscard]] bool IsExtension() const noexcept;
 

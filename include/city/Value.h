@@ -21,6 +21,8 @@ namespace city
     public:
         [[nodiscard]] Function *ToFunction() noexcept;
 
+        [[nodiscard]] std::size_t GetReadCount() const noexcept;
+
         void IncrementReadCount() noexcept;
         void DecrementReadCount() noexcept;
 
