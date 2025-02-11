@@ -2,6 +2,7 @@
 #define CITY_INTERFACEMODULE_H
 
 #include <city/type/Type.h>
+#include <memory>
 #include <string>
 #include <vector>
 #include "InterfaceFunction.h"
@@ -13,7 +14,7 @@ namespace city
     class InterfaceModule
     {
         friend class JIT;
-        
+
     protected:
         std::string name_;
         std::vector<std::unique_ptr<InterfaceFunction>> functions_;
