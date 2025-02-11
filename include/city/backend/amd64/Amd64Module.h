@@ -1,31 +1,24 @@
 #ifndef CITY_AMD64MODULE_H
 #define CITY_AMD64MODULE_H
 
-#include <city/Symbol.h>
-#include <city/backend/amd64/instruction/Amd64Instruction.h>
-#include <city/ir/IRModule.h>
 #include <vector>
+#include "city/backend/NativeModule.h"
 
 namespace city
 {
     class Amd64;
 
-    class Amd64Module
+    class Amd64Module : public NativeModule
     {
         friend class Amd64;
 
     protected:
-        std::string name_;
-
-        std::vector<std::uint8_t> data_;
         std::vector<Amd64Function> functions_;
 
-        StubList stubs_;
-
     public:
-        [[nodiscard]] Object Compile();
+        [[nodiscard]] Object Compile() override;
 
-        Amd64Module(std::string name);
+        Amd64Module(std::string name, std::vector<std::uint8_t> data);
     };
 } // namespace city
 

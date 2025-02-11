@@ -4,12 +4,27 @@ project(city VERSION 0.3.3)
 set(CMAKE_CXX_STANDARD 23)
 
 add_library(city
+        include/city/ABI.h
         include/city/Assembly.h
+        include/city/backend/aarch64/AArch64.h
+        include/city/backend/aarch64/instruction/AArch64Instruction.h
+        include/city/backend/amd64/Amd64Function.h
+        include/city/backend/amd64/Amd64Module.h
+        include/city/backend/amd64/container/Amd64RegisterBank.h
+        include/city/backend/amd64/instruction/arithmetic/Amd64Div.h
+        include/city/backend/amd64/instruction/arithmetic/Amd64Mul.h
+        include/city/backend/amd64/instruction/control/Amd64Leave.h
         include/city/ByteBuffer.h
         include/city/container/ConstantDataContainer.h
         include/city/container/Container.h
+        include/city/container/StackAllocationContainer.h
+        include/city/Function.h
+        include/city/interface/InterfaceFunction.h
+        include/city/interface/InterfaceModule.h
         include/city/ir/block/IRBlock.h
         include/city/ir/instruction/arithmetic/AddInst.h
+        include/city/ir/instruction/arithmetic/DivInst.h
+        include/city/ir/instruction/arithmetic/MulInst.h
         include/city/ir/instruction/arithmetic/SubInst.h
         include/city/ir/instruction/control/CallInst.h
         include/city/ir/instruction/control/RetInst.h
@@ -20,6 +35,7 @@ add_library(city
         include/city/ir/IRModule.h
         include/city/JIT.h
         include/city/Object.h
+        include/city/overload.h
         include/city/runtime/MacOS.h
         include/city/runtime/NativeMemoryHandle.h
         include/city/runtime/Runtime.h
@@ -29,19 +45,25 @@ add_library(city
         include/city/Value.h
         lib/Assembly.cpp
         lib/backend/aarch64/AArch64.cpp
-        lib/backend/aarch64/AArch64.h
         lib/backend/aarch64/instruction/AArch64Instruction.cpp
-        lib/backend/aarch64/instruction/AArch64Instruction.h
         lib/backend/amd64/Amd64.cpp
+        lib/backend/amd64/Amd64Function.cpp
         lib/backend/amd64/Amd64FunctionTranslator.cpp
+        lib/backend/amd64/Amd64Module.cpp
         lib/backend/amd64/container/Amd64Register.cpp
         lib/backend/amd64/instruction/Amd64Instruction.cpp
         lib/backend/Backend.cpp
         lib/backend/NativeInstruction.cpp
         lib/container/ConstantDataContainer.cpp
         lib/container/Container.cpp
+        lib/container/StackAllocationContainer.cpp
+        lib/Function.cpp
+        lib/interface/InterfaceFunction.cpp
+        lib/interface/InterfaceModule.cpp
         lib/ir/block/IRBlock.cpp
         lib/ir/instruction/arithmetic/AddInst.cpp
+        lib/ir/instruction/arithmetic/DivInst.cpp
+        lib/ir/instruction/arithmetic/MulInst.cpp
         lib/ir/instruction/arithmetic/SubInst.cpp
         lib/ir/instruction/control/CallInst.cpp
         lib/ir/instruction/control/RetInst.cpp
@@ -55,30 +77,14 @@ add_library(city
         lib/runtime/MacOS.cpp
         lib/runtime/NativeMemoryHandle.cpp
         lib/runtime/Windows.cpp
-        lib/Value.cpp
         lib/Symbol.cpp
-        include/city/backend/amd64/Amd64Module.h
-        lib/backend/amd64/Amd64Module.cpp
-        include/city/backend/amd64/container/Amd64RegisterBank.h
-        include/city/backend/amd64/instruction/control/Amd64Leave.h
-        include/city/backend/amd64/Amd64Function.h
-        lib/backend/amd64/Amd64Function.cpp
-        include/city/container/StackAllocationContainer.h
-        lib/container/StackAllocationContainer.cpp
-        include/city/ABI.h
-        include/city/interface/InterfaceModule.h
-        include/city/Function.h
-        lib/Function.cpp
-        include/city/interface/InterfaceFunction.h
-        lib/interface/InterfaceFunction.cpp
-        lib/interface/InterfaceModule.cpp
-        include/city/ir/instruction/arithmetic/MulInst.h
-        lib/ir/instruction/arithmetic/MulInst.cpp
-        include/city/ir/instruction/arithmetic/DivInst.h
-        lib/ir/instruction/arithmetic/DivInst.cpp
-        include/city/backend/amd64/instruction/arithmetic/Amd64Mul.h
-        include/city/overload.h
-        include/city/backend/amd64/instruction/arithmetic/Amd64Div.h
+        lib/Value.cpp
+        include/city/backend/aarch64/container/AArch64Register.h
+        include/city/backend/NativeModule.h
+        include/city/backend/aarch64/AArch64Function.h
+        include/city/backend/aarch64/AArch64Module.h
+        include/city/backend/aarch64/AArch64FunctionTranslator.h
+        lib/backend/aarch64/AArch64Module.cpp
 )
 target_include_directories(city PUBLIC include)
 

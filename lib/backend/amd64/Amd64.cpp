@@ -1,9 +1,9 @@
-#include <city/backend/amd64/Amd64.h>
-#include <city/backend/amd64/Amd64FunctionTranslator.h>
+#include "city/backend/amd64/Amd64.h"
+#include "city/backend/amd64/Amd64FunctionTranslator.h"
 
 using namespace city;
 
-Object Amd64::BuildIRModule(IRModule &&ir_module)
+Object Amd64::BuildIRModule(IRModule &&ir_module) override
 {
     Amd64Module amd64_module{ir_module.GetName()};
 

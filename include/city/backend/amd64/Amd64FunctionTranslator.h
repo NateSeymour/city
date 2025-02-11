@@ -3,7 +3,6 @@
 
 #include <city/backend/IRTranslator.h>
 #include <city/container/StackAllocationContainer.h>
-#include <city/overload.h>
 #include "Amd64Function.h"
 #include "Amd64Module.h"
 #include "container/Amd64RegisterBank.h"

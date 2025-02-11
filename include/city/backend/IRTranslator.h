@@ -10,8 +10,9 @@
 
 namespace city
 {
-    struct IRTranslator
+    class IRTranslator
     {
+    protected:
         virtual void TranslateInstruction(AddInst &inst) = 0;
         virtual void TranslateInstruction(DivInst &inst) = 0;
         virtual void TranslateInstruction(MulInst &inst) = 0;
@@ -19,6 +20,7 @@ namespace city
         virtual void TranslateInstruction(CallInst &inst) = 0;
         virtual void TranslateInstruction(RetInst &inst) = 0;
 
+    public:
         virtual ~IRTranslator() = default;
     };
 } // namespace city
