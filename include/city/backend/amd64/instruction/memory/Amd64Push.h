@@ -8,7 +8,7 @@ namespace city
     class Amd64Push : public Amd64Instruction
     {
     public:
-        static Amd64Push M64(Amd64Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0) noexcept
+        static Amd64Push M64(Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0) noexcept
         {
             Amd64Push inst{};
 

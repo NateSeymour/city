@@ -1,6 +1,5 @@
-#include <city/backend/amd64/instruction/Amd64Instruction.h>
-#include <cstring>
-#include <ranges>
+#include "city/backend/amd64/instruction/Amd64Instruction.h"
+#include "city/container/Register.h"
 
 using namespace city;
 
@@ -54,7 +53,7 @@ std::size_t Amd64Instruction::GetStubOffset()
     return this->GetBinarySize() - this->immediate_.GetSize();
 }
 
-void Amd64Instruction::SetREX(Amd64Register *reg, Amd64Register *rm)
+void Amd64Instruction::SetREX(Register *reg, Register *rm)
 {
     std::uint8_t prefix = Amd64Instruction::REX_0;
     prefix |= Amd64Instruction::REX_W;

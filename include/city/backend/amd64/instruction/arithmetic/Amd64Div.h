@@ -8,7 +8,7 @@ namespace city
     class Amd64Div : public Amd64Instruction
     {
     public:
-        static Amd64Div M32(Amd64Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0)
+        static Amd64Div M32(Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0)
         {
             Amd64Div inst;
 
@@ -18,7 +18,7 @@ namespace city
             return inst;
         }
 
-        static Amd64Div M64(Amd64Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0)
+        static Amd64Div M64(Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0)
         {
             Amd64Div inst;
 
@@ -29,7 +29,7 @@ namespace city
             return inst;
         }
 
-        static Amd64Div MX(Amd64Register &src, std::size_t size, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0)
+        static Amd64Div MX(Register &src, std::size_t size, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0)
         {
             if (size <= 4)
             {
@@ -44,7 +44,7 @@ namespace city
             throw std::runtime_error("operands too large");
         }
 
-        static Amd64Div SDA(Amd64Register &dst, Amd64Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0)
+        static Amd64Div SDA(Register &dst, Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0)
         {
             Amd64Div inst{};
 

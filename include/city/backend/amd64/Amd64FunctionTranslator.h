@@ -5,7 +5,7 @@
 #include <city/container/StackAllocationContainer.h>
 #include "Amd64Function.h"
 #include "Amd64Module.h"
-#include "container/Amd64RegisterBank.h"
+#include "Amd64RegisterBank.h"
 
 namespace city
 {
@@ -32,7 +32,7 @@ namespace city
     {
         friend class ConstantDataContainer;
         friend class StackAllocationContainer;
-        friend class Amd64Register;
+        friend class Register;
 
         std::uint64_t register_dislocation_count_ = 0;
 
@@ -44,8 +44,8 @@ namespace city
         void TranslateInstruction(CallInst &inst) override;
         void TranslateInstruction(RetInst &inst) override;
 
-        [[nodiscard]] Amd64Register &PrepareDestinationValue(Value &value);
-        [[nodiscard]] std::tuple<Amd64Register &, Amd64Mod, std::int32_t> PrepareSourceValue(Value &value);
+        [[nodiscard]] Register &PrepareDestinationValue(Value &value);
+        [[nodiscard]] std::tuple<Register &, Amd64Mod, std::int32_t> PrepareSourceValue(Value &value);
 
         template<typename IRInstructionType, typename NativeInstructionType>
             requires CInstSDA<NativeInstructionType>
@@ -54,7 +54,7 @@ namespace city
             auto lhs = *inst.GetLHS();
             auto rhs = *inst.GetRHS();
 
-            Amd64Register &dsttmp = this->PrepareDestinationValue(lhs);
+            Register &dsttmp = this->PrepareDestinationValue(lhs);
             auto [srctmp, mod, disp] = this->PrepareSourceValue(rhs);
 
             this->Insert(NativeInstructionType::SDA(dsttmp, srctmp, mod, disp));
@@ -62,7 +62,7 @@ namespace city
             lhs.DecrementReadCount();
             rhs.DecrementReadCount();
 
-            this->Associate(inst, dsttmp);
+            dsttmp.InstantiateValue(&inst);
         }
 
         template<typename IRInstructionType, typename NativeInstructionType>
@@ -75,7 +75,7 @@ namespace city
 
             if constexpr (CInstRM<NativeInstructionType>::value)
             {
-                Amd64Register &dsttmp = this->PrepareDestinationValue(lhs);
+                Register &dsttmp = this->PrepareDestinationValue(lhs);
                 auto [srctmp, mod, disp] = this->PrepareSourceValue(rhs);
 
                 this->Insert(NativeInstructionType::RMX(dsttmp, srctmp, type.GetSize(), mod, disp));
@@ -83,7 +83,7 @@ namespace city
                 lhs.DecrementReadCount();
                 rhs.DecrementReadCount();
 
-                this->Associate(inst, dsttmp);
+                dsttmp.InstantiateValue(&inst);
             }
             else if constexpr (CInstM<NativeInstructionType>::value)
             {
@@ -125,25 +125,23 @@ namespace city
             }
         }
 
-        void Load(Amd64Register &dst, ConstantDataContainer &src);
-        void Load(Amd64Register &dst, StackAllocationContainer &src);
-        void Load(Amd64Register &dst, Amd64Register &src);
+        void Load(Register &dst, ConstantDataContainer &src) override;
+        void Load(Register &dst, StackAllocationContainer &src) override;
+        void Load(Register &dst, Register &src) override;
 
-        void Store(StackAllocationContainer &dst, Amd64Register &src);
-        void Store(Amd64Register &dst, Amd64Register &src);
+        void Store(StackAllocationContainer &dst, Register &src) override;
+        void Store(Register &dst, Register &src) override;
 
-        [[nodiscard]] Amd64Register &CopyValue(Value &value);
+        [[nodiscard]] Register &CopyValue(Value &value);
 
-        void MoveValue(StackAllocationContainer &dst, Amd64Register &src);
-        void MoveValue(Amd64Register &dst, Amd64Register &src, ConflictStrategy strategy);
-        void MoveValue(Amd64Register &dst, Value &value, ConflictStrategy strategy);
+        void MoveValue(StackAllocationContainer &dst, Register &src);
+        void MoveValue(Register &dst, Register &src, ConflictStrategy strategy);
+        void MoveValue(Register &dst, Value &value, ConflictStrategy strategy);
 
-        void HandleConflict(Amd64Register &reg, ConflictStrategy strategy);
+        void HandleConflict(Register &reg, ConflictStrategy strategy);
 
         [[nodiscard]] StackAllocationContainer &AcquireStackSpace(std::size_t size);
-        [[nodiscard]] Amd64Register &AcquireGPRegister(Amd64RegisterValueType value_type = Amd64RegisterValueType::Integer);
-
-        void Associate(Value &value, Container &container);
+        [[nodiscard]] Register &AcquireGPRegister(RegisterType value_type = RegisterType::Integer);
 
         void Insert(Amd64Instruction &&inst);
         void InsertProlog(Amd64Instruction &&inst);
@@ -153,8 +151,6 @@ namespace city
         Amd64Function function;
         IRFunction &ir_function;
         Amd64RegisterBank registers;
-        std::int64_t stack_depth = 0;
-        std::vector<std::unique_ptr<StackAllocationContainer>> local_swap_;
 
         [[nodiscard]] Amd64Function Translate();
 

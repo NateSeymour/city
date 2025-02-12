@@ -10,7 +10,7 @@ add_library(city
         include/city/backend/aarch64/instruction/AArch64Instruction.h
         include/city/backend/amd64/Amd64Function.h
         include/city/backend/amd64/Amd64Module.h
-        include/city/backend/amd64/container/Amd64RegisterBank.h
+        include/city/backend/amd64/Amd64RegisterBank.h
         include/city/backend/amd64/instruction/arithmetic/Amd64Div.h
         include/city/backend/amd64/instruction/arithmetic/Amd64Mul.h
         include/city/backend/amd64/instruction/control/Amd64Leave.h
@@ -79,12 +79,16 @@ add_library(city
         lib/runtime/Windows.cpp
         lib/Symbol.cpp
         lib/Value.cpp
-        include/city/backend/aarch64/container/AArch64Register.h
         include/city/backend/NativeModule.h
         include/city/backend/aarch64/AArch64Function.h
         include/city/backend/aarch64/AArch64Module.h
         include/city/backend/aarch64/AArch64FunctionTranslator.h
         lib/backend/aarch64/AArch64Module.cpp
+        include/city/container/Register.h
+        include/city/backend/aarch64/AArch64RegisterBank.h
+        lib/backend/aarch64/AArch64FunctionTranslator.cpp
+        lib/backend/aarch64/AArch64Function.cpp
+        lib/backend/NativeModule.cpp
 )
 target_include_directories(city PUBLIC include)
 

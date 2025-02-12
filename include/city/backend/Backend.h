@@ -9,7 +9,7 @@ namespace city
     class Backend
     {
     public:
-        [[nodiscard]] virtual Object BuildIRModule(IRModule &&module) = 0;
+        [[nodiscard]] virtual Object BuildIRModule(IRModule &&ir_module) = 0;
 
         /**
          * Instantiates and returns a handle to the host-native compiler backend.

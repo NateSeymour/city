@@ -20,6 +20,7 @@ namespace city
         std::vector<Amd64Instruction> text_;
 
     public:
+        Amd64Function(IRFunction const &ir_function);
         Amd64Function(std::string name, Type type, std::vector<Type> argument_types);
     };
 } // namespace city

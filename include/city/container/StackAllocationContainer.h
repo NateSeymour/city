@@ -20,8 +20,8 @@ namespace city
         std::int64_t base_offset_ = 0;
 
     public:
-        void Load(Amd64FunctionTranslator &translator, Amd64Register &dst) override;
-        void Store(Amd64FunctionTranslator &translator, Amd64Register &src) override;
+        void Load(Amd64FunctionTranslator &translator, Register &dst) override;
+        void Store(Amd64FunctionTranslator &translator, Register &src) override;
 
         void SetOffset(std::int64_t offset);
         [[nodiscard]] std::int64_t GetOffset() const noexcept;

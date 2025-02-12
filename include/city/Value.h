@@ -12,6 +12,9 @@ namespace city
 
     class Value
     {
+        friend class Container;
+
+    protected:
         Type type_;
 
         Container *container_ = nullptr;
@@ -19,15 +22,18 @@ namespace city
         std::size_t read_count_ = 0;
 
     public:
+        /**
+         * Attempts to release the Value by clearing its container. Fails if Value is still used.
+         * @return True if successful, else false
+         */
+        bool Release();
+
         [[nodiscard]] Function *ToFunction() noexcept;
 
         [[nodiscard]] std::size_t GetReadCount() const noexcept;
 
         void IncrementReadCount() noexcept;
         void DecrementReadCount() noexcept;
-
-        void AssociateContainer(Container *container);
-        void Disassociate();
 
         [[nodiscard]] Container *GetContainer() const noexcept;
 

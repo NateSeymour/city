@@ -2,10 +2,10 @@
 #define X86_64INSTRUCTION_H
 
 #include <array>
-#include <city/ByteBuffer.h>
-#include <city/backend/NativeInstruction.h>
-#include <city/backend/amd64/Amd64.h>
 #include <cstdint>
+#include "city/ByteBuffer.h"
+#include "city/backend/NativeInstruction.h"
+#include "city/backend/amd64/Amd64.h"
 
 namespace city
 {
@@ -63,7 +63,7 @@ namespace city
         size_t AppendToBuffer(std::vector<std::uint8_t> &buffer) override;
         [[nodiscard]] std::size_t GetStubOffset() override;
 
-        void SetREX(Amd64Register *reg = nullptr, Amd64Register *rm = nullptr);
+        void SetREX(Register *reg = nullptr, Register *rm = nullptr);
 
         void SetPrefix(std::initializer_list<std::uint8_t> bytes);
         void SetOpcode(std::initializer_list<std::uint8_t> bytes);

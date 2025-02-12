@@ -3,6 +3,17 @@
 
 using namespace city;
 
+bool Value::Release()
+{
+    if (this->container_ == nullptr || !this->IsUsed())
+    {
+        this->container_ = nullptr;
+        return true;
+    }
+
+    return false;
+}
+
 Function *Value::ToFunction() noexcept
 {
     return dynamic_cast<Function *>(this);
@@ -16,16 +27,6 @@ void Value::IncrementReadCount() noexcept
 void Value::DecrementReadCount() noexcept
 {
     this->read_count_--;
-}
-
-void Value::AssociateContainer(Container *container)
-{
-    this->container_ = container;
-}
-
-void Value::Disassociate()
-{
-    this->container_ = nullptr;
 }
 
 Container *Value::GetContainer() const noexcept

@@ -4,7 +4,7 @@
 #include <cstdint>
 
 #include "city/backend/NativeInstruction.h"
-#include "city/backend/aarch64/container/AArch64Register.h"
+#include "city/container/Register.h"
 
 namespace city
 {
@@ -13,7 +13,7 @@ namespace city
         std::uint32_t encoding_ = 0;
 
     protected:
-        [[nodiscard]] static AArch64Instruction AddSubI(AArch64Register &dst, AArch64Register &src, bool sf = true, bool s = true)
+        [[nodiscard]] static AArch64Instruction AddSubI(Register &dst, Register &src, bool sf = true, bool s = true)
         {
             union
             {

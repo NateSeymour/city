@@ -3,12 +3,12 @@
 
 using namespace city;
 
-void ConstantDataContainer::Load(Amd64FunctionTranslator &translator, Amd64Register &dst)
+void ConstantDataContainer::Load(Amd64FunctionTranslator &translator, Register &dst)
 {
     translator.Load(dst, *this);
 }
 
-void ConstantDataContainer::Store(Amd64FunctionTranslator &translator, Amd64Register &src)
+void ConstantDataContainer::Store(Amd64FunctionTranslator &translator, Register &src)
 {
     throw std::runtime_error("cannot store value into constant container");
 }

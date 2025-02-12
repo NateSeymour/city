@@ -1,23 +1,41 @@
-#include <city/container/Container.h>
+#include "city/container/Container.h"
+#include "city/Value.h"
 
 using namespace city;
 
-void Container::AssociateValue(Value *value)
+bool Container::InstantiateValue(Value *value)
 {
+    if (this->HasValue() || !value || value->IsInstantiated())
+    {
+        return false;
+    }
+
     this->value_ = value;
+    this->value_->container_ = this;
+
+    return true;
 }
 
-void Container::Disassociate()
+bool Container::TakeValue(Container *container)
 {
-    this->value_ = nullptr;
-}
+    if (this->HasValue() || !container->HasValue())
+    {
+        return false;
+    }
 
-Value *Container::GetValue() const noexcept
-{
-    return this->value_;
+    this->value_ = container->value_;
+    this->value_->container_ = this;
+    container->value_ = nullptr;
+
+    return true;
 }
 
 bool Container::HasValue() const noexcept
+{
+    return this->value_ && this->value_->IsUsed();
+}
+
+Value *Container::GetValue() const noexcept
 {
     return this->value_;
 }

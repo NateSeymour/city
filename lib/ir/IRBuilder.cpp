@@ -81,8 +81,7 @@ Value *IRBuilder::CreateConstant(Type type, std::vector<std::uint8_t> const &dat
     auto container = this->CreateConstantDataContainer(data.size(), offset);
     auto value = this->ReserveValue(type);
 
-    value->AssociateContainer(container);
-    container->AssociateValue(value);
+    container->InstantiateValue(value);
 
     return value;
 }

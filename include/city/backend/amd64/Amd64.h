@@ -2,7 +2,6 @@
 #define X86_64_H
 
 #include <city/backend/Backend.h>
-#include "container/Amd64Register.h"
 
 namespace city
 {

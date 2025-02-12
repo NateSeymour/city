@@ -8,7 +8,7 @@ namespace city
     class Amd64Mul : public Amd64Instruction
     {
     public:
-        static Amd64Mul RM32(Amd64Register &dst, Amd64Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0)
+        static Amd64Mul RM32(Register &dst, Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0)
         {
             Amd64Mul inst{};
 
@@ -18,7 +18,7 @@ namespace city
             return inst;
         }
 
-        static Amd64Mul RM64(Amd64Register &dst, Amd64Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0)
+        static Amd64Mul RM64(Register &dst, Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0)
         {
             Amd64Mul inst{};
 
@@ -29,7 +29,7 @@ namespace city
             return inst;
         }
 
-        static Amd64Mul RMX(Amd64Register &dst, Amd64Register &src, std::size_t size, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0)
+        static Amd64Mul RMX(Register &dst, Register &src, std::size_t size, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0)
         {
             if (size <= 4)
             {
@@ -44,7 +44,7 @@ namespace city
             throw std::runtime_error("operands too large");
         }
 
-        static Amd64Mul SDA(Amd64Register &dst, Amd64Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0)
+        static Amd64Mul SDA(Register &dst, Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0)
         {
             Amd64Mul inst{};
 

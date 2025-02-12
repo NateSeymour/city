@@ -3,12 +3,12 @@
 
 using namespace city;
 
-void StackAllocationContainer::Load(Amd64FunctionTranslator &translator, Amd64Register &dst)
+void StackAllocationContainer::Load(Amd64FunctionTranslator &translator, Register &dst)
 {
     translator.Load(dst, *this);
 }
 
-void StackAllocationContainer::Store(Amd64FunctionTranslator &translator, Amd64Register &src)
+void StackAllocationContainer::Store(Amd64FunctionTranslator &translator, Register &src)
 {
     translator.Store(*this, src);
 }
