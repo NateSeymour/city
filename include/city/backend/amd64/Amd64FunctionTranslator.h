@@ -51,8 +51,8 @@ namespace city
             requires CInstSDA<NativeInstructionType>
         void TranslateFPBinaryInstruction(IRInstructionType &inst)
         {
-            auto lhs = *inst.GetLHS();
-            auto rhs = *inst.GetRHS();
+            auto &lhs = *inst.GetLHS();
+            auto &rhs = *inst.GetRHS();
 
             Register &dsttmp = this->PrepareDestinationValue(lhs);
             auto [srctmp, mod, disp] = this->PrepareSourceValue(rhs);
@@ -70,8 +70,8 @@ namespace city
         {
             auto const &type = inst.GetType();
 
-            auto lhs = *inst.GetLHS();
-            auto rhs = *inst.GetRHS();
+            auto &lhs = *inst.GetLHS();
+            auto &rhs = *inst.GetRHS();
 
             if constexpr (CInstRM<NativeInstructionType>::value)
             {
@@ -142,6 +142,8 @@ namespace city
 
         [[nodiscard]] StackAllocationContainer &AcquireStackSpace(std::size_t size);
         [[nodiscard]] Register &AcquireGPRegister(RegisterType value_type = RegisterType::Integer);
+
+        [[nodiscard]] std::span<Register *> GetScratchRegisterBank(NativeType type) override;
 
         void Insert(Amd64Instruction &&inst);
         void InsertProlog(Amd64Instruction &&inst);

@@ -1,14 +1,14 @@
-#include <city/backend/amd64/Amd64FunctionTranslator.h>
-#include <city/container/StackAllocationContainer.h>
+#include "city/container/StackAllocationContainer.h"
+#include "city/backend/IRTranslator.h"
 
 using namespace city;
 
-void StackAllocationContainer::Load(Amd64FunctionTranslator &translator, Register &dst)
+void StackAllocationContainer::Load(IRTranslator &translator, Register &dst)
 {
     translator.Load(dst, *this);
 }
 
-void StackAllocationContainer::Store(Amd64FunctionTranslator &translator, Register &src)
+void StackAllocationContainer::Store(IRTranslator &translator, Register &src)
 {
     translator.Store(*this, src);
 }

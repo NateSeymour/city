@@ -36,8 +36,8 @@ namespace city
         bool is_ext_ = false;
 
     public:
-        void Load(Amd64FunctionTranslator &translator, Register &dst) override;
-        void Store(Amd64FunctionTranslator &translator, Register &src) override;
+        void Load(IRTranslator &translator, Register &dst) override;
+        void Store(IRTranslator &translator, Register &src) override;
 
         [[nodiscard]] RegisterCode GetCode() const noexcept;
         [[nodiscard]] RegisterType GetValueType() const noexcept;

@@ -12,6 +12,11 @@ IRBlock &IRFunction::GetLastBlock() noexcept
     return this->blocks_.back();
 }
 
+std::list<IRBlock> const &IRFunction::GetBlocks() const noexcept
+{
+    return this->blocks_;
+}
+
 IRBlock &IRFunction::AppendBlock()
 {
     return this->blocks_.emplace_back(*this);

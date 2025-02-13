@@ -11,8 +11,8 @@ namespace city
         std::size_t offset_;
 
     public:
-        void Load(Amd64FunctionTranslator &translator, Register &dst) override;
-        void Store(Amd64FunctionTranslator &translator, Register &src) override;
+        void Load(IRTranslator &translator, Register &dst) override;
+        void Store(IRTranslator &translator, Register &src) override;
 
         [[nodiscard]] std::size_t GetSize() const noexcept override;
         [[nodiscard]] std::size_t GetOffset() const noexcept;

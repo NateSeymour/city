@@ -1,14 +1,14 @@
-#include "city/backend/amd64/Amd64FunctionTranslator.h"
 #include "city/container/Register.h"
+#include "city/backend/IRTranslator.h"
 
 using namespace city;
 
-void Register::Load(Amd64FunctionTranslator &translator, Register &dst)
+void Register::Load(IRTranslator &translator, Register &dst)
 {
     translator.Load(dst, *this);
 }
 
-void Register::Store(Amd64FunctionTranslator &translator, Register &src)
+void Register::Store(IRTranslator &translator, Register &src)
 {
     translator.Store(*this, src);
 }

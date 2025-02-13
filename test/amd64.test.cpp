@@ -31,6 +31,7 @@ TEST_F(Amd64TestRunner, AddConstantFunction)
 
     auto test = assembly["add_constants"].ToPointer<int()>();
 
+    test();
     ASSERT_EQ(test(), EXPECTED_RETURN_VALUE);
 
     this->jit.RemoveModule("test");

@@ -20,14 +20,14 @@ namespace city
         std::int64_t base_offset_ = 0;
 
     public:
-        void Load(Amd64FunctionTranslator &translator, Register &dst) override;
-        void Store(Amd64FunctionTranslator &translator, Register &src) override;
+        void Load(IRTranslator &translator, Register &dst) override;
+        void Store(IRTranslator &translator, Register &src) override;
 
         void SetOffset(std::int64_t offset);
         [[nodiscard]] std::int64_t GetOffset() const noexcept;
         [[nodiscard]] std::size_t GetSize() const noexcept override;
         [[nodiscard]] ContainerType GetType() const noexcept override;
-        
+
         StackAllocationContainer(std::size_t size);
         StackAllocationContainer(StackAllocationContainer const &) = delete;
     };

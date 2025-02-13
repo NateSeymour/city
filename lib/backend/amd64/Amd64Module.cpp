@@ -34,7 +34,6 @@ Object Amd64Module::Compile()
         }
     }
 
-
     return {std::move(this->data_), std::move(text), std::move(symtab), std::move(this->stubs_)};
 }
 

@@ -50,7 +50,7 @@ add_library(city
         lib/backend/amd64/Amd64Function.cpp
         lib/backend/amd64/Amd64FunctionTranslator.cpp
         lib/backend/amd64/Amd64Module.cpp
-        lib/backend/amd64/container/Amd64Register.cpp
+        lib/container/Register.cpp
         lib/backend/amd64/instruction/Amd64Instruction.cpp
         lib/backend/Backend.cpp
         lib/backend/NativeInstruction.cpp
@@ -89,6 +89,9 @@ add_library(city
         lib/backend/aarch64/AArch64FunctionTranslator.cpp
         lib/backend/aarch64/AArch64Function.cpp
         lib/backend/NativeModule.cpp
+        include/city/backend/aarch64/instruction/arithmetic/AArch64Add.h
+        lib/backend/IRTranslator.cpp
+        include/city/backend/aarch64/instruction/control/AArch64Ret.h
 )
 target_include_directories(city PUBLIC include)
 

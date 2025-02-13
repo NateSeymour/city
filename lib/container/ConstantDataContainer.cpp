@@ -1,14 +1,15 @@
-#include <city/backend/amd64/Amd64FunctionTranslator.h>
-#include <city/container/ConstantDataContainer.h>
+#include "city/container/ConstantDataContainer.h"
+#include <stdexcept>
+#include "city/backend/IRTranslator.h"
 
 using namespace city;
 
-void ConstantDataContainer::Load(Amd64FunctionTranslator &translator, Register &dst)
+void ConstantDataContainer::Load(IRTranslator &translator, Register &dst)
 {
     translator.Load(dst, *this);
 }
 
-void ConstantDataContainer::Store(Amd64FunctionTranslator &translator, Register &src)
+void ConstantDataContainer::Store(IRTranslator &translator, Register &src)
 {
     throw std::runtime_error("cannot store value into constant container");
 }

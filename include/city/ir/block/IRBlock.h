@@ -24,6 +24,8 @@ namespace city
         std::vector<std::unique_ptr<IRInstruction>> instructions_;
 
     public:
+        [[nodiscard]] std::vector<std::unique_ptr<IRInstruction>> const &GetInstructions() const noexcept;
+
         explicit IRBlock(IRFunction &parent_function);
     };
 } // namespace city

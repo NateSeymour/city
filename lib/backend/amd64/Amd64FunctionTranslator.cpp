@@ -379,6 +379,20 @@ Register &Amd64FunctionTranslator::AcquireGPRegister(RegisterType value_type)
     throw std::runtime_error("failed to acquire a new gp register");
 }
 
+std::span<Register *> Amd64FunctionTranslator::GetScratchRegisterBank(NativeType type)
+{
+    if (type == NativeType::Integer)
+    {
+        return std::span{this->registers.r_volatile};
+    }
+    else if (type == NativeType::FloatingPoint)
+    {
+        return std::span{this->registers.xmm_volatile};
+    }
+
+    throw std::runtime_error("unknown type");
+}
+
 StackAllocationContainer &Amd64FunctionTranslator::AcquireStackSpace(std::size_t size)
 {
     for (auto &stack_allocation : this->stack_)
@@ -399,9 +413,10 @@ StackAllocationContainer &Amd64FunctionTranslator::AcquireStackSpace(std::size_t
 Amd64Function Amd64FunctionTranslator::Translate()
 {
     // Instantiate arguments
-    for (int i = 0; i < this->ir_function.arg_values_.size(); i++)
+    auto const &arg_values = this->ir_function.GetArgumentValues();
+    for (int i = 0; i < arg_values.size(); i++)
     {
-        auto value = this->ir_function.arg_values_[i];
+        auto value = arg_values[i];
         auto const &value_type = value->GetType();
 
         if (value_type.GetNativeType() == NativeType::Integer)
@@ -415,9 +430,9 @@ Amd64Function Amd64FunctionTranslator::Translate()
     }
 
     // Function Body
-    for (auto &block : this->ir_function.blocks_)
+    for (auto &block : this->ir_function.GetBlocks())
     {
-        for (auto &instruction : block.instructions_)
+        for (auto &instruction : block.GetInstructions())
         {
             instruction->Apply(this);
         }

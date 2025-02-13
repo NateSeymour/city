@@ -1,6 +1,8 @@
 #ifndef IRTRANSLATOR_H
 #define IRTRANSLATOR_H
 
+#include <span>
+
 #include "city/container/ConstantDataContainer.h"
 #include "city/container/Register.h"
 #include "city/container/StackAllocationContainer.h"
@@ -18,7 +20,15 @@ namespace city
     {
     protected:
         std::int64_t stack_depth_ = 0;
+        std::uint64_t register_dislocation_count_ = 0;
         std::vector<std::unique_ptr<StackAllocationContainer>> stack_;
+
+        void AlignStack(unsigned int alignment) noexcept;
+
+        [[nodiscard]] virtual std::span<Register *> GetScratchRegisterBank(NativeType type) = 0;
+
+        [[nodiscard]] StackAllocationContainer &AcquireStackSpace(Type type);
+        [[nodiscard]] Register &AcquireScratchRegister(NativeType type);
 
     public:
         virtual void TranslateInstruction(AddInst &inst) = 0;

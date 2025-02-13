@@ -6,8 +6,8 @@
 namespace city
 {
     class Value;
-    class Amd64FunctionTranslator;
     class Register;
+    class IRTranslator;
 
     enum class ContainerType
     {
@@ -40,8 +40,8 @@ namespace city
 
         [[nodiscard]] virtual ContainerType GetType() const noexcept = 0;
 
-        virtual void Load(Amd64FunctionTranslator &translator, Register &dst) = 0;
-        virtual void Store(Amd64FunctionTranslator &translator, Register &src) = 0;
+        virtual void Load(IRTranslator &translator, Register &dst) = 0;
+        virtual void Store(IRTranslator &translator, Register &src) = 0;
 
         virtual ~Container() = default;
     };
