@@ -78,10 +78,19 @@ void AArch64FunctionTranslator::Load(Register &dst, ConstantDataContainer &src)
     }
 
     // Zero out the register firsst
-    this->Insert(AArch64Mov::RS(dst, dst, this->reg_.r[31], 0));
-
-    for (int i = src.GetSize(); i > 0; i -= 2)
+    auto buffer = reinterpret_cast<std::uint16_t const *>(src.GetDataBuffer().data());
+    this->Insert(AArch64Mov::IS(dst, buffer[0], 0));
+    auto buffer_size = src.GetSize();
+    for (int i = 1; i < buffer_size / 2; i++)
     {
+        std::uint16_t value = buffer[i];
+
+        if (value == 0)
+        {
+            continue;
+        }
+
+        this->Insert(AArch64Mov::KIS(dst, value, i));
     }
 }
 
@@ -107,6 +116,7 @@ Register &AArch64FunctionTranslator::LoadValue(Value &value)
     auto &reg = this->AcquireScratchRegister(value.GetType().GetNativeType());
 
     container->Load(*this, reg);
+    reg.TakeValue(container);
 
     return reg;
 }

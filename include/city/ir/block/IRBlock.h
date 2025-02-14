@@ -1,11 +1,9 @@
 #ifndef CITY_IRBLOCK_H
 #define CITY_IRBLOCK_H
 
-#include <city/Value.h>
-#include <city/ir/instruction/IRInstruction.h>
 #include <memory>
-#include <optional>
 #include <vector>
+#include "city/ir/instruction/IRInstruction.h"
 
 namespace city
 {

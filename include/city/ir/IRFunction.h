@@ -1,14 +1,12 @@
 #ifndef CITY_IRFUNCTION_H
 #define CITY_IRFUNCTION_H
 
-#include <city/Function.h>
-#include <city/Value.h>
-#include <city/type/Type.h>
 #include <list>
-#include <memory>
-#include <ranges>
 #include <string>
 #include "block/IRBlock.h"
+#include "city/Function.h"
+#include "city/type/Type.h"
+#include "city/value/Value.h"
 
 namespace city
 {

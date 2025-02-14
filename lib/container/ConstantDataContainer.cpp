@@ -14,6 +14,11 @@ void ConstantDataContainer::Store(IRTranslator &translator, Register &src)
     throw std::runtime_error("cannot store value into constant container");
 }
 
+std::size_t ConstantDataContainer::GetSize() const noexcept
+{
+    return this->data_.size();
+}
+
 ContainerType ConstantDataContainer::GetType() const noexcept
 {
     return ContainerType::Constant;

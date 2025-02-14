@@ -1,8 +1,8 @@
 #ifndef IRBINARYINSTRUCTION_H
 #define IRBINARYINSTRUCTION_H
 
-#include <city/Value.h>
 #include "IRInstruction.h"
+#include "city/value/Value.h"
 
 namespace city
 {

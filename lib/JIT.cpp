@@ -31,6 +31,18 @@ Assembly JIT::Link() const
         assembly_data_size += object.GetDataSize();
         assembly_text_size += object.GetBinarySize();
     }
+
+    // TODO: Find better solution!
+    if (assembly_data_size == 0)
+    {
+        assembly_data_size = 1;
+    }
+
+    if (assembly_text_size == 0)
+    {
+        assembly_text_size = 1;
+    }
+
     auto data = NativeMemoryHandle::Allocate(assembly_data_size);
     auto text = NativeMemoryHandle::Allocate(assembly_text_size);
 
