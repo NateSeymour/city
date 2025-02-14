@@ -176,22 +176,26 @@ std::tuple<Register &, Amd64Mod, std::int32_t> Amd64FunctionTranslator::PrepareS
 
 void Amd64FunctionTranslator::Load(Register &dst, ConstantDataContainer &src)
 {
-    Stub stub{
-            .src_offset = src.GetOffset(),
-            .type = StubSourceLocation::Data,
-    };
+    if (src.GetSize() > 8)
+    {
+        throw std::runtime_error("value is too big");
+    }
 
     auto value_type = src.GetValue()->GetType();
     if (value_type.GetNativeType() == NativeType::Integer)
     {
-        this->Insert(Amd64Mov::OIS(dst, std::move(stub)));
+        this->Insert(Amd64Mov::OIX(dst, src.GetDataBuffer()));
         this->Insert(Amd64Mov::RMX(dst, dst, dst.GetSize(), Amd64Mod::Pointer));
     }
-    else
+    // Need to take the roundabout way of loading the value first onto the stack via integer move and then into an xmm register.
+    else if (value_type.GetNativeType() == NativeType::FloatingPoint)
     {
-        auto &stubtmp = this->AcquireGPRegister(RegisterType::Integer);
-        this->Insert(Amd64Mov::OIS(stubtmp, std::move(stub)));
-        this->Insert(Amd64Mov::SDA(dst, stubtmp, Amd64Mod::Pointer));
+        auto &valtmp = this->AcquireGPRegister(RegisterType::Integer);
+        auto &stacktmp = this->AcquireStackSpace(8);
+
+        this->Insert(Amd64Mov::OIX(valtmp, src.GetDataBuffer()));
+        this->Insert(Amd64Mov::MR64(this->registers.r[5], valtmp, Amd64Mod::DisplacedPointer, stacktmp.GetOffset() * -1));
+        this->Insert(Amd64Mov::SDA(dst, this->registers.r[5], Amd64Mod::DisplacedPointer, stacktmp.GetOffset() * -1));
     }
 }
 

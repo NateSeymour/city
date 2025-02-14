@@ -42,7 +42,7 @@ add_library(city
         include/city/runtime/Windows.h
         include/city/Symbol.h
         include/city/type/Type.h
-        include/city/Value.h
+        include/city/value/Value.h
         lib/Assembly.cpp
         lib/backend/aarch64/AArch64.cpp
         lib/backend/aarch64/instruction/AArch64Instruction.cpp
@@ -78,7 +78,7 @@ add_library(city
         lib/runtime/NativeMemoryHandle.cpp
         lib/runtime/Windows.cpp
         lib/Symbol.cpp
-        lib/Value.cpp
+        lib/value/Value.cpp
         include/city/backend/NativeModule.h
         include/city/backend/aarch64/AArch64Function.h
         include/city/backend/aarch64/AArch64Module.h
@@ -92,6 +92,9 @@ add_library(city
         include/city/backend/aarch64/instruction/arithmetic/AArch64Add.h
         lib/backend/IRTranslator.cpp
         include/city/backend/aarch64/instruction/control/AArch64Ret.h
+        include/city/value/ConstantValue.h
+        lib/value/ConstantValue.cpp
+        include/city/backend/aarch64/instruction/memory/AArch64Mov.h
 )
 target_include_directories(city PUBLIC include)
 

@@ -59,7 +59,7 @@ namespace city
             return inst;
         }
 
-        static Amd64Mov OIX(Register &dst, std::vector<std::byte> const &buffer)
+        static Amd64Mov OIX(Register &dst, std::vector<std::uint8_t> const &buffer)
         {
             if (buffer.size() <= 2)
             {

@@ -1,24 +1,25 @@
 #ifndef COMPILETIMECONSTANT_H
 #define COMPILETIMECONSTANT_H
 
+#include <cstdint>
+#include <vector>
 #include "Container.h"
 
 namespace city
 {
     class ConstantDataContainer : public Container
     {
-        std::size_t size_;
-        std::size_t offset_;
+        std::vector<std::uint8_t> data_;
 
     public:
         void Load(IRTranslator &translator, Register &dst) override;
         void Store(IRTranslator &translator, Register &src) override;
 
         [[nodiscard]] std::size_t GetSize() const noexcept override;
-        [[nodiscard]] std::size_t GetOffset() const noexcept;
         [[nodiscard]] ContainerType GetType() const noexcept override;
-        ConstantDataContainer(std::size_t size, std::size_t offset);
-        ConstantDataContainer(ConstantDataContainer const &) = delete;
+        [[nodiscard]] std::vector<std::uint8_t> const &GetDataBuffer() const noexcept;
+
+        ConstantDataContainer(std::vector<std::uint8_t> data);
     };
 } // namespace city
 

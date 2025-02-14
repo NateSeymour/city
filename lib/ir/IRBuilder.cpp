@@ -1,14 +1,8 @@
-#include <city/container/StackAllocationContainer.h>
-#include <city/ir/IRBuilder.h>
-#include <city/ir/IRModule.h>
+#include "city/ir/IRBuilder.h"
+#include "city/ir/IRModule.h"
+#include "city/value/ConstantValue.h"
 
 using namespace city;
-
-ConstantDataContainer *IRBuilder::CreateConstantDataContainer(std::size_t size, std::size_t offset)
-{
-    auto &container = this->module_.global_constants_.emplace_back(std::make_unique<ConstantDataContainer>(size, offset));
-    return container.get();
-}
 
 Value *IRBuilder::ReserveValue(Type type)
 {
@@ -75,15 +69,9 @@ IRFunction *IRBuilder::GetInsertFunction() const
 Value *IRBuilder::CreateConstant(Type type, std::vector<std::uint8_t> const &data)
 {
     // Append the constant data to the module
-    std::size_t offset = this->module_.data_.size();
-    this->module_.data_.insert(this->module_.data_.end(), data.begin(), data.end());
+    auto &value = this->module_.values_.emplace_back(std::make_unique<ConstantValue>(type, data));
 
-    auto container = this->CreateConstantDataContainer(data.size(), offset);
-    auto value = this->ReserveValue(type);
-
-    container->InstantiateValue(value);
-
-    return value;
+    return value.get();
 }
 
 CallInst *IRBuilder::InsertCallInst(Function *function, std::vector<Value *> const &args)

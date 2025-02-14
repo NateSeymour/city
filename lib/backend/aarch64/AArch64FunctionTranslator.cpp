@@ -2,6 +2,7 @@
 
 #include "city/backend/aarch64/instruction/arithmetic/AArch64Add.h"
 #include "city/backend/aarch64/instruction/control/AArch64Ret.h"
+#include "city/backend/aarch64/instruction/memory/AArch64Mov.h"
 
 using namespace city;
 
@@ -75,6 +76,13 @@ void AArch64FunctionTranslator::Load(Register &dst, ConstantDataContainer &src)
     {
         throw std::runtime_error("value is too big");
     }
+
+    // Zero out the register firsst
+    this->Insert(AArch64Mov::RS(dst, dst, this->reg_.r[31], 0));
+
+    for (int i = src.GetSize(); i > 0; i -= 2)
+    {
+    }
 }
 
 void AArch64FunctionTranslator::Load(Register &dst, StackAllocationContainer &src) {}
@@ -99,7 +107,6 @@ Register &AArch64FunctionTranslator::LoadValue(Value &value)
     auto &reg = this->AcquireScratchRegister(value.GetType().GetNativeType());
 
     container->Load(*this, reg);
-    reg.TakeValue(container);
 
     return reg;
 }

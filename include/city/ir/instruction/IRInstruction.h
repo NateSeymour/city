@@ -1,7 +1,7 @@
 #ifndef CITY_INSTRUCTION_H
 #define CITY_INSTRUCTION_H
 
-#include <city/Value.h>
+#include "city/value/Value.h"
 
 namespace city
 {

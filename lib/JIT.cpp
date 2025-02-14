@@ -31,7 +31,7 @@ Assembly JIT::Link() const
         assembly_data_size += object.GetDataSize();
         assembly_text_size += object.GetBinarySize();
     }
-    auto data = NativeMemoryHandle::Allocate(assembly_text_size);
+    auto data = NativeMemoryHandle::Allocate(assembly_data_size);
     auto text = NativeMemoryHandle::Allocate(assembly_text_size);
 
     Assembly assembly{std::move(data), std::move(text)};

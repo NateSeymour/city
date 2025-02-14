@@ -1,9 +1,6 @@
 #ifndef CITY_IRBUILDER_H
 #define CITY_IRBUILDER_H
 
-#include <city/Value.h>
-#include <city/container/ConstantDataContainer.h>
-#include <city/type/Type.h>
 #include <concepts>
 #include <cstdint>
 #include <cstring>
@@ -11,6 +8,9 @@
 #include <type_traits>
 #include "IRFunction.h"
 #include "block/IRBlock.h"
+#include "city/container/ConstantDataContainer.h"
+#include "city/type/Type.h"
+#include "city/value/Value.h"
 #include "instruction/arithmetic/AddInst.h"
 #include "instruction/arithmetic/DivInst.h"
 #include "instruction/arithmetic/MulInst.h"
@@ -30,8 +30,6 @@ namespace city
         IRBlock *insert_point_ = nullptr;
 
     protected:
-        [[nodiscard]] ConstantDataContainer *CreateConstantDataContainer(std::size_t size, std::size_t offset);
-
         [[nodiscard]] Value *ReserveValue(Type type);
 
         template<typename T, typename... Args>

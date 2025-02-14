@@ -1,5 +1,5 @@
-#include <city/Function.h>
-#include <city/Value.h>
+#include "city/value/Value.h"
+#include "city/Function.h"
 
 using namespace city;
 
@@ -29,7 +29,7 @@ void Value::DecrementReadCount() noexcept
     this->read_count_--;
 }
 
-Container *Value::GetContainer() const noexcept
+Container *Value::GetContainer() noexcept
 {
     return this->container_;
 }
