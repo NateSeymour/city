@@ -14,17 +14,6 @@ namespace city
         ConstantDataContainer data_container_;
 
     public:
-        [[nodiscard]] Container *GetContainer() noexcept override;
-
-        void IncrementReadCount() noexcept override;
-        void DecrementReadCount() noexcept override;
-        [[nodiscard]] std::size_t GetReadCount() const noexcept override;
-
-        [[nodiscard]] bool IsInstantiated() const noexcept override;
-        [[nodiscard]] bool IsUsed() const noexcept override;
-
-        bool Release() override;
-
         ConstantValue(Type type, ConstantDataContainer container);
     };
 } // namespace city

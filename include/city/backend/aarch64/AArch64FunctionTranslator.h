@@ -35,6 +35,23 @@ namespace city
 
         [[nodiscard]] AArch64BinaryOperation PrepareBinaryOperation(IRBinaryInstruction &inst);
 
+        template<typename IRInstructionType, typename NativeInstructionType>
+        void TranslateBinaryInstruction(IRInstructionType &inst)
+        {
+            auto op = this->PrepareBinaryOperation(inst);
+
+            if (op.optype == NativeType::Integer)
+            {
+                this->Insert(NativeInstructionType::R(op.dst, op.src1, op.src2));
+            }
+            else if (op.optype == NativeType::FloatingPoint)
+            {
+                this->Insert(NativeInstructionType::F(op.dst, op.src1, op.src2));
+            }
+
+            op.Persist();
+        }
+
         void TranslateInstruction(AddInst &inst) override;
         void TranslateInstruction(DivInst &inst) override;
         void TranslateInstruction(MulInst &inst) override;

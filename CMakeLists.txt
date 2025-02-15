@@ -95,6 +95,8 @@ add_library(city
         include/city/value/ConstantValue.h
         lib/value/ConstantValue.cpp
         include/city/backend/aarch64/instruction/memory/AArch64Mov.h
+        include/city/backend/aarch64/instruction/arithmetic/AArch64Div.h
+        include/city/backend/aarch64/instruction/arithmetic/AArch64Mul.h
 )
 target_include_directories(city PUBLIC include)
 
@@ -110,7 +112,7 @@ if (CITY_ENABLE_TESTS)
 
     add_executable(city-test
             test/module.test.cpp
-            test/amd64.test.cpp
+            test/jit.test.cpp
     )
     target_link_libraries(city-test PRIVATE city GTest::gtest_main)
 endif ()

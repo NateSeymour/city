@@ -1,6 +1,8 @@
 #include "city/backend/aarch64/AArch64FunctionTranslator.h"
 
 #include "city/backend/aarch64/instruction/arithmetic/AArch64Add.h"
+#include "city/backend/aarch64/instruction/arithmetic/AArch64Div.h"
+#include "city/backend/aarch64/instruction/arithmetic/AArch64Mul.h"
 #include "city/backend/aarch64/instruction/control/AArch64Ret.h"
 #include "city/backend/aarch64/instruction/memory/AArch64Mov.h"
 
@@ -55,13 +57,19 @@ AArch64BinaryOperation AArch64FunctionTranslator::PrepareBinaryOperation(IRBinar
 
 void AArch64FunctionTranslator::TranslateInstruction(AddInst &inst)
 {
-    auto op = this->PrepareBinaryOperation(inst);
-    this->Insert(AArch64Add::R(op.dst, op.src1, op.src2));
-    op.Persist();
+    this->TranslateBinaryInstruction<AddInst, AArch64Add>(inst);
 }
 
-void AArch64FunctionTranslator::TranslateInstruction(DivInst &inst) {}
-void AArch64FunctionTranslator::TranslateInstruction(MulInst &inst) {}
+void AArch64FunctionTranslator::TranslateInstruction(DivInst &inst)
+{
+    this->TranslateBinaryInstruction<DivInst, AArch64Div>(inst);
+}
+
+void AArch64FunctionTranslator::TranslateInstruction(MulInst &inst)
+{
+    this->TranslateBinaryInstruction<MulInst, AArch64Mul>(inst);
+}
+
 void AArch64FunctionTranslator::TranslateInstruction(SubInst &inst) {}
 void AArch64FunctionTranslator::TranslateInstruction(CallInst &inst) {}
 
@@ -77,9 +85,18 @@ void AArch64FunctionTranslator::Load(Register &dst, ConstantDataContainer &src)
         throw std::runtime_error("value is too big");
     }
 
-    // Zero out the register firsst
+    Register *tmpdst = nullptr;
+    if (dst.GetValueType() == RegisterType::Integer)
+    {
+        tmpdst = &dst;
+    }
+    else if (dst.GetValueType() == RegisterType::FloatingPoint)
+    {
+        tmpdst = &this->AcquireScratchRegister(NativeType::Integer);
+    }
+
     auto buffer = reinterpret_cast<std::uint16_t const *>(src.GetDataBuffer().data());
-    this->Insert(AArch64Mov::IS(dst, buffer[0], 0));
+    this->Insert(AArch64Mov::IS(*tmpdst, buffer[0], 0));
     auto buffer_size = src.GetSize();
     for (int i = 1; i < buffer_size / 2; i++)
     {
@@ -90,7 +107,12 @@ void AArch64FunctionTranslator::Load(Register &dst, ConstantDataContainer &src)
             continue;
         }
 
-        this->Insert(AArch64Mov::KIS(dst, value, i));
+        this->Insert(AArch64Mov::KIS(*tmpdst, value, i));
+    }
+
+    if (dst.GetValueType() == RegisterType::FloatingPoint)
+    {
+        this->Insert(AArch64Mov::FR(dst, *tmpdst));
     }
 }
 
