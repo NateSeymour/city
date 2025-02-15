@@ -59,7 +59,7 @@ protected:
 
 TEST_F(JITTestRunner, Int16Addition)
 {
-    auto values = this->GetRandomPair<std::int16_t>();
+    auto values = this->GetRandomPair<std::uint16_t>();
 
     auto assembly = this->BuildTestModule([&](city::IRBuilder &builder) {
         (void)builder.CreateFunction("add");
@@ -69,7 +69,7 @@ TEST_F(JITTestRunner, Int16Addition)
         builder.InsertRetInst(retval);
     });
 
-    auto test = assembly["add"].ToPointer<std::int16_t()>();
+    auto test = assembly["add"].ToPointer<std::uint16_t()>();
 
     auto value = test();
     ASSERT_EQ(value, values.first + values.second);
@@ -77,7 +77,7 @@ TEST_F(JITTestRunner, Int16Addition)
 
 TEST_F(JITTestRunner, Int32Addition)
 {
-    auto values = this->GetRandomPair<std::int32_t>();
+    auto values = this->GetRandomPair<std::uint32_t>();
 
     auto assembly = this->BuildTestModule([&](city::IRBuilder &builder) {
         (void)builder.CreateFunction("add");
@@ -87,7 +87,7 @@ TEST_F(JITTestRunner, Int32Addition)
         builder.InsertRetInst(retval);
     });
 
-    auto test = assembly["add"].ToPointer<std::int32_t()>();
+    auto test = assembly["add"].ToPointer<std::uint32_t()>();
 
     auto value = test();
     ASSERT_EQ(value, values.first + values.second);
@@ -95,7 +95,7 @@ TEST_F(JITTestRunner, Int32Addition)
 
 TEST_F(JITTestRunner, Int64Addition)
 {
-    auto values = this->GetRandomPair<std::int64_t>();
+    auto values = this->GetRandomPair<std::uint64_t>();
 
     auto assembly = this->BuildTestModule([&](city::IRBuilder &builder) {
         (void)builder.CreateFunction("add");
@@ -105,7 +105,7 @@ TEST_F(JITTestRunner, Int64Addition)
         builder.InsertRetInst(retval);
     });
 
-    auto test = assembly["add"].ToPointer<std::int64_t()>();
+    auto test = assembly["add"].ToPointer<std::uint64_t()>();
 
     auto value = test();
     ASSERT_EQ(value, values.first + values.second);
@@ -149,7 +149,7 @@ TEST_F(JITTestRunner, FP64Addition)
 
 TEST_F(JITTestRunner, Int16Division)
 {
-    auto values = this->GetRandomPair<std::int16_t>();
+    auto values = this->GetRandomPair<std::uint16_t>();
 
     auto assembly = this->BuildTestModule([&](city::IRBuilder &builder) {
         (void)builder.CreateFunction("div");
@@ -159,7 +159,7 @@ TEST_F(JITTestRunner, Int16Division)
         builder.InsertRetInst(retval);
     });
 
-    auto test = assembly["div"].ToPointer<std::int16_t()>();
+    auto test = assembly["div"].ToPointer<std::uint16_t()>();
 
     auto value = test();
     ASSERT_EQ(value, values.first / values.second);
@@ -167,7 +167,7 @@ TEST_F(JITTestRunner, Int16Division)
 
 TEST_F(JITTestRunner, Int32Division)
 {
-    auto values = this->GetRandomPair<std::int32_t>();
+    auto values = this->GetRandomPair<std::uint32_t>();
 
     auto assembly = this->BuildTestModule([&](city::IRBuilder &builder) {
         (void)builder.CreateFunction("div");
@@ -177,7 +177,7 @@ TEST_F(JITTestRunner, Int32Division)
         builder.InsertRetInst(retval);
     });
 
-    auto test = assembly["div"].ToPointer<std::int32_t()>();
+    auto test = assembly["div"].ToPointer<std::uint32_t()>();
 
     auto value = test();
     ASSERT_EQ(value, values.first / values.second);
@@ -185,7 +185,7 @@ TEST_F(JITTestRunner, Int32Division)
 
 TEST_F(JITTestRunner, Int64Division)
 {
-    auto values = this->GetRandomPair<std::int64_t>();
+    auto values = this->GetRandomPair<std::uint64_t>();
 
     auto assembly = this->BuildTestModule([&](city::IRBuilder &builder) {
         (void)builder.CreateFunction("div");
@@ -195,7 +195,7 @@ TEST_F(JITTestRunner, Int64Division)
         builder.InsertRetInst(retval);
     });
 
-    auto test = assembly["div"].ToPointer<std::int64_t()>();
+    auto test = assembly["div"].ToPointer<std::uint64_t()>();
 
     auto value = test();
     ASSERT_EQ(value, values.first / values.second);
@@ -239,7 +239,7 @@ TEST_F(JITTestRunner, FP64Division)
 
 TEST_F(JITTestRunner, Int16Multiplication)
 {
-    auto values = this->GetRandomPair<std::int16_t>();
+    auto values = this->GetRandomPair<std::uint16_t>();
 
     auto assembly = this->BuildTestModule([&](city::IRBuilder &builder) {
         (void)builder.CreateFunction("mul");
@@ -249,7 +249,7 @@ TEST_F(JITTestRunner, Int16Multiplication)
         builder.InsertRetInst(retval);
     });
 
-    auto test = assembly["mul"].ToPointer<std::int16_t()>();
+    auto test = assembly["mul"].ToPointer<std::uint16_t()>();
 
     auto value = test();
     ASSERT_EQ(value, values.first * values.second);
@@ -257,7 +257,7 @@ TEST_F(JITTestRunner, Int16Multiplication)
 
 TEST_F(JITTestRunner, Int32Multiplication)
 {
-    auto values = this->GetRandomPair<std::int32_t>();
+    auto values = this->GetRandomPair<std::uint32_t>();
 
     auto assembly = this->BuildTestModule([&](city::IRBuilder &builder) {
         (void)builder.CreateFunction("mul");
@@ -267,7 +267,7 @@ TEST_F(JITTestRunner, Int32Multiplication)
         builder.InsertRetInst(retval);
     });
 
-    auto test = assembly["mul"].ToPointer<std::int32_t()>();
+    auto test = assembly["mul"].ToPointer<std::uint32_t()>();
 
     auto value = test();
     ASSERT_EQ(value, values.first * values.second);
@@ -275,7 +275,7 @@ TEST_F(JITTestRunner, Int32Multiplication)
 
 TEST_F(JITTestRunner, Int64Multiplication)
 {
-    auto values = this->GetRandomPair<std::int64_t>();
+    auto values = this->GetRandomPair<std::uint64_t>();
 
     auto assembly = this->BuildTestModule([&](city::IRBuilder &builder) {
         (void)builder.CreateFunction("mul");
@@ -285,7 +285,7 @@ TEST_F(JITTestRunner, Int64Multiplication)
         builder.InsertRetInst(retval);
     });
 
-    auto test = assembly["mul"].ToPointer<std::int64_t()>();
+    auto test = assembly["mul"].ToPointer<std::uint64_t()>();
 
     auto value = test();
     ASSERT_EQ(value, values.first * values.second);

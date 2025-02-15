@@ -25,7 +25,7 @@ namespace city
 
         [[nodiscard]] static AArch64Div F(Register &dst, Register &src1, Register &src2, std::size_t size = 8)
         {
-            unsigned ptype = (size / 4) + 1;
+            unsigned ptype = (size / 4) - 1;
             return {AArch64Encoding{
                     .fdp2{
                             .m = 0b0,

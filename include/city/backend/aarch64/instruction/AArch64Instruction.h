@@ -38,6 +38,21 @@ namespace city
         } dp_add_sub_ext;
         static_assert(sizeof(DPAddSubExt) == 4);
 
+        struct DPAddSubShift
+        {
+            unsigned rd : 5 = 0b0;
+            unsigned rn : 5 = 0b0;
+            unsigned imm : 6 = 0b0;
+            unsigned rm : 5 = 0b0;
+            unsigned _0 : 1 = 0b0;
+            unsigned shift : 2 = 0b0;
+            unsigned op0 : 5 = 0b0101'1;
+            unsigned s : 1 = 0b0;
+            unsigned op : 1 = 0b0;
+            unsigned sf : 1 = 0b1;
+        } dp_add_sub_shift;
+        static_assert(sizeof(DPAddSubShift) == 4);
+
         struct DP2
         {
             unsigned rd : 5 = 0b0;

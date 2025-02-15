@@ -28,12 +28,12 @@ namespace city
         {
             unsigned sf = size / 8;
             return {AArch64Encoding{
-                    .dp_add_sub_ext{
+                    .dp_add_sub_shift{
                             .sf = sf,
                             .op = 0b0,
                             .s = 0b0,
+                            .shift = 0b0,
                             .rm = src1.GetCode(),
-                            .option = 0b0,
                             .imm = 0b0,
                             .rn = src2.GetCode(),
                             .rd = dst.GetCode(),
