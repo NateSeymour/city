@@ -8,80 +8,53 @@ namespace city
     class AArch64Add : public AArch64Instruction
     {
     public:
-        static AArch64Add I(Register &dst, Register &src1, std::uint16_t src2)
+        [[nodiscard]] static AArch64Add I(Register &dst, Register &src1, std::uint16_t src2, std::size_t size = 8)
         {
-            union
-            {
-                struct
-                {
-                    unsigned dst : 5 = 0;
-                    unsigned src : 5 = 0;
-                    unsigned imm : 12 = 0;
-                    unsigned sh : 1 = 0;
-                    unsigned op : 6 = 0b100010;
-                    unsigned s : 1 = 1;
-                    unsigned op1 : 1 = 0;
-                    unsigned sf : 1 = 1;
-                };
-                std::uint32_t raw;
-            } encoding{
-                    .dst = dst.GetCode(),
-                    .src = src1.GetCode(),
-                    .imm = src2,
-            };
-
-            return {encoding.raw};
+            unsigned sf = size / 8;
+            return {AArch64Encoding{
+                    .dp_add_sub_i{
+                            .sf = sf,
+                            .op = 0b0,
+                            .s = 0b0,
+                            .sh = 0b0,
+                            .imm = src2,
+                            .rn = src1.GetCode(),
+                            .rd = dst.GetCode(),
+                    },
+            }};
         }
 
-        static AArch64Add R(Register &dst, Register &src1, Register &src2)
+        [[nodiscard]] static AArch64Add R(Register &dst, Register &src1, Register &src2, std::size_t size = 8)
         {
-            union
-            {
-                struct
-                {
-                    unsigned dst : 5 = 0;
-                    unsigned src1 : 5 = 0;
-                    unsigned imm : 6 = 0;
-                    unsigned src2 : 5 = 0;
-                    unsigned n : 1 = 0;
-                    unsigned shift : 2 = 0;
-                    unsigned op : 5 = 0b01011;
-                    unsigned s : 1 = 0;
-                    unsigned op1 : 1 = 0;
-                    unsigned sf : 1 = 1;
-                };
-                std::uint32_t raw;
-            } encoding{
-                    .dst = dst.GetCode(),
-                    .src1 = src1.GetCode(),
-                    .src2 = src2.GetCode(),
-            };
-
-            return {encoding.raw};
+            unsigned sf = size / 8;
+            return {AArch64Encoding{
+                    .dp_add_sub_ext{
+                            .sf = sf,
+                            .op = 0b0,
+                            .s = 0b0,
+                            .rm = src1.GetCode(),
+                            .option = 0b0,
+                            .imm = 0b0,
+                            .rn = src2.GetCode(),
+                            .rd = dst.GetCode(),
+                    },
+            }};
         }
 
-        static AArch64Add F(Register &dst, Register &src1, Register &src2)
+        [[nodiscard]] static AArch64Add F(Register &dst, Register &src1, Register &src2, std::size_t size = 8)
         {
-            union
-            {
-                struct
-                {
-                    unsigned dst : 5 = 0;
-                    unsigned src1 : 5 = 0;
-                    unsigned _ : 6 = 0b001010;
-                    unsigned src2 : 5 = 0;
-                    unsigned n : 1 = 1;
-                    unsigned ftype : 2 = 0b01;
-                    unsigned op : 8 = 0b0001'1110;
-                };
-                std::uint32_t raw;
-            } encoding{
-                    .dst = dst.GetCode(),
-                    .src1 = src1.GetCode(),
-                    .src2 = src2.GetCode(),
-            };
-
-            return {encoding.raw};
+            unsigned ptype = (size / 4) - 1;
+            return {AArch64Encoding{
+                    .fdp2{
+                            .m = 0b0,
+                            .s = 0b0,
+                            .ptype = ptype,
+                            .rm = src1.GetCode(),
+                            .opcode = 0b0010,
+                            .rn = src2.GetCode(),
+                            .rd = dst.GetCode(),
+                    },
+            }};
         }
 
         AArch64Add(std::uint32_t encoding) : AArch64Instruction(encoding) {}

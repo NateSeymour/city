@@ -1,5 +1,7 @@
 #include "city/backend/aarch64/AArch64FunctionTranslator.h"
 
+#include <algorithm>
+
 #include "city/backend/aarch64/instruction/arithmetic/AArch64Add.h"
 #include "city/backend/aarch64/instruction/arithmetic/AArch64Div.h"
 #include "city/backend/aarch64/instruction/arithmetic/AArch64Mul.h"
@@ -29,6 +31,8 @@ AArch64BinaryOperation AArch64FunctionTranslator::PrepareBinaryOperation(IRBinar
     auto &lhs = *inst.GetLHS();
     auto &rhs = *inst.GetRHS();
 
+    std::size_t opsize = inst.GetType().GetSize();
+
     auto &src1tmp = this->LoadValue(lhs);
     auto &src2tmp = this->LoadValue(rhs);
 
@@ -51,6 +55,7 @@ AArch64BinaryOperation AArch64FunctionTranslator::PrepareBinaryOperation(IRBinar
             .dst = *dst,
             .src1 = src1tmp,
             .src2 = src2tmp,
+            .opsize = opsize,
             .optype = optype,
     };
 }

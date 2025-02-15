@@ -15,6 +15,7 @@ namespace city
         Register &dst;
         Register &src1;
         Register &src2;
+        std::size_t opsize;
         NativeType optype;
 
         void Persist() const
@@ -42,11 +43,11 @@ namespace city
 
             if (op.optype == NativeType::Integer)
             {
-                this->Insert(NativeInstructionType::R(op.dst, op.src1, op.src2));
+                this->Insert(NativeInstructionType::R(op.dst, op.src1, op.src2, op.opsize));
             }
             else if (op.optype == NativeType::FloatingPoint)
             {
-                this->Insert(NativeInstructionType::F(op.dst, op.src1, op.src2));
+                this->Insert(NativeInstructionType::F(op.dst, op.src1, op.src2, op.opsize));
             }
 
             op.Persist();

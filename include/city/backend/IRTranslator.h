@@ -1,7 +1,9 @@
 #ifndef IRTRANSLATOR_H
 #define IRTRANSLATOR_H
 
+#include <memory>
 #include <span>
+#include <vector>
 
 #include "city/container/ConstantDataContainer.h"
 #include "city/container/Register.h"
