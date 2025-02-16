@@ -19,14 +19,14 @@ namespace city
 
         void Persist() const
         {
+            dst.ClearTempValue();
+            src1.ClearTempValue();
+            src2.ClearTempValue();
+
             this->inst.GetLHS()->DecrementReadCount();
             this->inst.GetRHS()->DecrementReadCount();
 
             dst.InstantiateValue(&inst);
-
-            dst.ClearTempValue();
-            src1.ClearTempValue();
-            src2.ClearTempValue();
         }
     };
 
