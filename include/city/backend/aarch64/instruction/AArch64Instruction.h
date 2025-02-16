@@ -15,7 +15,7 @@ namespace city
             unsigned rn : 5 = 0b0;
             unsigned imm : 12 = 0b0;
             unsigned sh : 1 = 0b0;
-            unsigned op0 : 6 = 0b10000'10;
+            unsigned op0 : 6 = 0b1000'10;
             unsigned s : 1 = 0b0;
             unsigned op : 1 = 0b0;
             unsigned sf : 1 = 0b1;
