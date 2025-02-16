@@ -96,6 +96,17 @@ namespace city
         } fdp2;
         static_assert(sizeof(FDP2) == 4);
 
+        struct UBR
+        {
+            unsigned op4 : 5 = 0b0;
+            unsigned rn : 5 = 0b0;
+            unsigned op3 : 6 = 0b0;
+            unsigned op2 : 5 = 0b0;
+            unsigned opc : 4 = 0b0;
+            unsigned op0 : 7 = 0b1101'011;
+        } ubr;
+        static_assert(sizeof(UBR) == 4);
+
         std::uint32_t raw = 0;
 
         [[nodiscard]] operator std::uint32_t() const

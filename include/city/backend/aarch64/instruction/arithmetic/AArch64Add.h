@@ -11,53 +11,53 @@ namespace city
         [[nodiscard]] static AArch64Add I(Register &dst, Register &src1, std::uint16_t src2, std::size_t size = 8)
         {
             unsigned sf = size / 8;
-            return {AArch64Encoding{
+            return AArch64Encoding{
                     .dp_add_sub_i{
-                            .sf = sf,
-                            .op = 0b0,
-                            .s = 0b0,
-                            .sh = 0b0,
-                            .imm = src2,
-                            .rn = src1.GetCode(),
                             .rd = dst.GetCode(),
+                            .rn = src1.GetCode(),
+                            .imm = src2,
+                            .sh = 0b0,
+                            .s = 0b0,
+                            .op = 0b0,
+                            .sf = sf,
                     },
-            }};
+            };
         }
 
         [[nodiscard]] static AArch64Add R(Register &dst, Register &src1, Register &src2, std::size_t size = 8)
         {
             unsigned sf = size / 8;
-            return {AArch64Encoding{
+            return AArch64Encoding{
                     .dp_add_sub_shift{
-                            .sf = sf,
-                            .op = 0b0,
-                            .s = 0b0,
-                            .shift = 0b0,
-                            .rm = src1.GetCode(),
-                            .imm = 0b0,
-                            .rn = src2.GetCode(),
                             .rd = dst.GetCode(),
+                            .rn = src2.GetCode(),
+                            .imm = 0b0,
+                            .rm = src1.GetCode(),
+                            .shift = 0b0,
+                            .s = 0b0,
+                            .op = 0b0,
+                            .sf = sf,
                     },
-            }};
+            };
         }
 
         [[nodiscard]] static AArch64Add F(Register &dst, Register &src1, Register &src2, std::size_t size = 8)
         {
             unsigned ptype = (size / 4) - 1;
-            return {AArch64Encoding{
+            return AArch64Encoding{
                     .fdp2{
-                            .m = 0b0,
-                            .s = 0b0,
-                            .ptype = ptype,
-                            .rm = src1.GetCode(),
-                            .opcode = 0b0010,
-                            .rn = src2.GetCode(),
                             .rd = dst.GetCode(),
+                            .rn = src2.GetCode(),
+                            .opcode = 0b0010,
+                            .rm = src1.GetCode(),
+                            .ptype = ptype,
+                            .s = 0b0,
+                            .m = 0b0,
                     },
-            }};
+            };
         }
 
-        AArch64Add(std::uint32_t encoding) : AArch64Instruction(encoding) {}
+        AArch64Add(AArch64Encoding encoding) : AArch64Instruction(encoding) {}
     };
 } // namespace city
 

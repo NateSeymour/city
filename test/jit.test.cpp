@@ -1,3 +1,4 @@
+#include <array>
 #include <city/JIT.h>
 #include <city/ir/IRModule.h>
 #include <gtest/gtest.h>

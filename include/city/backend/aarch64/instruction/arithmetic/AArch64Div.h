@@ -11,35 +11,35 @@ namespace city
         [[nodiscard]] static AArch64Div R(Register &dst, Register &src1, Register &src2, std::size_t size = 8)
         {
             unsigned sf = size / 8;
-            return {AArch64Encoding{
+            return AArch64Encoding{
                     .dp2{
-                            .sf = sf,
-                            .s = 0b0,
-                            .rm = src1.GetCode(),
-                            .opcode = 0b0000'11,
-                            .rn = src2.GetCode(),
                             .rd = dst.GetCode(),
+                            .rn = src2.GetCode(),
+                            .opcode = 0b0000'11,
+                            .rm = src1.GetCode(),
+                            .s = 0b0,
+                            .sf = sf,
                     },
-            }};
+            };
         }
 
         [[nodiscard]] static AArch64Div F(Register &dst, Register &src1, Register &src2, std::size_t size = 8)
         {
             unsigned ptype = (size / 4) - 1;
-            return {AArch64Encoding{
+            return AArch64Encoding{
                     .fdp2{
-                            .m = 0b0,
-                            .s = 0b0,
-                            .ptype = ptype,
-                            .rm = src1.GetCode(),
-                            .opcode = 0b0001,
-                            .rn = src2.GetCode(),
                             .rd = dst.GetCode(),
+                            .rn = src2.GetCode(),
+                            .opcode = 0b0001,
+                            .rm = src1.GetCode(),
+                            .ptype = ptype,
+                            .s = 0b0,
+                            .m = 0b0,
                     },
-            }};
+            };
         }
 
-        AArch64Div(std::uint32_t encoding) : AArch64Instruction(encoding) {}
+        AArch64Div(AArch64Encoding encoding) : AArch64Instruction(encoding) {}
     };
 } // namespace city
 

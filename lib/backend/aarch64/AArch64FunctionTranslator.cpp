@@ -1,6 +1,7 @@
 #include "city/backend/aarch64/AArch64FunctionTranslator.h"
 
 #include <algorithm>
+#include <stdexcept>
 
 #include "city/backend/aarch64/instruction/arithmetic/AArch64Add.h"
 #include "city/backend/aarch64/instruction/arithmetic/AArch64Div.h"
