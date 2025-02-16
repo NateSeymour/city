@@ -1,8 +1,8 @@
 #ifndef CITY_CALLINST_H
 #define CITY_CALLINST_H
 
-#include <city/Function.h>
-#include <city/ir/instruction/IRInstruction.h>
+#include "city/Function.h"
+#include "city/ir/instruction/IRInstruction.h"
 
 namespace city
 {

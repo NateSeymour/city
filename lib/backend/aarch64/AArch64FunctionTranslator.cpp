@@ -153,11 +153,13 @@ void AArch64FunctionTranslator::Store(Register &dst, Register &src) {}
 void AArch64FunctionTranslator::Insert(AArch64Instruction &&inst)
 {
     this->function.text_.push_back(std::move(inst));
+    this->pc_ += 4;
 }
 
 void AArch64FunctionTranslator::InsertProlog(AArch64Instruction &&inst)
 {
     this->function.prolog_.push_back(std::move(inst));
+    this->pc_ += 4;
 }
 
 AArch64FunctionTranslator::AArch64FunctionTranslator(AArch64Module &module, IRFunction &ir_function) : IRTranslator(ir_function), module_(module), function(ir_function)
