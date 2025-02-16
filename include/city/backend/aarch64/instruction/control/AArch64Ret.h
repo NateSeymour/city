@@ -13,9 +13,9 @@ namespace city
             return AArch64Encoding{
                     .ubr{
                             .op4 = 0b0000'0,
-                            .rn = 0b0,
+                            .rn = 30,
                             .op3 = 0b0000'00,
-                            .op2 = 0b0000'0,
+                            .op2 = 0b1111'1,
                             .opc = 0b0010,
                     },
             };
