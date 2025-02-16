@@ -4,25 +4,12 @@
 #include <city/Symbol.h>
 #include <cstddef>
 #include <cstdint>
-#include <optional>
-#include <string>
 
 namespace city
 {
     class NativeInstruction
     {
-        /**
-         * The linker reference is an optional flag for the linker to resolve the named symbol that is pointed to.
-         * After Assembly creation, the linker will make a pass to fill in final pointer values.
-         */
-        std::optional<Stub> stub_ = std::nullopt;
-
     public:
-        void SetStub(Stub stub);
-        [[nodiscard]] bool HasStub() const noexcept;
-        [[nodiscard]] Stub const &GetStub() const;
-        [[nodiscard]] virtual std::size_t GetStubOffset() = 0;
-
         [[nodiscard]] virtual std::size_t GetBinarySize() const noexcept = 0;
         virtual std::size_t AppendToBuffer(std::vector<std::uint8_t> &buffer) = 0;
 

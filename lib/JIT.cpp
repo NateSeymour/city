@@ -12,135 +12,73 @@ void JIT::InsertInterfaceModule(InterfaceModule &&module)
 
 void JIT::InsertIRModule(IRModule &&module)
 {
-    this->objects_.insert({module.GetName(), this->backend_->BuildIRModule(std::move(module))});
+    this->modules_.insert({module.GetName(), this->backend_->BuildIRModule(std::move(module))});
 }
 
 void JIT::RemoveModule(std::string const &name)
 {
     this->interfaces_.erase(name);
-    this->objects_.erase(name);
+    this->modules_.erase(name);
 }
 
 Assembly JIT::Link() const
 {
     // Create memory allocations
-    std::size_t assembly_data_size = 0;
     std::size_t assembly_text_size = 0;
-    for (auto const &[name, object] : this->objects_)
+    for (auto const &[name, object] : this->modules_)
     {
-        assembly_data_size += object.GetDataSize();
         assembly_text_size += object.GetBinarySize();
-    }
-
-    // TODO: Find better solution!
-    if (assembly_data_size == 0)
-    {
-        assembly_data_size = 1;
     }
 
     if (assembly_text_size == 0)
     {
-        assembly_text_size = 1;
+        throw std::runtime_error("cannot link empty modules");
     }
 
-    auto data = NativeMemoryHandle::Allocate(assembly_data_size);
-    auto text = NativeMemoryHandle::Allocate(assembly_text_size);
-
-    Assembly assembly{std::move(data), std::move(text)};
+    Assembly assembly{NativeMemoryHandle::Allocate(assembly_text_size)};
 
     // Process Interfaces
     for (auto const &[name, interface] : this->interfaces_)
     {
         for (auto const &function : interface.functions_)
         {
-            assembly.symtab_[function->name_] = {
-                    .location = reinterpret_cast<std::byte *>(function->address_),
-                    .flags = SymbolFlags::Executable,
-            };
+            assembly.symtab_.try_emplace(name, *function, function->address_);
         }
     }
 
-    // Process Objects
-    StubList stubs;
-    std::size_t data_offset = 0;
-    std::size_t text_offset = 0;
-    for (auto const &[name, object] : this->objects_)
+    // Process Modules
+    std::size_t module_offset = 0;
+    std::vector<std::pair<std::string, void **>> stubs;
+    for (auto const &[name, module] : this->modules_)
     {
-        auto data_size = object.GetDataSize();
-        auto text_size = object.GetBinarySize();
+        auto insertion_addr = assembly.text_.GetAddressAtOffset(module_offset);
 
-        auto data_insertion_addr = assembly.data_.GetAddressAtOffset(data_offset);
-        auto text_insertion_addr = assembly.text_.GetAddressAtOffset(text_offset);
+        memcpy(insertion_addr, module.cdata_.data(), module.cdata_.size());
 
-        memcpy(data_insertion_addr, object.data_.data(), data_size);
-        memcpy(text_insertion_addr, object.text_.data(), text_size);
+        insertion_addr += module.cdata_.size();
+        insertion_addr += module.stubs_.size() * sizeof(void *);
 
-        for (auto &[symbol_name, symbol] : object.symtab_)
+        for (int i = 0; i < module.stubs_.size(); i++)
         {
-            assembly.symtab_[symbol_name] = {
-                    .location = text_insertion_addr + reinterpret_cast<std::size_t>(symbol.location),
-                    .flags = SymbolFlags::Executable,
-            };
+            stubs.emplace_back(module.stubs_[i], static_cast<void **>(insertion_addr - ((i + 1) * sizeof(void *))));
         }
 
-        for (auto stub : object.stubs_)
+        memcpy(insertion_addr, module.text_.data(), module.text_.size());
+
+        for (auto &[symbol_name, symbol] : module.symtab_)
         {
-            switch (stub.type)
-            {
-                case StubSourceLocation::Data:
-                {
-                    stub.src_offset += data_offset;
-                    break;
-                }
-
-                case StubSourceLocation::Text:
-                {
-                    stub.src_offset += text_offset;
-                    break;
-                }
-            }
-
-            stub.dst_offset += text_offset;
-            stubs.push_back(std::move(stub));
+            assembly.symtab_.try_emplace(symbol_name, symbol, insertion_addr + reinterpret_cast<std::size_t>(symbol.GetLocation()));
         }
 
-        data_offset += data_size;
-        text_offset += text_size;
+        module_offset += module.GetBinarySize();
     }
 
-    for (auto &stub : stubs)
+    // Perform linking
+    for (auto &[name, addr] : stubs)
     {
-        auto ref_addr = reinterpret_cast<std::uint64_t *>(assembly.text_.GetAddressAtOffset(stub.dst_offset));
-
-        if (*ref_addr != kLinkerCanary64)
-        {
-            throw std::runtime_error("failed to link symbol");
-        }
-
-        if (stub.label.has_value())
-        {
-            *ref_addr = reinterpret_cast<std::uint64_t>(assembly.symtab_[*stub.label].location);
-        }
-        else
-        {
-            switch (stub.type)
-            {
-                case StubSourceLocation::Data:
-                {
-                    *ref_addr = reinterpret_cast<std::uint64_t>(assembly.data_.GetAddressAtOffset(stub.src_offset));
-                    break;
-                }
-
-                case StubSourceLocation::Text:
-                {
-                    *ref_addr = reinterpret_cast<std::uint64_t>(assembly.text_.GetAddressAtOffset(stub.src_offset));
-                    break;
-                }
-            }
-        }
+        *addr = assembly.symtab_[name].GetLocation();
     }
 
-    assembly.data_.SetProtection(MemoryProtection::Read | MemoryProtection::Write);
     assembly.text_.SetProtection(MemoryProtection::Read | MemoryProtection::Execute);
 
     return assembly;

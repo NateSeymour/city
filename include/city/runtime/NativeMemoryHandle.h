@@ -36,7 +36,7 @@ namespace city
 
         void SetProtection(MemoryProtection protection);
 
-        [[nodiscard]] std::byte *GetAddressAtOffset(std::size_t offset) const;
+        [[nodiscard]] void *GetAddressAtOffset(std::size_t offset) const;
 
         [[nodiscard]] std::size_t GetAllocationSize() const noexcept;
 

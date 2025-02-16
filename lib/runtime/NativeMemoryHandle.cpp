@@ -23,14 +23,14 @@ void NativeMemoryHandle::DebugDump() const
     std::cout << "\nEnd Debug Dump" << std::endl;
 }
 
-std::byte *NativeMemoryHandle::GetAddressAtOffset(std::size_t offset) const
+void *NativeMemoryHandle::GetAddressAtOffset(std::size_t offset) const
 {
     if (offset > this->size_)
     {
         throw std::runtime_error("offset is too large");
     }
 
-    return static_cast<std::byte *>(this->address_) + offset;
+    return this->address_ + offset;
 }
 
 std::size_t NativeMemoryHandle::GetAllocationSize() const noexcept

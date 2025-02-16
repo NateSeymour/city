@@ -8,7 +8,7 @@ namespace city
     class AArch64 : public Backend
     {
     public:
-        Object BuildIRModule(IRModule &&ir_module) override;
+        NativeModule BuildIRModule(IRModule &&ir_module) override;
     };
 } // namespace city
 

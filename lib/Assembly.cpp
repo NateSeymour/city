@@ -12,4 +12,4 @@ Symbol Assembly::Lookup(std::string const &symbol)
     return this->symtab_[symbol];
 }
 
-Assembly::Assembly(NativeMemoryHandle data, NativeMemoryHandle text) : data_(std::move(data)), text_(std::move(text)) {}
+Assembly::Assembly(NativeMemoryHandle text) : text_(std::move(text)) {}

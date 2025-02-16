@@ -5,6 +5,7 @@
 #include <span>
 #include <vector>
 
+#include "NativeModule.h"
 #include "city/container/ConstantDataContainer.h"
 #include "city/container/Register.h"
 #include "city/container/StackAllocationContainer.h"
@@ -22,9 +23,8 @@ namespace city
     class IRTranslator
     {
     protected:
+        NativeModule &module_;
         IRFunction &ir_function_;
-
-        std::uint64_t pc_ = 0;
 
         std::int64_t stack_depth_ = 0;
         std::vector<std::unique_ptr<StackAllocationContainer>> stack_;
@@ -59,7 +59,7 @@ namespace city
         virtual void Store(StackAllocationContainer &dst, Register &src) = 0;
         virtual void Store(Register &dst, Register &src) = 0;
 
-        IRTranslator(IRFunction &ir_function);
+        IRTranslator(NativeModule &module, IRFunction &ir_function);
         virtual ~IRTranslator() = default;
     };
 } // namespace city

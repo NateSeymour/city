@@ -32,7 +32,6 @@ namespace city
 
     class AArch64FunctionTranslator : IRTranslator
     {
-        AArch64Module &module_;
         AArch64RegisterBank reg_;
 
     protected:
@@ -77,7 +76,7 @@ namespace city
     public:
         AArch64Function function;
 
-        AArch64FunctionTranslator(AArch64Module &module, IRFunction &ir_function);
+        AArch64FunctionTranslator(NativeModule &module, IRFunction &ir_function);
     };
 } // namespace city
 

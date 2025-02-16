@@ -14,7 +14,6 @@ namespace city
         friend class JIT;
 
     protected:
-        NativeMemoryHandle data_;
         NativeMemoryHandle text_;
         SymbolTable symtab_;
 
@@ -22,7 +21,7 @@ namespace city
         [[nodiscard]] Symbol operator[](std::string const &symbol) const;
         [[nodiscard]] Symbol Lookup(std::string const &symbol);
 
-        Assembly(NativeMemoryHandle data, NativeMemoryHandle text);
+        Assembly(NativeMemoryHandle text);
     };
 } // namespace city
 

@@ -7,12 +7,12 @@
 
 namespace city
 {
-    class AArch64Module;
+    class AArch64;
     class AArch64FunctionTranslator;
 
     class AArch64Function : public Function
     {
-        friend class AArch64Module;
+        friend class AArch64;
         friend class AArch64FunctionTranslator;
 
     protected:

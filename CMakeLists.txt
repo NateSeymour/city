@@ -34,7 +34,6 @@ add_library(city
         include/city/ir/IRFunction.h
         include/city/ir/IRModule.h
         include/city/JIT.h
-        include/city/Object.h
         include/city/overload.h
         include/city/runtime/MacOS.h
         include/city/runtime/NativeMemoryHandle.h
@@ -73,7 +72,6 @@ add_library(city
         lib/ir/IRFunction.cpp
         lib/ir/IRModule.cpp
         lib/JIT.cpp
-        lib/Object.cpp
         lib/runtime/MacOS.cpp
         lib/runtime/NativeMemoryHandle.cpp
         lib/runtime/Windows.cpp
@@ -81,7 +79,6 @@ add_library(city
         lib/value/Value.cpp
         include/city/backend/NativeModule.h
         include/city/backend/aarch64/AArch64Function.h
-        include/city/backend/aarch64/AArch64Module.h
         include/city/backend/aarch64/AArch64FunctionTranslator.h
         lib/backend/aarch64/AArch64Module.cpp
         include/city/container/Register.h

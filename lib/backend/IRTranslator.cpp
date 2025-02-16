@@ -1,4 +1,5 @@
 #include "city/backend/IRTranslator.h"
+#include <stdexcept>
 
 using namespace city;
 
@@ -97,4 +98,4 @@ void IRTranslator::MoveValue(Container &dst, Value &value)
     tmp.ClearTempValue();
 }
 
-IRTranslator::IRTranslator(IRFunction &ir_function) : ir_function_(ir_function) {}
+IRTranslator::IRTranslator(NativeModule &module, IRFunction &ir_function) : module_(module), ir_function_(ir_function) {}

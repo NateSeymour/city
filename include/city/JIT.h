@@ -3,24 +3,19 @@
 
 #include <memory>
 #include <unordered_map>
-#include <vector>
 #include "Assembly.h"
-#include "Object.h"
 #include "backend/Backend.h"
 #include "interface/InterfaceModule.h"
 #include "ir/IRModule.h"
 
 namespace city
 {
-    constexpr std::uint32_t kLinkerCanary32 = 0xbeef'cafe;
-    constexpr std::uint64_t kLinkerCanary64 = 0xcafebeef'feeddeed;
-
     class JIT
     {
         std::unique_ptr<Backend> backend_;
 
         std::unordered_map<std::string, InterfaceModule> interfaces_;
-        std::unordered_map<std::string, Object> objects_;
+        std::unordered_map<std::string, NativeModule> modules_;
 
     public:
         /**
