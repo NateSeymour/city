@@ -2,7 +2,6 @@
 #define AARCH64FUNCTIONTRANSLATOR_H
 
 #include "AArch64Function.h"
-#include "AArch64Module.h"
 #include "AArch64RegisterBank.h"
 #include "city/backend/IRTranslator.h"
 #include "city/ir/IRFunction.h"
@@ -22,13 +21,18 @@ namespace city
         {
             this->inst.GetLHS()->DecrementReadCount();
             this->inst.GetRHS()->DecrementReadCount();
+
+            dst.InstantiateValue(&inst);
+
+            dst.ClearTempValue();
+            src1.ClearTempValue();
+            src2.ClearTempValue();
         }
     };
 
     class AArch64FunctionTranslator : IRTranslator
     {
         AArch64Module &module_;
-        IRFunction &ir_function_;
         AArch64RegisterBank reg_;
 
     protected:
@@ -63,8 +67,6 @@ namespace city
         void Load(Register &dst, ConstantDataContainer &src) override;
         void Load(Register &dst, StackAllocationContainer &src) override;
         void Load(Register &dst, Register &src) override;
-
-        [[nodiscard]] Register &LoadValue(Value &value);
 
         void Store(StackAllocationContainer &dst, Register &src) override;
         void Store(Register &dst, Register &src) override;

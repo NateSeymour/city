@@ -8,6 +8,7 @@
 #include "city/container/ConstantDataContainer.h"
 #include "city/container/Register.h"
 #include "city/container/StackAllocationContainer.h"
+#include "city/ir/IRFunction.h"
 
 #include "city/ir/instruction/arithmetic/AddInst.h"
 #include "city/ir/instruction/arithmetic/DivInst.h"
@@ -21,16 +22,23 @@ namespace city
     class IRTranslator
     {
     protected:
+        IRFunction &ir_function_;
         std::int64_t stack_depth_ = 0;
         std::uint64_t register_dislocation_count_ = 0;
         std::vector<std::unique_ptr<StackAllocationContainer>> stack_;
 
         void AlignStack(unsigned int alignment) noexcept;
 
+        [[nodiscard]] StackAllocationContainer &AcquireStackSpace(Type type);
+        void PersistRegisterBank(std::span<Register *> bank);
+        void PersistScratchRegisters();
+
         [[nodiscard]] virtual std::span<Register *> GetScratchRegisterBank(NativeType type) = 0;
 
-        [[nodiscard]] StackAllocationContainer &AcquireStackSpace(Type type);
         [[nodiscard]] Register &AcquireScratchRegister(NativeType type);
+
+        [[nodiscard]] Register &LoadValue(Value &value);
+        void MoveValue(Container &dst, Value &value);
 
     public:
         virtual void TranslateInstruction(AddInst &inst) = 0;
@@ -47,6 +55,7 @@ namespace city
         virtual void Store(StackAllocationContainer &dst, Register &src) = 0;
         virtual void Store(Register &dst, Register &src) = 0;
 
+        IRTranslator(IRFunction &ir_function);
         virtual ~IRTranslator() = default;
     };
 } // namespace city

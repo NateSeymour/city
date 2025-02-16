@@ -77,10 +77,32 @@ void AArch64FunctionTranslator::TranslateInstruction(MulInst &inst)
 }
 
 void AArch64FunctionTranslator::TranslateInstruction(SubInst &inst) {}
-void AArch64FunctionTranslator::TranslateInstruction(CallInst &inst) {}
+
+void AArch64FunctionTranslator::TranslateInstruction(CallInst &inst)
+{
+    this->PersistScratchRegisters();
+}
 
 void AArch64FunctionTranslator::TranslateInstruction(RetInst &inst)
 {
+    auto retval = inst.GetReturnValue();
+    if (retval && retval->IsInstantiated())
+    {
+        auto type = retval->GetType().GetNativeType();
+        if (type == NativeType::Integer)
+        {
+            retval->GetContainer()->Load(*this, this->reg_.r[0]);
+        }
+        else if (type == NativeType::FloatingPoint)
+        {
+            retval->GetContainer()->Load(*this, this->reg_.v[0]);
+        }
+    }
+
+    if (this->stack_depth_ > 0)
+    {
+    }
+
     this->Insert(AArch64Ret::Z());
 }
 
@@ -125,30 +147,6 @@ void AArch64FunctionTranslator::Load(Register &dst, ConstantDataContainer &src)
 void AArch64FunctionTranslator::Load(Register &dst, StackAllocationContainer &src) {}
 void AArch64FunctionTranslator::Load(Register &dst, Register &src) {}
 
-Register &AArch64FunctionTranslator::LoadValue(Value &value)
-{
-    if (!value.IsInstantiated())
-    {
-        throw std::runtime_error("cannot load uninstantiated value!");
-    }
-
-    auto container = value.GetContainer();
-
-    // The value is already loaded, so return itself.
-    if (container->GetType() == ContainerType::Register)
-    {
-        return *dynamic_cast<Register *>(container);
-    }
-
-    // Value not loaded
-    auto &reg = this->AcquireScratchRegister(value.GetType().GetNativeType());
-
-    container->Load(*this, reg);
-    reg.TakeValue(container);
-
-    return reg;
-}
-
 void AArch64FunctionTranslator::Store(StackAllocationContainer &dst, Register &src) {}
 void AArch64FunctionTranslator::Store(Register &dst, Register &src) {}
 
@@ -162,7 +160,7 @@ void AArch64FunctionTranslator::InsertProlog(AArch64Instruction &&inst)
     this->function.prolog_.push_back(std::move(inst));
 }
 
-AArch64FunctionTranslator::AArch64FunctionTranslator(AArch64Module &module, IRFunction &ir_function) : module_(module), ir_function_(ir_function), function(ir_function)
+AArch64FunctionTranslator::AArch64FunctionTranslator(AArch64Module &module, IRFunction &ir_function) : IRTranslator(ir_function), module_(module), function(ir_function)
 {
     // Instantiate arguments
     auto const &arg_values = this->ir_function_.GetArgumentValues();
@@ -190,12 +188,6 @@ AArch64FunctionTranslator::AArch64FunctionTranslator(AArch64Module &module, IRFu
         }
     }
 
-    /*
-     * Entering into a function
-     * 1. Push RBP. This will save the old stack from.
-     * 2. Save RSP -> RBP. This will initialize the stack frame pointer to use for constant offsets into the stack.
-     * 3. Subtract space for stack storage from RSP.
-     */
     // Generate Prolog
     if (this->stack_depth_ > 0)
     {

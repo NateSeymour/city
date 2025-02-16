@@ -327,3 +327,23 @@ TEST_F(JITTestRunner, FP64Multiplication)
     auto value = test();
     ASSERT_EQ(value, values.first * values.second);
 }
+
+TEST_F(JITTestRunner, FunctionCall)
+{
+    auto values = this->GetRandomPair<double>();
+
+    auto assembly = this->BuildTestModule([&](city::IRBuilder &builder) {
+        auto callee = builder.CreateFunction("foo", city::Type::Get<double>());
+        builder.InsertRetInst(builder.CreateConstant(values.first));
+
+        (void)builder.CreateFunction("bar", city::Type::Get<double>());
+        auto retval = builder.InsertCallInst(callee);
+        auto multmp = builder.InsertMulInst(retval, builder.CreateConstant(values.second));
+        builder.InsertRetInst(multmp);
+    });
+
+    auto test = assembly["bar"].ToPointer<double()>();
+
+    auto value = test();
+    ASSERT_EQ(value, values.first * values.second);
+}

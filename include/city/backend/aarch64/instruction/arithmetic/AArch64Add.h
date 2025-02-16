@@ -30,9 +30,9 @@ namespace city
             return AArch64Encoding{
                     .dp_add_sub_shift{
                             .rd = dst.GetCode(),
-                            .rn = src2.GetCode(),
+                            .rn = src1.GetCode(),
                             .imm = 0b0,
-                            .rm = src1.GetCode(),
+                            .rm = src2.GetCode(),
                             .shift = 0b0,
                             .s = 0b0,
                             .op = 0b0,
@@ -47,9 +47,9 @@ namespace city
             return AArch64Encoding{
                     .fdp2{
                             .rd = dst.GetCode(),
-                            .rn = src2.GetCode(),
+                            .rn = src1.GetCode(),
                             .opcode = 0b0010,
-                            .rm = src1.GetCode(),
+                            .rm = src2.GetCode(),
                             .ptype = ptype,
                             .s = 0b0,
                             .m = 0b0,

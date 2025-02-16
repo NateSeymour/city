@@ -14,9 +14,9 @@ namespace city
             return AArch64Encoding{
                     .dp2{
                             .rd = dst.GetCode(),
-                            .rn = src2.GetCode(),
+                            .rn = src1.GetCode(),
                             .opcode = 0b0000'11,
-                            .rm = src1.GetCode(),
+                            .rm = src2.GetCode(),
                             .s = 0b0,
                             .sf = sf,
                     },
@@ -29,9 +29,9 @@ namespace city
             return AArch64Encoding{
                     .fdp2{
                             .rd = dst.GetCode(),
-                            .rn = src2.GetCode(),
+                            .rn = src1.GetCode(),
                             .opcode = 0b0001,
-                            .rm = src1.GetCode(),
+                            .rm = src2.GetCode(),
                             .ptype = ptype,
                             .s = 0b0,
                             .m = 0b0,

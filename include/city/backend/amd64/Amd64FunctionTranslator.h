@@ -151,7 +151,6 @@ namespace city
     public:
         Amd64Module &module;
         Amd64Function function;
-        IRFunction &ir_function;
         Amd64RegisterBank registers;
 
         [[nodiscard]] Amd64Function Translate();

@@ -123,7 +123,7 @@ void Amd64FunctionTranslator::TranslateInstruction(RetInst &inst)
         this->Insert(Amd64Leave::ZO());
     }
 
-    this->function.text_.push_back(Amd64Ret::ZONear());
+    this->Insert(Amd64Ret::ZONear());
 }
 
 Register &Amd64FunctionTranslator::PrepareDestinationValue(Value &value)
@@ -417,7 +417,7 @@ StackAllocationContainer &Amd64FunctionTranslator::AcquireStackSpace(std::size_t
 Amd64Function Amd64FunctionTranslator::Translate()
 {
     // Instantiate arguments
-    auto const &arg_values = this->ir_function.GetArgumentValues();
+    auto const &arg_values = this->ir_function_.GetArgumentValues();
     for (int i = 0; i < arg_values.size(); i++)
     {
         auto value = arg_values[i];
@@ -434,7 +434,7 @@ Amd64Function Amd64FunctionTranslator::Translate()
     }
 
     // Function Body
-    for (auto &block : this->ir_function.GetBlocks())
+    for (auto &block : this->ir_function_.GetBlocks())
     {
         for (auto &instruction : block.GetInstructions())
         {
@@ -469,4 +469,4 @@ void Amd64FunctionTranslator::InsertProlog(Amd64Instruction &&inst)
     this->function.prolog_.push_back(std::move(inst));
 }
 
-Amd64FunctionTranslator::Amd64FunctionTranslator(Amd64Module &module, IRFunction &ir_function) : module(module), ir_function(ir_function), function(ir_function) {}
+Amd64FunctionTranslator::Amd64FunctionTranslator(Amd64Module &module, IRFunction &ir_function) : IRTranslator(ir_function), module(module), function(ir_function) {}
