@@ -16,8 +16,6 @@ namespace city
         std::vector<Amd64Function> functions_;
 
     public:
-        [[nodiscard]] Object Compile() override;
-
         Amd64Module(std::string name, std::vector<std::uint8_t> data);
     };
 } // namespace city

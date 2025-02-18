@@ -61,7 +61,6 @@ namespace city
 
         [[nodiscard]] std::size_t GetBinarySize() const noexcept override;
         size_t AppendToBuffer(std::vector<std::uint8_t> &buffer) override;
-        [[nodiscard]] std::size_t GetStubOffset() override;
 
         void SetREX(Register *reg = nullptr, Register *rm = nullptr);
 

@@ -120,7 +120,6 @@ namespace city
         std::uint32_t encoding_ = 0;
 
     public:
-        [[nodiscard]] std::size_t GetStubOffset() override;
         [[nodiscard]] std::size_t GetBinarySize() const noexcept override;
         std::size_t AppendToBuffer(std::vector<std::uint8_t> &buffer) override;
 

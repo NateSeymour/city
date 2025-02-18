@@ -51,7 +51,7 @@ Assembly JIT::Link() const
     std::vector<std::pair<std::string, void **>> stubs;
     for (auto const &[name, module] : this->modules_)
     {
-        auto insertion_addr = assembly.text_.GetAddressAtOffset(module_offset);
+        auto insertion_addr = static_cast<std::uint8_t *>(assembly.text_.GetAddressAtOffset(module_offset));
 
         memcpy(insertion_addr, module.cdata_.data(), module.cdata_.size());
 
@@ -60,7 +60,7 @@ Assembly JIT::Link() const
 
         for (int i = 0; i < module.stubs_.size(); i++)
         {
-            stubs.emplace_back(module.stubs_[i], static_cast<void **>(insertion_addr - ((i + 1) * sizeof(void *))));
+            stubs.emplace_back(module.stubs_[i], reinterpret_cast<void **>(insertion_addr - ((i + 1) * sizeof(void *))));
         }
 
         memcpy(insertion_addr, module.text_.data(), module.text_.size());

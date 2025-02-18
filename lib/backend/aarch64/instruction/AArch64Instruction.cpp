@@ -2,11 +2,6 @@
 
 using namespace city;
 
-std::size_t AArch64Instruction::GetStubOffset()
-{
-    return 0;
-}
-
 std::size_t AArch64Instruction::GetBinarySize() const noexcept
 {
     return 4;

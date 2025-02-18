@@ -80,7 +80,6 @@ add_library(city
         include/city/backend/NativeModule.h
         include/city/backend/aarch64/AArch64Function.h
         include/city/backend/aarch64/AArch64FunctionTranslator.h
-        lib/backend/aarch64/AArch64Module.cpp
         include/city/container/Register.h
         include/city/backend/aarch64/AArch64RegisterBank.h
         lib/backend/aarch64/AArch64FunctionTranslator.cpp

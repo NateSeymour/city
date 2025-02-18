@@ -48,11 +48,6 @@ size_t Amd64Instruction::AppendToBuffer(std::vector<std::uint8_t> &buffer)
     return this->GetBinarySize();
 }
 
-std::size_t Amd64Instruction::GetStubOffset()
-{
-    return this->GetBinarySize() - this->immediate_.GetSize();
-}
-
 void Amd64Instruction::SetREX(Register *reg, Register *rm)
 {
     std::uint8_t prefix = Amd64Instruction::REX_0;

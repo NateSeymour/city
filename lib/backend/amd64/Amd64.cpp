@@ -3,7 +3,7 @@
 
 using namespace city;
 
-Object Amd64::BuildIRModule(IRModule &&ir_module)
+NativeModule Amd64::BuildIRModule(IRModule &&ir_module)
 {
     Amd64Module amd64_module{ir_module.GetName(), std::move(ir_module.data_)};
 
@@ -13,5 +13,5 @@ Object Amd64::BuildIRModule(IRModule &&ir_module)
         amd64_module.functions_.push_back(translator.Translate());
     }
 
-    return amd64_module.Compile();
+    return amd64_module;
 }

@@ -4,6 +4,7 @@
 
 using namespace city;
 
+/*
 Object Amd64Module::Compile()
 {
     std::vector<std::uint8_t> text;
@@ -36,5 +37,6 @@ Object Amd64Module::Compile()
 
     return {std::move(this->data_), std::move(text), std::move(symtab), std::move(this->stubs_)};
 }
+*/
 
 Amd64Module::Amd64Module(std::string name, std::vector<std::uint8_t> data) : NativeModule(std::move(name), std::move(data)) {}
