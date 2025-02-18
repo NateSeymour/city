@@ -166,7 +166,7 @@ void Amd64FunctionTranslator::Load(Register &dst, StubContainer &src)
     auto index = static_cast<std::int32_t>(this->GetStubIndex(*name));
 
     auto &rip = this->reg_.r[5];
-    this->Insert(Amd64Mov::MR64(dst, rip, Amd64Mod::Pointer, (-8 * index) - this->module_.pc_));
+    this->Insert(Amd64Mov::RM64(dst, rip, Amd64Mod::Pointer, (-8 * (index + 1)) - this->module_.pc_ - 7));
 }
 
 void Amd64FunctionTranslator::Load(Register &dst, Register &src)

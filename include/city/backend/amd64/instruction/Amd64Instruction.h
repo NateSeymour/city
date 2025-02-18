@@ -48,6 +48,7 @@ namespace city
         bool has_sib_ = false;
         std::uint8_t sib_ = 0x0;
 
+        bool has_displacement_ = false;
         std::int32_t displacement_ = 0;
 
         Amd64Immediate immediate_ = {};

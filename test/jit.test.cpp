@@ -348,3 +348,16 @@ TEST_F(JITTestRunner, FunctionCall)
     auto value = test();
     ASSERT_EQ(value, values.first * values.second);
 }
+
+TEST_F(JITTestRunner, ReturnFunctionPointer)
+{
+    auto assembly = this->BuildTestModule([&](city::IRBuilder &builder) {
+        (void)builder.CreateFunction("test", city::Type::Get<void *>());
+        builder.InsertRetInst(this->stdlib["__pow"]);
+    });
+
+    auto test = assembly["test"].ToPointer<void *()>();
+
+    auto value = test();
+    ASSERT_EQ(value, reinterpret_cast<void *>((double (*)(double, double))std::pow));
+}

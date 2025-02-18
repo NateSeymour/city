@@ -12,7 +12,7 @@ size_t Amd64Instruction::GetBinarySize() const noexcept
     size += this->has_mod_rm_ ? 1 : 0;
     size += this->has_sib_ ? 1 : 0;
 
-    if (this->mod_ == Amd64Mod::DisplacedPointer)
+    if (this->has_displacement_)
     {
         size += 4;
     }
@@ -37,7 +37,7 @@ size_t Amd64Instruction::AppendToBuffer(std::vector<std::uint8_t> &buffer)
         buffer.push_back(this->sib_);
     }
 
-    if (this->mod_ == Amd64Mod::DisplacedPointer)
+    if (this->has_displacement_)
     {
         auto disp_buffer = reinterpret_cast<std::uint8_t *>(&this->displacement_);
         buffer.insert(buffer.end(), disp_buffer, disp_buffer + 4);
@@ -91,5 +91,7 @@ void Amd64Instruction::SetModRM(std::uint8_t reg, std::uint8_t rm, Amd64Mod mod,
     this->mod_rm_ = (0 | (bmod << 6) | (breg << 3) | brm);
 
     this->mod_ = mod;
+
+    this->has_displacement_ = mod == Amd64Mod::DisplacedPointer || disp != 0;
     this->displacement_ = disp;
 }
