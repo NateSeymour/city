@@ -19,7 +19,7 @@ void StubContainer::Load(IRTranslator &translator, Register &dst)
     translator.Load(dst, *this);
 }
 
-void StubContainer::Store(IRTranslator &translator, Register &src)
+void StubContainer::Store([[maybe_unused]] IRTranslator &translator, [[maybe_unused]] Register &src)
 {
     throw std::runtime_error("stub containers are constant and cannot be stored into");
 }

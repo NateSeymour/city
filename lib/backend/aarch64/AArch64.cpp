@@ -10,8 +10,8 @@ NativeModule AArch64::BuildIRModule(IRModule &&ir_module)
 
     for (auto &[name, ir_function] : ir_module.functions_)
     {
-        auto misalignment = module.AlignPC(16);
-        for (int i = 0; i < misalignment; i++)
+        std::size_t misalignment = module.AlignPC(16);
+        for (std::size_t i = 0; i < misalignment; i++)
         {
             module.text_.push_back(0x69);
         }

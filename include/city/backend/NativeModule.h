@@ -1,9 +1,9 @@
 #ifndef NATIVEMODULE_H
 #define NATIVEMODULE_H
 
+#include <cstdint>
 #include <string>
 #include <vector>
-
 #include "city/Symbol.h"
 
 namespace city

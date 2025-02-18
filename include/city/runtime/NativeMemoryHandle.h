@@ -25,9 +25,9 @@ namespace city
 
     class NativeMemoryHandle
     {
-        MemoryProtection protection_;
         std::size_t size_;
         void *address_;
+        MemoryProtection protection_;
 
         NativeMemoryHandle(std::size_t size, void *address, MemoryProtection protection);
 

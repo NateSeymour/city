@@ -31,8 +31,8 @@ namespace city
     protected:
         RegisterCode code_;
         RegisterType value_type_;
-        RegisterPurpose type_;
         Volatility volatility_;
+        RegisterPurpose type_;
         bool is_ext_ = false;
 
     public:

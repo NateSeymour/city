@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.29)
-project(city VERSION 0.3.9)
+project(city VERSION 0.3.10)
 
 set(CMAKE_CXX_STANDARD 23)
 
@@ -95,6 +95,12 @@ add_library(city
         lib/container/StubContainer.cpp
 )
 target_include_directories(city PUBLIC include)
+
+#if (MSVC)
+#    target_compile_options(city PRIVATE /W4 /WX)
+#else ()
+#    target_compile_options(city PRIVATE -Wall -Wextra -Wpedantic -Werror)
+#endif ()
 
 option(CITY_ENABLE_TESTS "Include googletest and enable test targets" ON)
 if (CITY_ENABLE_TESTS)

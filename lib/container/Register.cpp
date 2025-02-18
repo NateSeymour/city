@@ -38,20 +38,9 @@ RegisterType Register::GetValueType() const noexcept
     return this->value_type_;
 }
 
-size_t Register::GetSize() const noexcept
+std::size_t Register::GetSize() const noexcept
 {
-    switch (this->value_type_)
-    {
-        case RegisterType::Integer:
-        {
-            return 8;
-        }
-
-        case RegisterType::FloatingPoint:
-        {
-            return 16;
-        }
-    }
+    return 8;
 }
 
 ContainerType Register::GetType() const noexcept

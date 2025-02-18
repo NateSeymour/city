@@ -1,6 +1,7 @@
 #include <array>
 #include <city/JIT.h>
 #include <city/ir/IRModule.h>
+#include <cmath>
 #include <gtest/gtest.h>
 #include <string>
 #include <unordered_map>

@@ -9,7 +9,7 @@ void ConstantDataContainer::Load(IRTranslator &translator, Register &dst)
     translator.Load(dst, *this);
 }
 
-void ConstantDataContainer::Store(IRTranslator &translator, Register &src)
+void ConstantDataContainer::Store([[maybe_unused]] IRTranslator &translator, [[maybe_unused]] Register &src)
 {
     throw std::runtime_error("cannot store value into constant container");
 }
