@@ -130,7 +130,7 @@ namespace city
                 Register(6, RegisterType::FloatingPoint, Volatility::NonVolatile, RegisterPurpose::General, true),  // XMM14
                 Register(7, RegisterType::FloatingPoint, Volatility::NonVolatile, RegisterPurpose::General, true),  // XMM15
         };
-        std::array<Register *, 9> r_volatile = {
+        std::array<Register *, 7> r_volatile = {
                 &this->r[0],
                 &this->r[1],
                 &this->r[2],
@@ -139,22 +139,21 @@ namespace city
                 &this->r[10],
                 &this->r[11],
         };
-        std::array<Register *, 16> xmm_volatile = {
+        std::array<Register *, 6> xmm_volatile = {
                 &this->xmm[0],
                 &this->xmm[1],
                 &this->xmm[2],
                 &this->xmm[3],
                 &this->xmm[4],
                 &this->xmm[5],
-                &this->xmm[15],
         };
-        std::array<Register *, 6> r_args = {
+        std::array<Register *, 4> r_args = {
                 &this->r[2],
                 &this->r[3],
                 &this->r[8],
                 &this->r[9],
         };
-        std::array<Register *, 8> xmm_args = {
+        std::array<Register *, 4> xmm_args = {
                 &this->xmm[0],
                 &this->xmm[1],
                 &this->xmm[2],
