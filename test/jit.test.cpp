@@ -6,6 +6,14 @@
 #include <string>
 #include <unordered_map>
 
+namespace tstd
+{
+    extern "C" double pow(double a, double b)
+    {
+        return std::pow(a, b);
+    }
+} // namespace tstd
+
 class JITTestRunner : public testing::Test
 {
 protected:
@@ -45,7 +53,7 @@ protected:
         city::InterfaceModule module{"__std"};
 
         std::array functions = {
-                module.InsertBinding("__pow", (double (*)(double, double))std::pow),
+                module.InsertBinding("__pow", tstd::pow),
         };
 
         for (auto function : functions)
@@ -360,4 +368,21 @@ TEST_F(JITTestRunner, ReturnFunctionPointer)
 
     auto value = test();
     ASSERT_EQ(value, reinterpret_cast<void *>((double (*)(double, double))std::pow));
+}
+
+TEST_F(JITTestRunner, InterfaceFunctionCall)
+{
+    auto values = this->GetRandomPair<double>();
+    auto assembly = this->BuildTestModule([&](city::IRBuilder &builder) {
+        (void)builder.CreateFunction("test", city::Type::Get<double>(), {2, city::Type::Get<double>()});
+
+        auto pow = builder.InsertCallInst(this->stdlib["__pow"], {builder.CreateConstant(values.first), builder.CreateConstant(values.second)});
+
+        builder.InsertRetInst(pow);
+    });
+
+    auto test = assembly["test"].ToPointer<double(double, double)>();
+
+    auto value = test(values.first, values.second);
+    ASSERT_EQ(value, tstd::pow(values.first, values.second));
 }
