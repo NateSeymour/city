@@ -148,8 +148,8 @@ namespace city
                 &this->xmm[5],
         };
         std::array<Register *, 4> r_args = {
+                &this->r[1],
                 &this->r[2],
-                &this->r[3],
                 &this->r[8],
                 &this->r[9],
         };
