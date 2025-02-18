@@ -7,12 +7,13 @@
 
 namespace city
 {
-    class Amd64Module;
+
+    class Amd64;
     class Amd64FunctionTranslator;
 
     class Amd64Function : public Function
     {
-        friend class Amd64Module;
+        friend class Amd64;
         friend class Amd64FunctionTranslator;
 
     protected:

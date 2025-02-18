@@ -61,7 +61,43 @@ Register &IRTranslator::AcquireScratchRegister(NativeType type)
     return *victim;
 }
 
-Register &IRTranslator::LoadValue(Value &value)
+BinaryOperation IRTranslator::PrepareBinaryOperation(IRBinaryInstruction &inst, bool destructive)
+{
+    auto optype = inst.GetType().GetNativeType();
+
+    auto &lhs = *inst.GetLHS();
+    auto &rhs = *inst.GetRHS();
+
+    std::size_t opsize = inst.GetType().GetSize();
+
+    auto &src1tmp = this->LoadValue(lhs, destructive); // Force copy of src1 if the instruction is destructive.
+    auto &src2tmp = this->LoadValue(rhs);
+
+    Register *dst = nullptr;
+    if (lhs.GetReadCount() == 1 || destructive)
+    {
+        dst = &src1tmp;
+    }
+    else if (rhs.GetReadCount() == 1)
+    {
+        dst = &src2tmp;
+    }
+    else
+    {
+        dst = &this->AcquireScratchRegister(optype);
+    }
+
+    return {
+            .inst = inst,
+            .dst = *dst,
+            .src1 = src1tmp,
+            .src2 = src2tmp,
+            .opsize = opsize,
+            .optype = optype,
+    };
+}
+
+Register &IRTranslator::LoadValue(Value &value, bool copy)
 {
     if (!value.IsInstantiated())
     {
@@ -71,7 +107,7 @@ Register &IRTranslator::LoadValue(Value &value)
     auto container = value.GetContainer();
 
     // The value is already loaded, so return itself.
-    if (container->GetType() == ContainerType::Register)
+    if (container->GetType() == ContainerType::Register && !copy)
     {
         return *dynamic_cast<Register *>(container);
     }
@@ -80,12 +116,19 @@ Register &IRTranslator::LoadValue(Value &value)
     auto &reg = this->AcquireScratchRegister(value.GetType().GetNativeType());
 
     container->Load(*this, reg);
-    if (!reg.SetTempValue(&value))
+    if (!((!copy && reg.TakeValue(container)) || reg.SetTempValue(&value)))
     {
         throw std::runtime_error("failed to set temporary value");
     }
 
     return reg;
+}
+
+std::size_t IRTranslator::GetStubIndex(std::string const &name) const
+{
+    this->module_.stubs_.push_back(name);
+
+    return this->module_.stubs_.size() - 1;
 }
 
 void IRTranslator::MoveValue(Container &dst, Value &value)

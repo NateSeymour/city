@@ -13,6 +13,7 @@ namespace city
     class Amd64;
     class AArch64;
 
+    class IRTranslator;
     class Amd64FunctionTranslator;
     class AArch64FunctionTranslator;
 
@@ -23,6 +24,7 @@ namespace city
         friend class Amd64;
         friend class AArch64;
 
+        friend class IRTranslator;
         friend class Amd64FunctionTranslator;
         friend class AArch64FunctionTranslator;
 

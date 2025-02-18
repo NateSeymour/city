@@ -30,7 +30,7 @@ void *NativeMemoryHandle::GetAddressAtOffset(std::size_t offset) const
         throw std::runtime_error("offset is too large");
     }
 
-    return this->address_ + offset;
+    return reinterpret_cast<std::uint8_t *>(this->address_) + offset;
 }
 
 std::size_t NativeMemoryHandle::GetAllocationSize() const noexcept

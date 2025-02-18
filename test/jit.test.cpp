@@ -49,7 +49,7 @@ protected:
 
         for (auto function : functions)
         {
-            this->stdlib[function->GetName()] = function;
+            this->stdlib[*function->GetName()] = function;
         }
 
         this->jit.InsertInterfaceModule(std::move(module));

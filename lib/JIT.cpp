@@ -42,7 +42,7 @@ Assembly JIT::Link() const
     {
         for (auto const &function : interface.functions_)
         {
-            assembly.symtab_.try_emplace(name, *function, function->address_);
+            assembly.symtab_.try_emplace(*function->GetName(), *function, function->address_);
         }
     }
 
@@ -76,7 +76,7 @@ Assembly JIT::Link() const
     // Perform linking
     for (auto &[name, addr] : stubs)
     {
-        *addr = assembly.symtab_[name].GetLocation();
+        *addr = assembly.symtab_.at(name).GetLocation();
     }
 
     assembly.text_.SetProtection(MemoryProtection::Read | MemoryProtection::Execute);

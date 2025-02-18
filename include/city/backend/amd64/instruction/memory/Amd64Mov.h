@@ -3,26 +3,12 @@
 
 #include <city/backend/amd64/instruction/Amd64Instruction.h>
 #include <stdexcept>
-#include "city/JIT.h"
 
 namespace city
 {
     class Amd64Mov : public Amd64Instruction
     {
     public:
-        static Amd64Mov OI16(Register &dst, std::uint16_t data) noexcept
-        {
-            Amd64Mov inst;
-
-            auto buffer = reinterpret_cast<std::uint8_t *>(&data);
-
-            std::uint8_t opcode = 0xB8 + dst.GetCode();
-            inst.SetOpcode({opcode});
-            inst.SetImmediate({buffer[0], buffer[1]});
-
-            return inst;
-        }
-
         static Amd64Mov OI32(Register &dst, std::uint32_t data) noexcept
         {
             Amd64Mov inst;
@@ -61,12 +47,6 @@ namespace city
 
         static Amd64Mov OIX(Register &dst, std::vector<std::uint8_t> const &buffer)
         {
-            if (buffer.size() <= 2)
-            {
-                std::uint16_t data = *reinterpret_cast<std::uint16_t const *>(buffer.data());
-                return Amd64Mov::OI16(dst, data);
-            }
-
             if (buffer.size() <= 4)
             {
                 std::uint32_t data = *reinterpret_cast<std::uint32_t const *>(buffer.data());
@@ -80,14 +60,6 @@ namespace city
             }
 
             throw std::runtime_error("data buffer is too big to fit into immediate value");
-        }
-
-        static Amd64Mov OIS(Register &dst, Stub stub)
-        {
-            auto inst = Amd64Mov::OI64(dst, kLinkerCanary64);
-            inst.SetStub(std::move(stub));
-
-            return inst;
         }
 
         static Amd64Mov MR32(Register &dst, Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0) noexcept
@@ -109,6 +81,21 @@ namespace city
             inst.SetModRM(src.GetCode(), dst.GetCode(), mod, disp);
 
             return inst;
+        }
+
+        static Amd64Mov MRX(Register &dst, Register &src, std::size_t size, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0)
+        {
+            if (size <= 4)
+            {
+                return Amd64Mov::MR32(dst, src, mod, disp);
+            }
+
+            if (size <= 8)
+            {
+                return Amd64Mov::MR64(dst, src, mod, disp);
+            }
+
+            throw std::runtime_error("data is too big to fit into container");
         }
 
         static Amd64Mov RM32(Register &dst, Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0) noexcept
@@ -152,7 +139,7 @@ namespace city
             Amd64Mov inst{};
 
             inst.SetOpcode({0xF2, 0x0F, 0x10});
-            inst.SetModRM(src.GetCode(), dst.GetCode(), mod, disp);
+            inst.SetModRM(dst.GetCode(), src.GetCode(), mod, disp);
 
             return inst;
         }

@@ -25,42 +25,6 @@ std::span<Register *> AArch64FunctionTranslator::GetScratchRegisterBank(NativeTy
     throw std::runtime_error("unknown type");
 }
 
-AArch64BinaryOperation AArch64FunctionTranslator::PrepareBinaryOperation(IRBinaryInstruction &inst)
-{
-    auto optype = inst.GetType().GetNativeType();
-
-    auto &lhs = *inst.GetLHS();
-    auto &rhs = *inst.GetRHS();
-
-    std::size_t opsize = inst.GetType().GetSize();
-
-    auto &src1tmp = this->LoadValue(lhs);
-    auto &src2tmp = this->LoadValue(rhs);
-
-    Register *dst = nullptr;
-    if (lhs.GetReadCount() == 1)
-    {
-        dst = &src1tmp;
-    }
-    else if (rhs.GetReadCount() == 1)
-    {
-        dst = &src2tmp;
-    }
-    else
-    {
-        dst = &this->AcquireScratchRegister(optype);
-    }
-
-    return {
-            .inst = inst,
-            .dst = *dst,
-            .src1 = src1tmp,
-            .src2 = src2tmp,
-            .opsize = opsize,
-            .optype = optype,
-    };
-}
-
 void AArch64FunctionTranslator::TranslateInstruction(AddInst &inst)
 {
     this->TranslateBinaryInstruction<AddInst, AArch64Add>(inst);
@@ -145,6 +109,7 @@ void AArch64FunctionTranslator::Load(Register &dst, ConstantDataContainer &src)
 }
 
 void AArch64FunctionTranslator::Load(Register &dst, StackAllocationContainer &src) {}
+void AArch64FunctionTranslator::Load(Register &dst, StubContainer &src) {}
 void AArch64FunctionTranslator::Load(Register &dst, Register &src) {}
 
 void AArch64FunctionTranslator::Store(StackAllocationContainer &dst, Register &src) {}
@@ -152,14 +117,14 @@ void AArch64FunctionTranslator::Store(Register &dst, Register &src) {}
 
 void AArch64FunctionTranslator::Insert(AArch64Instruction &&inst)
 {
-    this->function.text_.push_back(std::move(inst));
     this->module_.pc_ += 4;
+    this->function.text_.push_back(std::move(inst));
 }
 
 void AArch64FunctionTranslator::InsertProlog(AArch64Instruction &&inst)
 {
-    this->function.prolog_.push_back(std::move(inst));
     this->module_.pc_ += 4;
+    this->function.prolog_.push_back(std::move(inst));
 }
 
 AArch64FunctionTranslator::AArch64FunctionTranslator(NativeModule &module, IRFunction &ir_function) : IRTranslator(module, ir_function), function(ir_function)

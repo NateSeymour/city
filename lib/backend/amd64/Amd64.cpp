@@ -5,13 +5,33 @@ using namespace city;
 
 NativeModule Amd64::BuildIRModule(IRModule &&ir_module)
 {
-    Amd64Module amd64_module{ir_module.GetName(), std::move(ir_module.data_)};
+    NativeModule module{ir_module.GetName(), std::move(ir_module.data_)};
 
-    for (auto &[name, function] : ir_module.functions_)
+    for (auto &[name, ir_function] : ir_module.functions_)
     {
-        Amd64FunctionTranslator translator{amd64_module, *function};
-        amd64_module.functions_.push_back(translator.Translate());
+        auto misalignment = module.AlignPC(16);
+        for (int i = 0; i < misalignment; i++)
+        {
+            module.text_.push_back(0x69);
+        }
+
+        std::size_t function_begin = module.pc_;
+
+        Amd64FunctionTranslator translator{module, *ir_function};
+        auto &function = translator.function;
+
+        module.symtab_.try_emplace(name, function, reinterpret_cast<void *>(function_begin));
+
+        for (auto &inst : function.prolog_)
+        {
+            inst.AppendToBuffer(module.text_);
+        }
+
+        for (auto &inst : function.text_)
+        {
+            inst.AppendToBuffer(module.text_);
+        }
     }
 
-    return amd64_module;
+    return module;
 }

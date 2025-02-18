@@ -16,10 +16,12 @@ NativeModule AArch64::BuildIRModule(IRModule &&ir_module)
             module.text_.push_back(0x69);
         }
 
+        std::size_t function_begin = module.pc_;
+
         AArch64FunctionTranslator translator{module, *ir_function};
         auto &function = translator.function;
 
-        module.symtab_.try_emplace(name, function, module.pc_);
+        module.symtab_.try_emplace(name, function, reinterpret_cast<void *>(function_begin));
 
         for (auto &inst : function.prolog_)
         {

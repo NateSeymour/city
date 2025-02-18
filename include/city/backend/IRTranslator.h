@@ -9,6 +9,7 @@
 #include "city/container/ConstantDataContainer.h"
 #include "city/container/Register.h"
 #include "city/container/StackAllocationContainer.h"
+#include "city/container/StubContainer.h"
 #include "city/ir/IRFunction.h"
 
 #include "city/ir/instruction/arithmetic/AddInst.h"
@@ -20,6 +21,28 @@
 
 namespace city
 {
+    struct BinaryOperation
+    {
+        IRBinaryInstruction &inst;
+        Register &dst;
+        Register &src1;
+        Register &src2;
+        std::size_t opsize;
+        NativeType optype;
+
+        void Persist() const
+        {
+            dst.ClearTempValue();
+            src1.ClearTempValue();
+            src2.ClearTempValue();
+
+            this->inst.GetLHS()->DecrementReadCount();
+            this->inst.GetRHS()->DecrementReadCount();
+
+            dst.InstantiateValue(&inst);
+        }
+    };
+
     class IRTranslator
     {
     protected:
@@ -41,7 +64,25 @@ namespace city
 
         [[nodiscard]] Register &AcquireScratchRegister(NativeType type);
 
-        [[nodiscard]] Register &LoadValue(Value &value);
+        /**
+         *
+         * @param inst Instruction to prepare
+         * @param destructive The instruction is destructive, meaning that it overwrites its first source argument. In this case, `dst` and `src1` will be aliases. `src1` will be a
+         * strict copy of the original value.
+         * @return
+         */
+        [[nodiscard]] BinaryOperation PrepareBinaryOperation(IRBinaryInstruction &inst, bool destructive = false);
+
+        /**
+         * Loads a value into a scratch register. Default behavior is to do nothing if the value is already in a register.
+         * @param value Value to load into a scratch register
+         * @param copy
+         * @return
+         */
+        [[nodiscard]] Register &LoadValue(Value &value, bool copy = false);
+
+        [[nodiscard]] std::size_t GetStubIndex(std::string const &name) const;
+
         void MoveValue(Container &dst, Value &value);
 
     public:
@@ -54,6 +95,7 @@ namespace city
 
         virtual void Load(Register &dst, ConstantDataContainer &src) = 0;
         virtual void Load(Register &dst, StackAllocationContainer &src) = 0;
+        virtual void Load(Register &dst, StubContainer &src) = 0;
         virtual void Load(Register &dst, Register &src) = 0;
 
         virtual void Store(StackAllocationContainer &dst, Register &src) = 0;

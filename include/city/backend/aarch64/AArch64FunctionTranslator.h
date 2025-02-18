@@ -8,36 +8,12 @@
 
 namespace city
 {
-    struct AArch64BinaryOperation
-    {
-        IRBinaryInstruction &inst;
-        Register &dst;
-        Register &src1;
-        Register &src2;
-        std::size_t opsize;
-        NativeType optype;
-
-        void Persist() const
-        {
-            dst.ClearTempValue();
-            src1.ClearTempValue();
-            src2.ClearTempValue();
-
-            this->inst.GetLHS()->DecrementReadCount();
-            this->inst.GetRHS()->DecrementReadCount();
-
-            dst.InstantiateValue(&inst);
-        }
-    };
-
-    class AArch64FunctionTranslator : IRTranslator
+    class AArch64FunctionTranslator : public IRTranslator
     {
         AArch64RegisterBank reg_;
 
     protected:
         [[nodiscard]] std::span<Register *> GetScratchRegisterBank(NativeType type) override;
-
-        [[nodiscard]] AArch64BinaryOperation PrepareBinaryOperation(IRBinaryInstruction &inst);
 
         template<typename IRInstructionType, typename NativeInstructionType>
         void TranslateBinaryInstruction(IRInstructionType &inst)
@@ -65,6 +41,7 @@ namespace city
 
         void Load(Register &dst, ConstantDataContainer &src) override;
         void Load(Register &dst, StackAllocationContainer &src) override;
+        void Load(Register &dst, StubContainer &src) override;
         void Load(Register &dst, Register &src) override;
 
         void Store(StackAllocationContainer &dst, Register &src) override;

@@ -16,7 +16,7 @@ namespace city
                 Register(2, RegisterType::Integer, Volatility::Volatile, RegisterPurpose::General, false),    // RDX
                 Register(3, RegisterType::Integer, Volatility::NonVolatile, RegisterPurpose::General, false), // RBX
                 Register(4, RegisterType::Integer, Volatility::NonVolatile, RegisterPurpose::Special, false), // RSP
-                Register(5, RegisterType::Integer, Volatility::NonVolatile, RegisterPurpose::Special, false), // RBP
+                Register(5, RegisterType::Integer, Volatility::NonVolatile, RegisterPurpose::Special, false), // RBP/RIP
                 Register(6, RegisterType::Integer, Volatility::Volatile, RegisterPurpose::General, false),    // RSI
                 Register(7, RegisterType::Integer, Volatility::Volatile, RegisterPurpose::General, false),    // RDI
                 Register(0, RegisterType::Integer, Volatility::Volatile, RegisterPurpose::General, true),     // R8

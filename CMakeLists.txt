@@ -9,7 +9,6 @@ add_library(city
         include/city/backend/aarch64/AArch64.h
         include/city/backend/aarch64/instruction/AArch64Instruction.h
         include/city/backend/amd64/Amd64Function.h
-        include/city/backend/amd64/Amd64Module.h
         include/city/backend/amd64/Amd64RegisterBank.h
         include/city/backend/amd64/instruction/arithmetic/Amd64Div.h
         include/city/backend/amd64/instruction/arithmetic/Amd64Mul.h
@@ -48,7 +47,6 @@ add_library(city
         lib/backend/amd64/Amd64.cpp
         lib/backend/amd64/Amd64Function.cpp
         lib/backend/amd64/Amd64FunctionTranslator.cpp
-        lib/backend/amd64/Amd64Module.cpp
         lib/container/Register.cpp
         lib/backend/amd64/instruction/Amd64Instruction.cpp
         lib/backend/Backend.cpp
@@ -93,6 +91,8 @@ add_library(city
         include/city/backend/aarch64/instruction/memory/AArch64Mov.h
         include/city/backend/aarch64/instruction/arithmetic/AArch64Div.h
         include/city/backend/aarch64/instruction/arithmetic/AArch64Mul.h
+        include/city/container/StubContainer.h
+        lib/container/StubContainer.cpp
 )
 target_include_directories(city PUBLIC include)
 

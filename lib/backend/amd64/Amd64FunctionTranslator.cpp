@@ -14,6 +14,20 @@
 
 using namespace city;
 
+std::span<Register *> Amd64FunctionTranslator::GetScratchRegisterBank(NativeType type)
+{
+    if (type == NativeType::Integer)
+    {
+        return std::span{this->reg_.r_volatile};
+    }
+    else if (type == NativeType::FloatingPoint)
+    {
+        return std::span{this->reg_.xmm_volatile};
+    }
+
+    throw std::runtime_error("unknown type");
+}
+
 void Amd64FunctionTranslator::TranslateInstruction(AddInst &inst)
 {
     this->TranslateBinaryInstruction<AddInst, Amd64Add>(inst);
@@ -36,33 +50,7 @@ void Amd64FunctionTranslator::TranslateInstruction(SubInst &inst)
 
 void Amd64FunctionTranslator::TranslateInstruction(CallInst &inst)
 {
-    // Generate address stub
-    auto &address_reg = this->AcquireGPRegister();
-
-    Stub stub{
-            .label = inst.GetTarget()->GetName(),
-            .type = StubSourceLocation::Text,
-    };
-    this->Insert(Amd64Mov::OIS(address_reg, std::move(stub)));
-
-    // Persist volatile registers
-    for (auto &reg : this->registers.r)
-    {
-        if (reg.HasValue() && reg.GetValue()->IsUsed())
-        {
-            auto &swap = this->AcquireStackSpace(reg.GetSize());
-            this->MoveValue(swap, reg);
-        }
-    }
-
-    for (auto &reg : this->registers.xmm)
-    {
-        if (reg.HasValue() && reg.GetValue()->IsUsed())
-        {
-            auto &swap = this->AcquireStackSpace(reg.GetSize());
-            this->MoveValue(swap, reg);
-        }
-    }
+    this->PersistScratchRegisters();
 
     // Load arguments
     auto const &args = inst.GetArguments();
@@ -79,26 +67,27 @@ void Amd64FunctionTranslator::TranslateInstruction(CallInst &inst)
         auto container = value->GetContainer();
         if (value_type.GetNativeType() == NativeType::Integer)
         {
-            container->Load(*this, *this->registers.r_args[i]);
+            container->Load(*this, *this->reg_.r_args[i]);
         }
         else if (value_type.GetNativeType() == NativeType::FloatingPoint)
         {
-            container->Load(*this, *this->registers.xmm_args[i]);
+            container->Load(*this, *this->reg_.xmm_args[i]);
         }
     }
 
     // Make call
-    this->Insert(Amd64Call::M64(address_reg));
+    auto &addr = this->LoadValue(*inst.GetTarget());
+    this->Insert(Amd64Call::M64(addr));
 
     // Instantiate retval
     auto native_type = inst.GetType().GetNativeType();
     if (native_type == NativeType::Integer)
     {
-        this->registers.r[0].InstantiateValue(&inst);
+        this->reg_.r[0].InstantiateValue(&inst);
     }
     else if (native_type == NativeType::FloatingPoint)
     {
-        this->registers.xmm[0].InstantiateValue(&inst);
+        this->reg_.xmm[0].InstantiateValue(&inst);
     }
 }
 
@@ -110,11 +99,11 @@ void Amd64FunctionTranslator::TranslateInstruction(RetInst &inst)
         auto native_type = inst.GetType().GetNativeType();
         if (native_type == NativeType::Integer)
         {
-            this->MoveValue(this->registers.r[0], *retval, ConflictStrategy::Discard);
+            this->MoveValue(this->reg_.r[0], *retval);
         }
         else if (native_type == NativeType::FloatingPoint)
         {
-            this->MoveValue(this->registers.xmm[0], *retval, ConflictStrategy::Discard);
+            this->MoveValue(this->reg_.xmm[0], *retval);
         }
     }
 
@@ -124,54 +113,6 @@ void Amd64FunctionTranslator::TranslateInstruction(RetInst &inst)
     }
 
     this->Insert(Amd64Ret::ZONear());
-}
-
-Register &Amd64FunctionTranslator::PrepareDestinationValue(Value &value)
-{
-    if (!value.IsInstantiated())
-    {
-        throw std::runtime_error("cannot prepare uninstantiated value");
-    }
-
-    Container *container = value.GetContainer();
-
-    // If this is the last read then we can store the new value there.
-    if (container->GetType() == ContainerType::Register && value.GetReadCount() == 1)
-    {
-        return *dynamic_cast<Register *>(container);
-    }
-
-    // Otherwise it needs to be copied into a new register.
-    return this->CopyValue(value);
-}
-
-std::tuple<Register &, Amd64Mod, std::int32_t> Amd64FunctionTranslator::PrepareSourceValue(Value &value)
-{
-    if (!value.IsInstantiated())
-    {
-        throw std::runtime_error("cannot prepare uninstantiated value");
-    }
-
-    Container *container = value.GetContainer();
-
-    switch (container->GetType())
-    {
-        case ContainerType::Constant:
-        {
-            return {this->CopyValue(value), Amd64Mod::Value, 0};
-        }
-
-        case ContainerType::StackAllocation:
-        {
-            auto stack_allocation = dynamic_cast<StackAllocationContainer *>(container);
-            return {this->registers.r[5], Amd64Mod::DisplacedPointer, stack_allocation->GetOffset() * -1};
-        }
-
-        case ContainerType::Register:
-        {
-            return {*dynamic_cast<Register *>(container), Amd64Mod::Value, 0};
-        }
-    }
 }
 
 void Amd64FunctionTranslator::Load(Register &dst, ConstantDataContainer &src)
@@ -185,23 +126,22 @@ void Amd64FunctionTranslator::Load(Register &dst, ConstantDataContainer &src)
     if (value_type.GetNativeType() == NativeType::Integer)
     {
         this->Insert(Amd64Mov::OIX(dst, src.GetDataBuffer()));
-        this->Insert(Amd64Mov::RMX(dst, dst, dst.GetSize(), Amd64Mod::Pointer));
     }
     // Need to take the roundabout way of loading the value first onto the stack via integer move and then into an xmm register.
     else if (value_type.GetNativeType() == NativeType::FloatingPoint)
     {
-        auto &valtmp = this->AcquireGPRegister(RegisterType::Integer);
-        auto &stacktmp = this->AcquireStackSpace(8);
+        auto &valtmp = this->AcquireScratchRegister(NativeType::Integer);
+        auto &stacktmp = this->AcquireStackSpace(value_type);
 
         this->Insert(Amd64Mov::OIX(valtmp, src.GetDataBuffer()));
-        this->Insert(Amd64Mov::MR64(this->registers.r[5], valtmp, Amd64Mod::DisplacedPointer, stacktmp.GetOffset() * -1));
-        this->Insert(Amd64Mov::SDA(dst, this->registers.r[5], Amd64Mod::DisplacedPointer, stacktmp.GetOffset() * -1));
+        this->Insert(Amd64Mov::MRX(this->reg_.r[5], valtmp, src.GetSize(), Amd64Mod::DisplacedPointer, stacktmp.GetOffset() * -1));
+        this->Insert(Amd64Mov::SDA(dst, this->reg_.r[5], Amd64Mod::DisplacedPointer, stacktmp.GetOffset() * -1));
     }
 }
 
 void Amd64FunctionTranslator::Load(Register &dst, StackAllocationContainer &src)
 {
-    auto &rbp = this->registers.r[5];
+    auto &rbp = this->reg_.r[5];
 
     if (dst.GetValueType() == RegisterType::Integer)
     {
@@ -211,6 +151,22 @@ void Amd64FunctionTranslator::Load(Register &dst, StackAllocationContainer &src)
     {
         this->Insert(Amd64Mov::SDA(dst, rbp, Amd64Mod::DisplacedPointer, src.GetOffset() * -1));
     }
+}
+
+void Amd64FunctionTranslator::Load(Register &dst, StubContainer &src)
+{
+    auto value = src.GetValue();
+
+    auto const &name = value->GetName();
+    if (!name.has_value())
+    {
+        throw std::runtime_error("cannot link against anonymous value");
+    }
+
+    auto index = static_cast<std::int32_t>(this->GetStubIndex(*name));
+
+    auto &rip = this->reg_.r[5];
+    this->Insert(Amd64Mov::MR64(dst, rip, Amd64Mod::Pointer, (-8 * index) - this->module_.pc_));
 }
 
 void Amd64FunctionTranslator::Load(Register &dst, Register &src)
@@ -233,7 +189,7 @@ void Amd64FunctionTranslator::Load(Register &dst, Register &src)
 
 void Amd64FunctionTranslator::Store(StackAllocationContainer &dst, Register &src)
 {
-    auto &rbp = this->registers.r[5];
+    auto &rbp = this->reg_.r[5];
 
     if (src.GetValueType() == RegisterType::Integer)
     {
@@ -250,171 +206,19 @@ void Amd64FunctionTranslator::Store(Register &dst, Register &src)
     this->Load(dst, src);
 }
 
-Register &Amd64FunctionTranslator::CopyValue(Value &value)
+void Amd64FunctionTranslator::Insert(Amd64Instruction &&inst)
 {
-    if (!value.IsInstantiated())
-    {
-        throw std::runtime_error("impossible to copy uninstantiated value");
-    }
-
-    auto value_type = value.GetType();
-    auto register_type = value_type.GetNativeType() == NativeType::Integer ? RegisterType::Integer : RegisterType::FloatingPoint;
-    auto &target_register = this->AcquireGPRegister(register_type);
-
-    auto src = value.GetContainer();
-    src->Load(*this, target_register);
-    target_register.InstantiateValue(&value);
-
-    return target_register;
+    this->module_.pc_ += inst.GetBinarySize();
+    this->function.text_.push_back(std::move(inst));
 }
 
-void Amd64FunctionTranslator::MoveValue(StackAllocationContainer &dst, Register &src)
+void Amd64FunctionTranslator::InsertProlog(Amd64Instruction &&inst)
 {
-    if (!src.HasValue())
-    {
-        throw std::runtime_error("source has no value to move");
-    }
-
-    if (dst.HasValue() && dst.GetValue()->IsUsed())
-    {
-        throw std::runtime_error("unresolvable value conflict");
-    }
-
-    this->Store(dst, src);
-
-    dst.TakeValue(&src);
+    this->module_.pc_ += inst.GetBinarySize();
+    this->function.prolog_.push_back(std::move(inst));
 }
 
-void Amd64FunctionTranslator::MoveValue(Register &dst, Register &src, ConflictStrategy strategy)
-{
-    if (!src.HasValue())
-    {
-        throw std::runtime_error("source has no value to move");
-    }
-
-    this->HandleConflict(dst, strategy);
-
-    this->Store(dst, src);
-
-    dst.TakeValue(&src);
-}
-
-void Amd64FunctionTranslator::MoveValue(Register &dst, Value &value, ConflictStrategy strategy)
-{
-    if (!value.IsInstantiated())
-    {
-        throw std::runtime_error("cannot move uninstantiated value");
-    }
-
-    this->HandleConflict(dst, strategy);
-
-    auto &src = *value.GetContainer();
-    src.Load(*this, dst);
-
-    dst.TakeValue(&src);
-}
-
-void Amd64FunctionTranslator::HandleConflict(Register &reg, ConflictStrategy strategy)
-{
-    if (!reg.HasValue())
-    {
-        return;
-    }
-
-    auto value = reg.GetValue();
-    if (!value->IsUsed())
-    {
-        return;
-    }
-
-    switch (strategy)
-    {
-        case ConflictStrategy::Discard:
-        {
-            return;
-        }
-
-        case ConflictStrategy::Save:
-        {
-            auto &swap = this->AcquireStackSpace(reg.GetSize());
-            this->MoveValue(swap, reg);
-            break;
-        }
-    }
-}
-
-Register &Amd64FunctionTranslator::AcquireGPRegister(RegisterType value_type)
-{
-    auto &available_registers = value_type == RegisterType::Integer ? this->registers.r : this->registers.xmm;
-
-    for (auto &reg : available_registers)
-    {
-        if (reg.GetRegisterType() != RegisterPurpose::General)
-        {
-            continue;
-        }
-
-        if (reg.GetVolatility() != Volatility::Volatile)
-        {
-            continue;
-        }
-
-        if (!reg.HasValue() || !reg.GetValue()->IsUsed())
-        {
-            return reg;
-        }
-    }
-
-    // No free register has been found, so now we dislocate a register with an existing value into the stack.
-    this->register_dislocation_count_++;
-    for (int i = 0; i < available_registers.size(); i++)
-    {
-        auto &victim = available_registers[(i + this->register_dislocation_count_) % available_registers.size()];
-        if (victim.GetRegisterType() != RegisterPurpose::General || victim.GetVolatility() != Volatility::Volatile)
-        {
-            continue;
-        }
-
-        auto &swap = this->AcquireStackSpace(8);
-        this->MoveValue(swap, victim);
-        return victim;
-    }
-
-    throw std::runtime_error("failed to acquire a new gp register");
-}
-
-std::span<Register *> Amd64FunctionTranslator::GetScratchRegisterBank(NativeType type)
-{
-    if (type == NativeType::Integer)
-    {
-        return std::span{this->registers.r_volatile};
-    }
-    else if (type == NativeType::FloatingPoint)
-    {
-        return std::span{this->registers.xmm_volatile};
-    }
-
-    throw std::runtime_error("unknown type");
-}
-
-StackAllocationContainer &Amd64FunctionTranslator::AcquireStackSpace(std::size_t size)
-{
-    for (auto &stack_allocation : this->stack_)
-    {
-        if (stack_allocation->GetSize() == size && !stack_allocation->HasValue())
-        {
-            return *stack_allocation;
-        }
-    }
-
-    auto &stack_allocation = this->stack_.emplace_back(std::make_unique<StackAllocationContainer>(size));
-    this->stack_depth_ += static_cast<std::int64_t>(size);
-    stack_allocation->SetOffset(this->stack_depth_);
-
-    return *stack_allocation;
-}
-
-Amd64Function Amd64FunctionTranslator::Translate()
+Amd64FunctionTranslator::Amd64FunctionTranslator(NativeModule &module, IRFunction &ir_function) : IRTranslator(module, ir_function), function(ir_function)
 {
     // Instantiate arguments
     auto const &arg_values = this->ir_function_.GetArgumentValues();
@@ -425,11 +229,11 @@ Amd64Function Amd64FunctionTranslator::Translate()
 
         if (value_type.GetNativeType() == NativeType::Integer)
         {
-            this->registers.r_args[i]->InstantiateValue(value);
+            this->reg_.r_args[i]->InstantiateValue(value);
         }
         else if (value_type.GetNativeType() == NativeType::FloatingPoint)
         {
-            this->registers.xmm_args[i]->InstantiateValue(value);
+            this->reg_.xmm_args[i]->InstantiateValue(value);
         }
     }
 
@@ -442,31 +246,11 @@ Amd64Function Amd64FunctionTranslator::Translate()
         }
     }
 
-    /*
-     * Entering into a function
-     * 1. Push RBP. This will save the old stack from.
-     * 2. Save RSP -> RBP. This will initialize the stack frame pointer to use for constant offsets into the stack.
-     * 3. Subtract space for stack storage from RSP.
-     */
     // Generate Prolog
     if (this->stack_depth_ > 0)
     {
-        this->InsertProlog(Amd64Push::M64(this->registers.r[5]));
-        this->InsertProlog(Amd64Mov::MR64(this->registers.r[5], this->registers.r[4]));
-        this->InsertProlog(Amd64Sub::MI64(this->registers.r[4], this->stack_depth_));
+        this->InsertProlog(Amd64Push::M64(this->reg_.r[5]));
+        this->InsertProlog(Amd64Mov::MR64(this->reg_.r[5], this->reg_.r[4]));
+        this->InsertProlog(Amd64Sub::MI64(this->reg_.r[4], this->stack_depth_));
     }
-
-    return std::move(this->function);
 }
-
-void Amd64FunctionTranslator::Insert(Amd64Instruction &&inst)
-{
-    this->function.text_.push_back(std::move(inst));
-}
-
-void Amd64FunctionTranslator::InsertProlog(Amd64Instruction &&inst)
-{
-    this->function.prolog_.push_back(std::move(inst));
-}
-
-Amd64FunctionTranslator::Amd64FunctionTranslator(Amd64Module &module, IRFunction &ir_function) : IRTranslator(ir_function), module(module), function(ir_function) {}

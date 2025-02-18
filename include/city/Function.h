@@ -1,9 +1,9 @@
 #ifndef CITY_FUNCTION_H
 #define CITY_FUNCTION_H
 
-#include <string>
 #include <vector>
 #include "city/value/Value.h"
+#include "container/StubContainer.h"
 #include "type/Type.h"
 
 namespace city
@@ -14,12 +14,13 @@ namespace city
     {
         friend class IRBuilder;
 
+        StubContainer stub_container_;
+
     protected:
-        std::string name_;
+        Type return_type_;
         std::vector<Type> argument_types_;
 
     public:
-        [[nodiscard]] std::string const &GetName() const noexcept;
         [[nodiscard]] std::vector<Type> const &GetArgumentTypes() const noexcept;
 
         Function(std::string name, Type return_type, std::vector<Type> arg_types);

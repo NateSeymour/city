@@ -23,10 +23,10 @@ namespace city
             this->location_ = location;
         }
 
-        template<typename ReturnType, typename... Args>
-        auto ToPointer()
+        template<typename FunctionType>
+        FunctionType *ToPointer()
         {
-            return reinterpret_cast<ReturnType (*)(Args...)>(this->location_);
+            return reinterpret_cast<FunctionType *>(this->location_);
         }
 
         Symbol(Function const &function, void *location) : Function(function), location_(location) {}

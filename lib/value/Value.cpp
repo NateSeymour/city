@@ -19,6 +19,11 @@ Function *Value::ToFunction() noexcept
     return dynamic_cast<Function *>(this);
 }
 
+std::optional<std::string> const &Value::GetName() const noexcept
+{
+    return this->name_;
+}
+
 void Value::IncrementReadCount() noexcept
 {
     this->read_count_++;
@@ -55,3 +60,5 @@ std::size_t Value::GetReadCount() const noexcept
 }
 
 Value::Value(Type type) : type_(type) {}
+
+Value::Value(std::string name, Type type) : name_(std::move(name)), type_(type) {}

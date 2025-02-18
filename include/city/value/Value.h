@@ -2,6 +2,8 @@
 #define CITY_VALUE_H
 
 #include <cstddef>
+#include <optional>
+#include <string>
 #include "city/container/Container.h"
 #include "city/type/Type.h"
 
@@ -14,8 +16,8 @@ namespace city
         friend class Container;
 
     protected:
+        std::optional<std::string> name_;
         Type type_;
-
         Container *container_ = nullptr;
 
         std::size_t read_count_ = 0;
@@ -23,8 +25,9 @@ namespace city
     public:
         [[nodiscard]] Function *ToFunction() noexcept;
 
-        [[nodiscard]] virtual Container *GetContainer() noexcept;
+        [[nodiscard]] std::optional<std::string> const &GetName() const noexcept;
         [[nodiscard]] Type const &GetType() const noexcept;
+        [[nodiscard]] virtual Container *GetContainer() noexcept;
 
         virtual void IncrementReadCount() noexcept;
         virtual void DecrementReadCount() noexcept;
@@ -39,7 +42,9 @@ namespace city
          */
         virtual bool Release();
 
-        explicit Value(Type type);
+        Value(Type type);
+        Value(std::string name, Type type);
+
         virtual ~Value() = default;
     };
 } // namespace city
