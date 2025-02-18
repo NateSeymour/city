@@ -18,4 +18,10 @@ void CallInst::Apply(IRTranslator *interface)
     interface->TranslateInstruction(*this);
 }
 
-CallInst::CallInst(Function *target, std::vector<Value *> arguments) : IRInstruction(target->GetType()), target_(target), arguments_(std::move(arguments)) {}
+CallInst::CallInst(Function *target, std::vector<Value *> arguments) : IRInstruction(target->GetType()), target_(target), arguments_(std::move(arguments))
+{
+    for (auto argument : arguments)
+    {
+        argument->IncrementReadCount();
+    }
+}
