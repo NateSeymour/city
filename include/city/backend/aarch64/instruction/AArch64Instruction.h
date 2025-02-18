@@ -22,6 +22,17 @@ namespace city
         } dp_add_sub_i;
         static_assert(sizeof(DPAddSubI) == 4);
 
+        struct DPMovI
+        {
+            unsigned rd : 5 = 0b0;
+            unsigned imm : 16 = 0b0;
+            unsigned hw : 2 = 0b0;
+            unsigned op0 : 6 = 0b1001'01;
+            unsigned opc : 2 = 0b0;
+            unsigned sf : 1 = 0b1;
+        } dpmi;
+        static_assert(sizeof(DPMovI) == 4);
+
         struct DPAddSubExt
         {
             unsigned rd : 5 = 0b0;
@@ -79,6 +90,36 @@ namespace city
             unsigned sf : 1 = 0b1;
         } dp3;
         static_assert(sizeof(DP3) == 4);
+
+        struct DPL
+        {
+            unsigned rd : 5 = 0b0;
+            unsigned rn : 5 = 0b0;
+            unsigned imm : 6 = 0b0;
+            unsigned rm : 5 = 0b0;
+            unsigned n : 1 = 0b0;
+            unsigned shift : 2 = 0b0;
+            unsigned op0 : 5 = 0b0101'0;
+            unsigned opc : 2 = 0b0;
+            unsigned sf : 1 = 0b1;
+        } dpl;
+        static_assert(sizeof(DPL) == 4);
+
+        struct FCONV
+        {
+            unsigned rd : 5 = 0b0;
+            unsigned rn : 5 = 0b0;
+            unsigned op1 : 6 = 0b0;
+            unsigned opcode : 3 = 0b0;
+            unsigned rmode : 2 = 0b0;
+            unsigned _1 : 1 = 0b1;
+            unsigned ptype : 2 = 0b0;
+            unsigned op0 : 5 = 0b1111'0;
+            unsigned s : 1 = 0b0;
+            unsigned _0 : 1 = 0b0;
+            unsigned sf : 1 = 0b1;
+        } fconv;
+        static_assert(sizeof(FCONV) == 4);
 
         struct FDP2
         {

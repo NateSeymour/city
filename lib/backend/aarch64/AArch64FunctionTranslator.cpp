@@ -88,7 +88,7 @@ void AArch64FunctionTranslator::Load(Register &dst, ConstantDataContainer &src)
     }
 
     auto buffer = reinterpret_cast<std::uint16_t const *>(src.GetDataBuffer().data());
-    this->Insert(AArch64Mov::IS(*tmpdst, buffer[0], 0));
+    this->Insert(AArch64Mov::I(*tmpdst, buffer[0], 0));
     auto buffer_size = src.GetSize();
     for (int i = 1; i < buffer_size / 2; i++)
     {
@@ -99,7 +99,7 @@ void AArch64FunctionTranslator::Load(Register &dst, ConstantDataContainer &src)
             continue;
         }
 
-        this->Insert(AArch64Mov::KIS(*tmpdst, value, i));
+        this->Insert(AArch64Mov::I(*tmpdst, value, i, false));
     }
 
     if (dst.GetValueType() == RegisterType::FloatingPoint)

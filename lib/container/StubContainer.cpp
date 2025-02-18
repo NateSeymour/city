@@ -1,4 +1,5 @@
 #include "city/container/StubContainer.h"
+#include <stdexcept>
 #include "city/backend/IRTranslator.h"
 
 using namespace city;
