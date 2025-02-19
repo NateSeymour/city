@@ -8,7 +8,7 @@
 
 namespace tstd
 {
-    extern "C" double pow(double a, double b)
+    extern "C" double my_pow(double a, double b)
     {
         return std::pow(a, b);
     }
@@ -53,7 +53,7 @@ protected:
         city::InterfaceModule module{"__std"};
 
         std::array functions = {
-                module.InsertBinding("__pow", tstd::pow),
+                module.InsertBinding("__pow", tstd::my_pow),
         };
 
         for (auto function : functions)
@@ -384,5 +384,5 @@ TEST_F(JITTestRunner, InterfaceFunctionCall)
     auto test = assembly["test"].ToPointer<double(double, double)>();
 
     auto value = test(values.first, values.second);
-    ASSERT_EQ(value, tstd::pow(values.first, values.second));
+    ASSERT_EQ(value, tstd::my_pow(values.first, values.second));
 }

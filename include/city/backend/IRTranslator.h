@@ -52,6 +52,8 @@ namespace city
         std::int64_t stack_depth_ = 0;
         std::vector<std::unique_ptr<StackAllocationContainer>> stack_;
 
+        Value stub_base_pointer_{Type::Get<void *>()};
+
         std::uint64_t register_dislocation_count_ = 0;
 
         void AlignStack(unsigned int alignment) noexcept;

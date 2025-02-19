@@ -21,7 +21,7 @@ namespace city
 
     protected:
         std::size_t size_ = 0;
-        NativeType native_type_ = NativeType::Integer;
+        NativeType native_type_ = NativeType::Void;
 
     public:
         template<typename T>
@@ -29,7 +29,7 @@ namespace city
         {
             Type type;
 
-            if constexpr (std::is_integral_v<T>)
+            if constexpr (std::is_integral_v<T> || std::is_pointer_v<T>)
             {
                 type.size_ = sizeof(T);
                 type.native_type_ = NativeType::Integer;

@@ -9,6 +9,7 @@
 #include "city/backend/amd64/instruction/control/Amd64Call.h"
 #include "city/backend/amd64/instruction/control/Amd64Leave.h"
 #include "city/backend/amd64/instruction/control/Amd64Ret.h"
+#include "city/backend/amd64/instruction/memory/Amd64Lea.h"
 #include "city/backend/amd64/instruction/memory/Amd64Mov.h"
 #include "city/backend/amd64/instruction/memory/Amd64Push.h"
 
@@ -122,7 +123,7 @@ void Amd64FunctionTranslator::Load(Register &dst, ConstantDataContainer &src)
         throw std::runtime_error("value is too big");
     }
 
-    auto value_type = src.GetValue()->GetType();
+    auto value_type = dst.GetValue()->GetType();
     if (value_type.GetNativeType() == NativeType::Integer)
     {
         this->Insert(Amd64Mov::OIX(dst, src.GetDataBuffer()));
@@ -165,8 +166,8 @@ void Amd64FunctionTranslator::Load(Register &dst, StubContainer &src)
 
     auto index = static_cast<std::int32_t>(this->GetStubIndex(*name));
 
-    auto &rip = this->reg_.r[5];
-    this->Insert(Amd64Mov::RM64(dst, rip, Amd64Mod::Pointer, (-8 * (index + 1)) - this->module_.pc_ - 7));
+    auto &stub_base_reg = this->LoadValue(this->stub_base_pointer_);
+    this->Insert(Amd64Mov::RM64(dst, stub_base_reg, Amd64Mod::DisplacedPointer, -8 * (index + 1)));
 }
 
 void Amd64FunctionTranslator::Load(Register &dst, Register &src)
@@ -237,6 +238,12 @@ Amd64FunctionTranslator::Amd64FunctionTranslator(NativeModule &module, IRFunctio
         }
     }
 
+    // Save stub location
+    this->stub_base_pointer_.IncrementReadCount();
+    auto &stub_base_reg = this->AcquireScratchRegister(NativeType::Integer);
+    this->InsertProlog(Amd64Lea::RM(stub_base_reg, this->reg_.r[5], Amd64Mod::Pointer, (-1 * this->module_.pc_) - 7)); // Magic number 7 is the size of instruction plus disp
+    stub_base_reg.InstantiateValue(&this->stub_base_pointer_);
+
     // Function Body
     for (auto &block : this->ir_function_.GetBlocks())
     {
@@ -246,7 +253,7 @@ Amd64FunctionTranslator::Amd64FunctionTranslator(NativeModule &module, IRFunctio
         }
     }
 
-    // Generate Prolog
+    // Stack management
     if (this->stack_depth_ > 0)
     {
         this->InsertProlog(Amd64Push::M64(this->reg_.r[5]));

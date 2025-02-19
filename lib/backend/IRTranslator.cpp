@@ -114,12 +114,12 @@ Register &IRTranslator::LoadValue(Value &value, bool copy)
 
     // Value not loaded
     auto &reg = this->AcquireScratchRegister(value.GetType().GetNativeType());
-
-    container->Load(*this, reg);
     if (!((!copy && reg.TakeValue(container)) || reg.SetTempValue(&value)))
     {
         throw std::runtime_error("failed to set temporary value");
     }
+
+    container->Load(*this, reg);
 
     return reg;
 }
