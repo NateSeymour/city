@@ -117,6 +117,9 @@ if (CITY_ENABLE_TESTS)
 
     add_executable(city-test
             test/module.test.cpp
+            test/arithmetic.test.cpp
+            test/jit.test.h
+            test/functional.test.cpp
             test/jit.test.cpp
     )
     target_link_libraries(city-test PRIVATE city GTest::gtest_main)

@@ -60,11 +60,11 @@ void AArch64FunctionTranslator::TranslateInstruction(RetInst &inst)
         auto type = retval->GetType().GetNativeType();
         if (type == NativeType::Integer)
         {
-            retval->GetContainer()->Load(*this, this->reg_.r[0]);
+            this->MoveValue(this->reg_.r[0], *retval);
         }
         else if (type == NativeType::FloatingPoint)
         {
-            retval->GetContainer()->Load(*this, this->reg_.v[0]);
+            this->MoveValue(this->reg_.v[0], *retval);
         }
     }
 
@@ -111,8 +111,7 @@ void AArch64FunctionTranslator::Load(Register &dst, ConstantDataContainer &src)
         this->Insert(AArch64Mov::I(*tmpdst, value, i, false));
     }
 
-    // Sign extend if necessary
-
+    // TODO: Sign extend if necessary
 
     if (dst.GetValueType() == RegisterType::FloatingPoint)
     {
