@@ -7,6 +7,7 @@
 #include "city/backend/aarch64/instruction/arithmetic/AArch64Div.h"
 #include "city/backend/aarch64/instruction/arithmetic/AArch64Mul.h"
 #include "city/backend/aarch64/instruction/arithmetic/AArch64Sub.h"
+#include "city/backend/aarch64/instruction/control/AArch64B.h"
 #include "city/backend/aarch64/instruction/control/AArch64Ret.h"
 #include "city/backend/aarch64/instruction/memory/AArch64Adr.h"
 #include "city/backend/aarch64/instruction/memory/AArch64Mov.h"
@@ -50,6 +51,44 @@ void AArch64FunctionTranslator::TranslateInstruction(SubInst &inst)
 void AArch64FunctionTranslator::TranslateInstruction(CallInst &inst)
 {
     this->PersistScratchRegisters();
+
+    // Load arguments
+    auto const &args = inst.GetArguments();
+    for (int i = 0; i < args.size(); i++)
+    {
+        auto value = args[i];
+        auto const &value_type = value->GetType();
+
+        if (!value->IsInstantiated())
+        {
+            throw std::runtime_error("attempted to pass uninstantiated value");
+        }
+
+        auto container = value->GetContainer();
+        if (value_type.GetNativeType() == NativeType::Integer)
+        {
+            container->Load(*this, *this->reg_.r_args[i]);
+        }
+        else if (value_type.GetNativeType() == NativeType::FloatingPoint)
+        {
+            container->Load(*this, *this->reg_.v_args[i]);
+        }
+    }
+
+    // Make call
+    auto &addr = this->reg_.r[14];
+    this->stub_base_pointer_.GetContainer()->Load(*this, addr);
+    this->Insert(AArch64B::R(addr, true));
+
+    // Instantiate return value
+    if (inst.GetType().GetNativeType() == NativeType::Integer)
+    {
+        this->reg_.r[0].InstantiateValue(&inst);
+    }
+    else if (inst.GetType().GetNativeType() == NativeType::FloatingPoint)
+    {
+        this->reg_.v[0].InstantiateValue(&inst);
+    }
 }
 
 void AArch64FunctionTranslator::TranslateInstruction(RetInst &inst)
@@ -119,12 +158,44 @@ void AArch64FunctionTranslator::Load(Register &dst, ConstantDataContainer &src)
     }
 }
 
-void AArch64FunctionTranslator::Load(Register &dst, StackAllocationContainer &src) {}
+void AArch64FunctionTranslator::Load(Register &dst, StackAllocationContainer &src)
+{
+    auto &sbp = this->reg_.r[13];
+
+    if (dst.GetValueType() == RegisterType::Integer)
+    {
+    }
+    else if (dst.GetValueType() == RegisterType::FloatingPoint)
+    {
+    }
+}
+
 void AArch64FunctionTranslator::Load(Register &dst, StubContainer &src) {}
-void AArch64FunctionTranslator::Load(Register &dst, Register &src) {}
+
+void AArch64FunctionTranslator::Load(Register &dst, Register &src)
+{
+    // Return if attempt to load into the same register.
+    if (dst.GetCode() == src.GetCode())
+    {
+        return;
+    }
+
+    if (dst.GetValueType() == RegisterType::Integer)
+    {
+        this->Insert(AArch64Mov::R(dst, src));
+    }
+    else if (dst.GetValueType() == RegisterType::FloatingPoint)
+    {
+        this->Insert(AArch64Mov::FR(dst, src));
+    }
+}
 
 void AArch64FunctionTranslator::Store(StackAllocationContainer &dst, Register &src) {}
-void AArch64FunctionTranslator::Store(Register &dst, Register &src) {}
+
+void AArch64FunctionTranslator::Store(Register &dst, Register &src)
+{
+    this->Load(dst, src);
+}
 
 void AArch64FunctionTranslator::Insert(AArch64Instruction &&inst)
 {
@@ -174,6 +245,7 @@ AArch64FunctionTranslator::AArch64FunctionTranslator(NativeModule &module, IRFun
     // Generate Prolog
     if (this->stack_depth_ > 0)
     {
+        this->InsertProlog(AArch64Add::I(this->reg_.r[13], this->reg_.r[31], 0)); // mov r13, sp
         this->InsertProlog(AArch64Sub::I(this->reg_.r[31], this->reg_.r[31], this->stack_depth_));
     }
 }

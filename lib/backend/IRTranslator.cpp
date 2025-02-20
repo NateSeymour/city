@@ -45,7 +45,7 @@ Register &IRTranslator::AcquireScratchRegister(NativeType type)
     // Find an unused register and return it
     for (auto reg : bank)
     {
-        if (!reg->HasValue())
+        if (!reg->HasValue() && reg->GetRegisterPurpose() == RegisterPurpose::General)
         {
             return *reg;
         }

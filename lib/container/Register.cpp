@@ -18,7 +18,7 @@ RegisterCode Register::GetCode() const noexcept
     return this->code_;
 }
 
-RegisterPurpose Register::GetRegisterType() const noexcept
+RegisterPurpose Register::GetRegisterPurpose() const noexcept
 {
     return this->type_;
 }

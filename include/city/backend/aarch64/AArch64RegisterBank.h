@@ -22,9 +22,9 @@ namespace city
                 Register(10, RegisterType::Integer, Volatility::Volatile),
                 Register(11, RegisterType::Integer, Volatility::Volatile),
                 Register(12, RegisterType::Integer, Volatility::Volatile),
-                Register(13, RegisterType::Integer, Volatility::Volatile),
-                Register(14, RegisterType::Integer, Volatility::Volatile),
-                Register(15, RegisterType::Integer, Volatility::Volatile),
+                Register(13, RegisterType::Integer, Volatility::Volatile, RegisterPurpose::Special),    // STACK BASE
+                Register(14, RegisterType::Integer, Volatility::Volatile, RegisterPurpose::Special),    // SUBROUTINE LINK
+                Register(15, RegisterType::Integer, Volatility::Volatile, RegisterPurpose::Special),    // STUB BASE
                 Register(16, RegisterType::Integer, Volatility::NonVolatile, RegisterPurpose::Special), // IP0
                 Register(17, RegisterType::Integer, Volatility::NonVolatile, RegisterPurpose::Special), // IP1
                 Register(18, RegisterType::Integer, Volatility::NonVolatile, RegisterPurpose::Special), // PR

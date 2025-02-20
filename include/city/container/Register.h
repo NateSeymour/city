@@ -42,7 +42,7 @@ namespace city
         [[nodiscard]] RegisterCode GetCode() const noexcept;
         [[nodiscard]] RegisterType GetValueType() const noexcept;
         [[nodiscard]] std::size_t GetSize() const noexcept override;
-        [[nodiscard]] RegisterPurpose GetRegisterType() const noexcept;
+        [[nodiscard]] RegisterPurpose GetRegisterPurpose() const noexcept;
         [[nodiscard]] ContainerType GetType() const noexcept override;
         [[nodiscard]] Volatility GetVolatility() const noexcept;
         [[nodiscard]] bool IsExtension() const noexcept;
