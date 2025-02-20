@@ -64,6 +64,16 @@ namespace city
         } dp_add_sub_shift;
         static_assert(sizeof(DPAddSubShift) == 4);
 
+        struct DPPCR
+        {
+            unsigned rd : 5 = 0b0;
+            unsigned immhi : 19 = 0b0;
+            unsigned op0 : 5 = 0b1000'0;
+            unsigned immlo : 2 = 0b0;
+            unsigned op : 1 = 0b0;
+        } dppcr;
+        static_assert(sizeof(DPPCR) == 4);
+
         struct DP2
         {
             unsigned rd : 5 = 0b0;

@@ -8,6 +8,7 @@
 #include "city/backend/aarch64/instruction/arithmetic/AArch64Mul.h"
 #include "city/backend/aarch64/instruction/arithmetic/AArch64Sub.h"
 #include "city/backend/aarch64/instruction/control/AArch64Ret.h"
+#include "city/backend/aarch64/instruction/memory/AArch64Adr.h"
 #include "city/backend/aarch64/instruction/memory/AArch64Mov.h"
 
 using namespace city;
@@ -157,7 +158,8 @@ AArch64FunctionTranslator::AArch64FunctionTranslator(NativeModule &module, IRFun
 
     this->stub_base_pointer_.IncrementReadCount();
     auto &stub_base_reg = this->AcquireScratchRegister(NativeType::Integer);
-
+    this->InsertProlog(AArch64Adr::I(stub_base_reg, -1 * static_cast<std::int32_t>(this->module_.pc_)));
+    stub_base_reg.InstantiateValue(&this->stub_base_pointer_);
 
     // Function Body
     for (auto &block : this->ir_function_.GetBlocks())
