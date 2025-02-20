@@ -110,7 +110,7 @@ void AArch64FunctionTranslator::TranslateInstruction(RetInst &inst)
     if (this->stack_depth_ > 0)
     {
         this->AlignStack(16);
-        this->InsertProlog(AArch64Add::I(this->reg_.r[31], this->reg_.r[31], this->stack_depth_));
+        this->Insert(AArch64Add::I(this->reg_.r[31], this->reg_.r[31], this->stack_depth_));
     }
 
     this->Insert(AArch64Ret::Z());
