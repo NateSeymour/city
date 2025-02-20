@@ -70,6 +70,8 @@ void AArch64FunctionTranslator::TranslateInstruction(RetInst &inst)
 
     if (this->stack_depth_ > 0)
     {
+        this->AlignStack(16);
+        this->InsertProlog(AArch64Add::I(this->reg_.r[31], this->reg_.r[31], this->stack_depth_));
     }
 
     this->Insert(AArch64Ret::Z());
@@ -157,7 +159,7 @@ AArch64FunctionTranslator::AArch64FunctionTranslator(NativeModule &module, IRFun
     }
 
     this->stub_base_pointer_.IncrementReadCount();
-    auto &stub_base_reg = this->AcquireScratchRegister(NativeType::Integer);
+    auto &stub_base_reg = this->reg_.r[15];
     this->InsertProlog(AArch64Adr::I(stub_base_reg, -1 * static_cast<std::int32_t>(this->module_.pc_)));
     stub_base_reg.InstantiateValue(&this->stub_base_pointer_);
 
@@ -173,5 +175,6 @@ AArch64FunctionTranslator::AArch64FunctionTranslator(NativeModule &module, IRFun
     // Generate Prolog
     if (this->stack_depth_ > 0)
     {
+        this->InsertProlog(AArch64Sub::I(this->reg_.r[31], this->reg_.r[31], this->stack_depth_));
     }
 }
