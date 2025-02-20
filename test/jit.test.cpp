@@ -157,6 +157,96 @@ TEST_F(JITTestRunner, FP64Addition)
     ASSERT_EQ(value, values.first + values.second);
 }
 
+TEST_F(JITTestRunner, Int16Subtraction)
+{
+    auto values = this->GetRandomPair<std::uint16_t>();
+
+    auto assembly = this->BuildTestModule([&](city::IRBuilder &builder) {
+        (void)builder.CreateFunction("sub");
+
+        auto retval = builder.InsertSubInst(builder.CreateConstant(values.first), builder.CreateConstant(values.second));
+
+        builder.InsertRetInst(retval);
+    });
+
+    auto test = assembly["sub"].ToPointer<std::uint16_t()>();
+
+    auto value = test();
+    ASSERT_EQ(value, values.first - values.second);
+}
+
+TEST_F(JITTestRunner, Int32Subtraction)
+{
+    auto values = this->GetRandomPair<std::uint32_t>();
+
+    auto assembly = this->BuildTestModule([&](city::IRBuilder &builder) {
+        (void)builder.CreateFunction("sub");
+
+        auto retval = builder.InsertSubInst(builder.CreateConstant(values.first), builder.CreateConstant(values.second));
+
+        builder.InsertRetInst(retval);
+    });
+
+    auto test = assembly["sub"].ToPointer<std::uint32_t()>();
+
+    auto value = test();
+    ASSERT_EQ(value, values.first - values.second);
+}
+
+TEST_F(JITTestRunner, Int64Subtraction)
+{
+    auto values = this->GetRandomPair<std::uint64_t>();
+
+    auto assembly = this->BuildTestModule([&](city::IRBuilder &builder) {
+        (void)builder.CreateFunction("sub");
+
+        auto retval = builder.InsertSubInst(builder.CreateConstant(values.first), builder.CreateConstant(values.second));
+
+        builder.InsertRetInst(retval);
+    });
+
+    auto test = assembly["sub"].ToPointer<std::uint64_t()>();
+
+    auto value = test();
+    ASSERT_EQ(value, values.first - values.second);
+}
+
+TEST_F(JITTestRunner, FP32Subtraction)
+{
+    auto values = this->GetRandomPair<float>();
+
+    auto assembly = this->BuildTestModule([&](city::IRBuilder &builder) {
+        (void)builder.CreateFunction("sub");
+
+        auto retval = builder.InsertSubInst(builder.CreateConstant(values.first), builder.CreateConstant(values.second));
+
+        builder.InsertRetInst(retval);
+    });
+
+    auto test = assembly["sub"].ToPointer<float()>();
+
+    auto value = test();
+    ASSERT_EQ(value, values.first - values.second);
+}
+
+TEST_F(JITTestRunner, FP64Subtraction)
+{
+    auto values = this->GetRandomPair<double>();
+
+    auto assembly = this->BuildTestModule([&](city::IRBuilder &builder) {
+        (void)builder.CreateFunction("sub");
+
+        auto retval = builder.InsertSubInst(builder.CreateConstant(values.first), builder.CreateConstant(values.second));
+
+        builder.InsertRetInst(retval);
+    });
+
+    auto test = assembly["sub"].ToPointer<double()>();
+
+    auto value = test();
+    ASSERT_EQ(value, values.first - values.second);
+}
+
 TEST_F(JITTestRunner, Int16Division)
 {
     auto values = this->GetRandomPair<std::uint16_t>();

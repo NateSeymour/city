@@ -6,6 +6,7 @@
 #include "city/backend/aarch64/instruction/arithmetic/AArch64Add.h"
 #include "city/backend/aarch64/instruction/arithmetic/AArch64Div.h"
 #include "city/backend/aarch64/instruction/arithmetic/AArch64Mul.h"
+#include "city/backend/aarch64/instruction/arithmetic/AArch64Sub.h"
 #include "city/backend/aarch64/instruction/control/AArch64Ret.h"
 #include "city/backend/aarch64/instruction/memory/AArch64Mov.h"
 
@@ -40,7 +41,10 @@ void AArch64FunctionTranslator::TranslateInstruction(MulInst &inst)
     this->TranslateBinaryInstruction<MulInst, AArch64Mul>(inst);
 }
 
-void AArch64FunctionTranslator::TranslateInstruction(SubInst &inst) {}
+void AArch64FunctionTranslator::TranslateInstruction(SubInst &inst)
+{
+    this->TranslateBinaryInstruction<SubInst, AArch64Sub>(inst);
+}
 
 void AArch64FunctionTranslator::TranslateInstruction(CallInst &inst)
 {
@@ -158,6 +162,5 @@ AArch64FunctionTranslator::AArch64FunctionTranslator(NativeModule &module, IRFun
     // Generate Prolog
     if (this->stack_depth_ > 0)
     {
-        this->AlignStack(16);
     }
 }
