@@ -10,6 +10,7 @@
 #include "city/backend/aarch64/instruction/control/AArch64B.h"
 #include "city/backend/aarch64/instruction/control/AArch64Ret.h"
 #include "city/backend/aarch64/instruction/memory/AArch64Adr.h"
+#include "city/backend/aarch64/instruction/memory/AArch64Ldr.h"
 #include "city/backend/aarch64/instruction/memory/AArch64Mov.h"
 
 using namespace city;
@@ -77,7 +78,7 @@ void AArch64FunctionTranslator::TranslateInstruction(CallInst &inst)
 
     // Make call
     auto &addr = this->reg_.r[14];
-    this->stub_base_pointer_.GetContainer()->Load(*this, addr);
+    inst.GetTarget()->GetContainer()->Load(*this, addr);
     this->Insert(AArch64B::R(addr, true));
 
     // Instantiate return value
@@ -160,17 +161,34 @@ void AArch64FunctionTranslator::Load(Register &dst, ConstantDataContainer &src)
 
 void AArch64FunctionTranslator::Load(Register &dst, StackAllocationContainer &src)
 {
-    auto &sbp = this->reg_.r[13];
+    auto &sp = this->reg_.r[31];
 
     if (dst.GetValueType() == RegisterType::Integer)
     {
+        this->Insert(AArch64Ldr::I(dst, sp, src.GetOffset(), src.GetSize()));
     }
     else if (dst.GetValueType() == RegisterType::FloatingPoint)
     {
+        this->Insert(AArch64Ldr::F(dst, sp, src.GetOffset(), src.GetSize()));
     }
 }
 
-void AArch64FunctionTranslator::Load(Register &dst, StubContainer &src) {}
+void AArch64FunctionTranslator::Load(Register &dst, StubContainer &src)
+{
+    auto value = src.GetValue();
+
+    auto const &name = value->GetName();
+    if (!name.has_value())
+    {
+        throw std::runtime_error("cannot link against anonymous value");
+    }
+
+    auto index = static_cast<std::int32_t>(this->GetStubIndex(*name));
+
+    auto &sbr = this->reg_.r[15];
+    this->Insert(AArch64Sub::I(dst, sbr, 8 * (index + 1))); // LDR can only take a positive offset, so we need to do this crap
+    this->Insert(AArch64Ldr::I(dst, dst));
+}
 
 void AArch64FunctionTranslator::Load(Register &dst, Register &src)
 {
@@ -245,7 +263,6 @@ AArch64FunctionTranslator::AArch64FunctionTranslator(NativeModule &module, IRFun
     // Generate Prolog
     if (this->stack_depth_ > 0)
     {
-        this->InsertProlog(AArch64Add::I(this->reg_.r[13], this->reg_.r[31], 0)); // mov r13, sp
         this->InsertProlog(AArch64Sub::I(this->reg_.r[31], this->reg_.r[31], this->stack_depth_));
     }
 }

@@ -147,6 +147,7 @@ namespace city
         } fdp2;
         static_assert(sizeof(FDP2) == 4);
 
+        /// Unconditional Branch (Register)
         struct UBR
         {
             unsigned op4 : 5 = 0b0;
@@ -157,6 +158,20 @@ namespace city
             unsigned op0 : 7 = 0b1101'011;
         } ubr;
         static_assert(sizeof(UBR) == 4);
+
+        /// Load-Store Register (Unsigned Immediate)
+        struct LSRUI
+        {
+            unsigned rt : 5 = 0b0;
+            unsigned rm : 5 = 0b0;
+            unsigned imm : 12 = 0b0;
+            unsigned opc : 2 = 0b0;
+            unsigned op1 : 2 = 0b01;
+            unsigned v : 1 = 0b0;
+            unsigned op0 : 3 = 0b111;
+            unsigned size : 2 = 0b0;
+        } lsrui;
+        static_assert(sizeof(LSRUI) == 4);
 
         std::uint32_t raw = 0;
 
