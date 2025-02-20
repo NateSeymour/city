@@ -95,6 +95,7 @@ add_library(city
         lib/container/StubContainer.cpp
         include/city/backend/amd64/instruction/memory/Amd64Lea.h
         include/city/backend/aarch64/instruction/arithmetic/AArch64Sub.h
+        include/city/backend/aarch64/instruction/memory/AArch64Adr.h
 )
 target_include_directories(city PUBLIC include)
 

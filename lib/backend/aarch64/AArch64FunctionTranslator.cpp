@@ -81,6 +81,7 @@ void AArch64FunctionTranslator::Load(Register &dst, ConstantDataContainer &src)
         throw std::runtime_error("value is too big");
     }
 
+    // Acquire temporary register to load value into
     Register *tmpdst = nullptr;
     if (dst.GetValueType() == RegisterType::Integer)
     {
@@ -91,6 +92,7 @@ void AArch64FunctionTranslator::Load(Register &dst, ConstantDataContainer &src)
         tmpdst = &this->AcquireScratchRegister(NativeType::Integer);
     }
 
+    // Load the value 16 bits at a time
     auto buffer = reinterpret_cast<std::uint16_t const *>(src.GetDataBuffer().data());
     this->Insert(AArch64Mov::I(*tmpdst, buffer[0], 0));
     auto buffer_size = src.GetSize();
@@ -105,6 +107,9 @@ void AArch64FunctionTranslator::Load(Register &dst, ConstantDataContainer &src)
 
         this->Insert(AArch64Mov::I(*tmpdst, value, i, false));
     }
+
+    // Sign extend if necessary
+
 
     if (dst.GetValueType() == RegisterType::FloatingPoint)
     {
@@ -149,6 +154,10 @@ AArch64FunctionTranslator::AArch64FunctionTranslator(NativeModule &module, IRFun
             this->reg_.v_args[i]->InstantiateValue(value);
         }
     }
+
+    this->stub_base_pointer_.IncrementReadCount();
+    auto &stub_base_reg = this->AcquireScratchRegister(NativeType::Integer);
+
 
     // Function Body
     for (auto &block : this->ir_function_.GetBlocks())

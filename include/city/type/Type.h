@@ -22,6 +22,7 @@ namespace city
     protected:
         std::size_t size_ = 0;
         NativeType native_type_ = NativeType::Void;
+        bool signed_ = false;
 
     public:
         template<typename T>
@@ -44,9 +45,14 @@ namespace city
                 type.size_ = 0;
                 type.native_type_ = NativeType::Void;
             }
+
+            if constexpr (std::is_signed_v<T>)
+            {
+                type.signed_ = true;
+            }
             else
             {
-                static_assert("Unrecognized Native Type!");
+                type.signed_ = false;
             }
 
             return type;
@@ -64,7 +70,7 @@ namespace city
 
         bool operator==(Type const &rhs) const noexcept
         {
-            return this->size_ == rhs.size_ && this->native_type_ == rhs.native_type_;
+            return this->size_ == rhs.size_ && this->native_type_ == rhs.native_type_ && this->signed_ == rhs.signed_;
         }
 
         [[nodiscard]] bool IsVoid() const noexcept
