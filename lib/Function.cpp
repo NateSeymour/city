@@ -2,6 +2,11 @@
 
 using namespace city;
 
+Type const &Function::GetReturnType() const noexcept
+{
+    return this->return_type_;
+}
+
 std::vector<Type> const &Function::GetArgumentTypes() const noexcept
 {
     return this->argument_types_;

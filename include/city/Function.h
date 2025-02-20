@@ -21,6 +21,7 @@ namespace city
         std::vector<Type> argument_types_;
 
     public:
+        [[nodiscard]] Type const &GetReturnType() const noexcept;
         [[nodiscard]] std::vector<Type> const &GetArgumentTypes() const noexcept;
 
         Function(std::string name, Type return_type, std::vector<Type> arg_types);
