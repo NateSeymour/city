@@ -12,6 +12,7 @@
 #include "city/backend/aarch64/instruction/memory/AArch64Adr.h"
 #include "city/backend/aarch64/instruction/memory/AArch64Ldr.h"
 #include "city/backend/aarch64/instruction/memory/AArch64Mov.h"
+#include "city/backend/aarch64/instruction/memory/AArch64Str.h"
 
 using namespace city;
 
@@ -51,7 +52,15 @@ void AArch64FunctionTranslator::TranslateInstruction(SubInst &inst)
 
 void AArch64FunctionTranslator::TranslateInstruction(CallInst &inst)
 {
+    // Scratch Registers
     this->PersistScratchRegisters();
+
+    // Frame in prolog
+    if (!this->frame_.IsInstantiated())
+    {
+        auto &frame_container = this->AcquireStackSpace(this->frame_.GetType());
+        frame_container.InstantiateValue(&this->frame_);
+    }
 
     // Load arguments
     auto const &args = inst.GetArguments();
@@ -98,19 +107,27 @@ void AArch64FunctionTranslator::TranslateInstruction(RetInst &inst)
     if (retval && retval->IsInstantiated())
     {
         auto type = retval->GetType().GetNativeType();
+        auto container = retval->GetContainer();
         if (type == NativeType::Integer)
         {
-            this->MoveValue(this->reg_.r[0], *retval);
+            container->Load(*this, this->reg_.r[0]);
         }
         else if (type == NativeType::FloatingPoint)
         {
-            this->MoveValue(this->reg_.v[0], *retval);
+            container->Load(*this, this->reg_.v[0]);
         }
     }
 
+    // Restore frame
+    if (this->frame_.IsInstantiated())
+    {
+        auto container = dynamic_cast<StackAllocationContainer *>(this->frame_.GetContainer());
+        this->Insert(AArch64Ldr::P(this->reg_.r[31], container->GetOffset(), this->reg_.r[29], this->reg_.r[30]));
+    }
+
+    // Restore stack pointer
     if (this->stack_depth_ > 0)
     {
-        this->AlignStack(16);
         this->Insert(AArch64Add::I(this->reg_.r[31], this->reg_.r[31], this->stack_depth_));
     }
 
@@ -208,7 +225,19 @@ void AArch64FunctionTranslator::Load(Register &dst, Register &src)
     }
 }
 
-void AArch64FunctionTranslator::Store(StackAllocationContainer &dst, Register &src) {}
+void AArch64FunctionTranslator::Store(StackAllocationContainer &dst, Register &src)
+{
+    auto &sp = this->reg_.r[31];
+
+    if (src.GetValueType() == RegisterType::Integer)
+    {
+        this->Insert(AArch64Str::I(src, sp, dst.GetOffset(), dst.GetSize()));
+    }
+    else if (src.GetValueType() == RegisterType::FloatingPoint)
+    {
+        this->Insert(AArch64Str::F(src, sp, dst.GetOffset(), dst.GetSize()));
+    }
+}
 
 void AArch64FunctionTranslator::Store(Register &dst, Register &src)
 {
@@ -264,5 +293,11 @@ AArch64FunctionTranslator::AArch64FunctionTranslator(NativeModule &module, IRFun
     if (this->stack_depth_ > 0)
     {
         this->InsertProlog(AArch64Sub::I(this->reg_.r[31], this->reg_.r[31], this->stack_depth_));
+    }
+
+    if (this->frame_.IsInstantiated())
+    {
+        auto container = dynamic_cast<StackAllocationContainer *>(this->frame_.GetContainer());
+        this->InsertProlog(AArch64Str::P(this->reg_.r[31], container->GetOffset(), this->reg_.r[29], this->reg_.r[30]));
     }
 }

@@ -173,6 +173,21 @@ namespace city
         } lsrui;
         static_assert(sizeof(LSRUI) == 4);
 
+        /// Load-Store Register Pair (Offset)
+        struct LSRPO
+        {
+            unsigned rt : 5 = 0b0;
+            unsigned rn : 5 = 0b0;
+            unsigned rt2 : 5 = 0b0;
+            unsigned imm : 7 = 0b0;
+            unsigned l : 1 = 0b0;
+            unsigned op1 : 3 = 0b010;
+            unsigned v : 1 = 0b0;
+            unsigned op0 : 3 = 0b101;
+            unsigned opc : 2 = 0b0;
+        } lsrpo;
+        static_assert(sizeof(LSRPO) == 4);
+
         std::uint32_t raw = 0;
 
         [[nodiscard]] operator std::uint32_t() const

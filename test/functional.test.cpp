@@ -30,7 +30,7 @@ TEST_F(JITTestRunner, ReturnFunctionPointer)
     auto test = assembly["test"].ToPointer<void *()>();
 
     auto value = test();
-    ASSERT_EQ(value, reinterpret_cast<void *>((double (*)(double, double))std::pow));
+    ASSERT_EQ(value, jitstd_pow);
 }
 
 TEST_F(JITTestRunner, InterfaceFunctionCall)

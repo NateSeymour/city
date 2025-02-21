@@ -13,8 +13,10 @@ StackAllocationContainer &IRTranslator::AcquireStackSpace(Type type)
     auto size = type.GetSize();
     auto &container = this->stack_.emplace_back(std::make_unique<StackAllocationContainer>(size));
 
-    this->stack_depth_ += size;
     container->SetOffset(this->stack_depth_);
+
+    this->stack_depth_ += size;
+    this->AlignStack(16);
 
     return *container.get();
 }
