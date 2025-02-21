@@ -11,7 +11,7 @@ namespace city
     class AArch64FunctionTranslator : public IRTranslator
     {
         AArch64RegisterBank reg_;
-        Value frame_{Type::Get<__int128_t>()};
+        Value frame_{{16, NativeType::Integer}};
 
     protected:
         [[nodiscard]] std::span<Register *> GetScratchRegisterBank(NativeType type) override;

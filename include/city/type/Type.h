@@ -77,6 +77,9 @@ namespace city
         {
             return this->native_type_ == NativeType::Void;
         }
+
+        Type(std::size_t size, NativeType native_type, bool is_signed = false) : size_(size), native_type_(native_type), signed_(is_signed) {}
+        Type() = default;
     };
 } // namespace city
 
