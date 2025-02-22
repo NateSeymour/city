@@ -9,16 +9,26 @@ namespace city
     class Amd64Lea : public Amd64Instruction
     {
     public:
-        [[nodiscard]] static Amd64Lea RM(Register &dst, Register &src, Amd64Access mod = Amd64Access::DisplacedPointer, std::int32_t disp = 0)
+        /// LEA r64, m
+        [[nodiscard]] static Amd64Lea RM(Register &dst, Register &src, Amd64Access access = Amd64Access::DisplacedPointer, std::optional<std::int32_t> disp = std::nullopt)
         {
-            Amd64Lea inst{};
-
-            inst.SetREX(&dst, &src);
-            inst.SetOpcode({0x8D});
-            inst.SetModRM(dst.GetCode(), src.GetCode(), mod, disp);
-
-            return inst;
+            return {Amd64Encoding{
+                    .rex{{
+                            .w = true,
+                            .r = dst.IsExtension(),
+                            .b = src.IsExtension(),
+                    }},
+                    .opcode = {0x8D},
+                    .mod{{
+                            .access = access,
+                            .reg_code = dst.GetCode(),
+                            .rm_code = src.GetCode(),
+                    }},
+                    .disp = disp,
+            }};
         }
+
+        Amd64Lea(Amd64Encoding encoding) : Amd64Instruction(encoding) {}
     };
 } // namespace city
 

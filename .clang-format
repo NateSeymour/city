@@ -32,7 +32,7 @@ BraceWrapping:
 BracedInitializerIndentWidth: 8
 BreakConstructorInitializers: AfterColon
 BreakConstructorInitializersBeforeComma: false
-ColumnLimit: 180
+ColumnLimit: 200
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
 ContinuationIndentWidth: 8
 IncludeCategories:

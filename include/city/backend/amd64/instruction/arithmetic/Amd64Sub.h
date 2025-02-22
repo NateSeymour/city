@@ -8,70 +8,83 @@ namespace city
     class Amd64Sub : public Amd64Instruction
     {
     public:
-        static Amd64Sub MI64(Register &dst, std::uint32_t data, Amd64Access mod = Amd64Access::Value, std::int32_t disp = 0)
+        /// SUB r/m64, imm32
+        [[nodiscard]] static Amd64Sub MI(Register &dst, std::uint32_t src, Amd64Access access = Amd64Access::Value, std::optional<std::int32_t> disp = std::nullopt)
         {
-            Amd64Sub inst;
-
-            auto buffer = reinterpret_cast<std::uint8_t *>(&data);
-
-            inst.SetREX(nullptr, &dst);
-            inst.SetOpcode({0x81});
-            inst.SetModRM(5, dst.GetCode(), mod, disp);
-            inst.SetImmediate({
-                    buffer[0],
-                    buffer[1],
-                    buffer[2],
-                    buffer[3],
-            });
-
-            return inst;
+            return {Amd64Encoding{
+                    .rex{{
+                            .w = true,
+                            .b = dst.IsExtension(),
+                    }},
+                    .opcode = {0x81},
+                    .mod{{
+                            .access = access,
+                            .reg_code = 5,
+                            .rm_code = dst.GetCode(),
+                    }},
+                    .disp = disp,
+                    .imm = src,
+            }};
         }
 
-        static Amd64Sub RM32(Register &dst, Register &src, Amd64Access mod = Amd64Access::Value, std::int32_t disp = 0)
+        /// SUB r/m64, r64
+        [[nodiscard]] static Amd64Sub MR(Register &dst, Register &src, Amd64Access access = Amd64Access::Value, std::optional<std::int32_t> disp = std::nullopt)
         {
-            Amd64Sub inst{};
-
-            inst.SetOpcode({0x2B});
-            inst.SetModRM(dst.GetCode(), src.GetCode(), mod, disp);
-
-            return inst;
+            return {Amd64Encoding{
+                    .rex{{
+                            .w = true,
+                            .r = src.IsExtension(),
+                            .b = dst.IsExtension(),
+                    }},
+                    .opcode = {0x29},
+                    .mod{{
+                            .access = access,
+                            .reg_code = src.GetCode(),
+                            .rm_code = dst.GetCode(),
+                    }},
+                    .disp = disp,
+            }};
         }
 
-        static Amd64Sub RM64(Register &dst, Register &src, Amd64Access mod = Amd64Access::Value, std::int32_t disp = 0)
+        /// SUB r64, r/m64
+        [[nodiscard]] static Amd64Sub RM(Register &dst, Register &src, Amd64Access access = Amd64Access::Value, std::optional<std::int32_t> disp = std::nullopt)
         {
-            Amd64Sub inst{};
-
-            inst.SetREX(&src, &dst);
-            inst.SetOpcode({0x2B});
-            inst.SetModRM(dst.GetCode(), src.GetCode(), mod, disp);
-
-            return inst;
+            return {Amd64Encoding{
+                    .rex{{
+                            .w = true,
+                            .r = dst.IsExtension(),
+                            .b = src.IsExtension(),
+                    }},
+                    .opcode = {0x2B},
+                    .mod{{
+                            .access = access,
+                            .reg_code = dst.GetCode(),
+                            .rm_code = src.GetCode(),
+                    }},
+                    .disp = disp,
+            }};
         }
 
-        static Amd64Sub RMX(Register &dst, Register &src, std::size_t size, Amd64Access mod = Amd64Access::Value, std::int32_t disp = 0)
+        /// SUB(SS|SD) xmm1, xmm2/m(32|64)
+        [[nodiscard]] static Amd64Sub FA(Register &dst, Register &src, std::size_t precision = 8, Amd64Access access = Amd64Access::Value, std::optional<std::int32_t> disp = std::nullopt)
         {
-            if (size <= 4)
-            {
-                return Amd64Sub::RM32(dst, src, mod, disp);
-            }
-
-            if (size <= 8)
-            {
-                return Amd64Sub::RM64(dst, src, mod, disp);
-            }
-
-            throw std::runtime_error("operands too large");
+            std::uint8_t opcode_leader = precision == 8 ? 0xF2 : 0xF3;
+            return {Amd64Encoding{
+                    .rex{{
+                            .r = dst.IsExtension(),
+                            .b = src.IsExtension(),
+                    }},
+                    .opcode = {opcode_leader, 0x0F, 0x5C},
+                    .mod{{
+                            .access = access,
+                            .reg_code = dst.GetCode(),
+                            .rm_code = src.GetCode(),
+                    }},
+                    .disp = disp,
+            }};
         }
 
-        static Amd64Sub SDA(Register &dst, Register &src, Amd64Access mod = Amd64Access::Value, std::int32_t disp = 0)
-        {
-            Amd64Sub inst{};
-
-            inst.SetOpcode({0xF2, 0x0F, 0x5C});
-            inst.SetModRM(dst.GetCode(), src.GetCode(), mod, disp);
-
-            return inst;
-        }
+        Amd64Sub(Amd64Encoding encoding) : Amd64Instruction(encoding) {}
     };
 } // namespace city
 

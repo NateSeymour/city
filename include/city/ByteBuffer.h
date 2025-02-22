@@ -35,6 +35,54 @@ namespace city
             return this->buffer_.data() + this->size_;
         }
 
+        constexpr ByteBuffer(std::uint8_t value)
+        {
+            this->size_ = std::min(static_cast<std::size_t>(1), MaxSize);
+            memccpy(this->buffer_.data(), &value, 1);
+        }
+
+        constexpr ByteBuffer(std::uint16_t value)
+        {
+            this->size_ = std::min(static_cast<std::size_t>(2), MaxSize);
+            memccpy(this->buffer_.data(), &value, 2);
+        }
+
+        constexpr ByteBuffer(std::uint32_t value)
+        {
+            this->size_ = std::min(static_cast<std::size_t>(4), MaxSize);
+            memccpy(this->buffer_.data(), &value, 4);
+        }
+
+        constexpr ByteBuffer(std::uint64_t value)
+        {
+            this->size_ = std::min(static_cast<std::size_t>(8), MaxSize);
+            memccpy(this->buffer_.data(), &value, 8);
+        }
+
+        constexpr ByteBuffer(std::int8_t value)
+        {
+            this->size_ = std::min(static_cast<std::size_t>(1), MaxSize);
+            memccpy(this->buffer_.data(), &value, 1);
+        }
+
+        constexpr ByteBuffer(std::int16_t value)
+        {
+            this->size_ = std::min(static_cast<std::size_t>(2), MaxSize);
+            memccpy(this->buffer_.data(), &value, 2);
+        }
+
+        constexpr ByteBuffer(std::int32_t value)
+        {
+            this->size_ = std::min(static_cast<std::size_t>(4), MaxSize);
+            memccpy(this->buffer_.data(), &value, 4);
+        }
+
+        constexpr ByteBuffer(std::int64_t value)
+        {
+            this->size_ = std::min(static_cast<std::size_t>(8), MaxSize);
+            memccpy(this->buffer_.data(), &value, 8);
+        }
+
         constexpr ByteBuffer(std::initializer_list<std::uint8_t> bytes)
         {
             this->size_ = std::min(bytes.size(), MaxSize);

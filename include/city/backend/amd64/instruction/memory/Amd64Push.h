@@ -8,15 +8,15 @@ namespace city
     class Amd64Push : public Amd64Instruction
     {
     public:
-        static Amd64Push M64(Register &src, Amd64Access mod = Amd64Access::Value, std::int32_t disp = 0) noexcept
+        [[nodiscard]] static Amd64Push O(Register &src) noexcept
         {
-            Amd64Push inst{};
-
-            inst.SetOpcode({0xFF});
-            inst.SetModRM(6, src.GetCode(), mod, disp);
-
-            return inst;
+            std::uint8_t opcode = 0x50 + src.GetCode();
+            return {Amd64Encoding{
+                    .opcode = {opcode},
+            }};
         }
+
+        Amd64Push(Amd64Encoding encoding) : Amd64Instruction(encoding) {}
     };
 } // namespace city
 

@@ -36,6 +36,11 @@ namespace city
         /// R/M extension
         bool b = false;
 
+        [[nodiscard]] bool ContainsInformation() const noexcept
+        {
+            return w || r || x || b;
+        }
+
         operator std::uint8_t() const() const noexcept
         {
             return 0b0100'0000 | (w ? 0b1 << 3 : 0) | (r ? 0b1 << 2 : 0) | (x ? 0b1 << 1 : 0) | (b ? 0b1 << 0 : 0);
@@ -58,11 +63,11 @@ namespace city
     {
         std::optional<std::uint8_t> legacy_prefix = std::nullopt;
         std::optional<Amd64REX> rex = std::nullopt;
-        std::optional<ByteBuffer<3>> opcode = std::nullopt;
+        ByteBuffer<3> opcode = {};
         std::optional<Amd64Mod> mod = std::nullopt;
         std::optional<std::uint8_t> sib = std::nullopt;
         std::optional<std::int32_t> disp = std::nullopt;
-        std::optional<std::int32_t> imm = std::nullopt;
+        std::optional<ByteBuffer<8>> imm = std::nullopt;
     };
 
     class Amd64Instruction : public NativeInstruction

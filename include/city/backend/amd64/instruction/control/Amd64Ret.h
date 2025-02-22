@@ -8,23 +8,15 @@ namespace city
     class Amd64Ret : public Amd64Instruction
     {
     public:
-        static Amd64Ret ZONear() noexcept
+        /// RET
+        [[nodiscard]] static Amd64Ret ZONear() noexcept
         {
-            Amd64Ret inst;
-
-            inst.SetOpcode({0xC3});
-
-            return inst;
+            return {Amd64Encoding{
+                    .opcode = {0xC3},
+            }};
         }
 
-        static Amd64Ret ZOFar() noexcept
-        {
-            Amd64Ret inst;
-
-            inst.SetOpcode({0xCB});
-
-            return inst;
-        }
+        Amd64Ret(Amd64Encoding encoding) : Amd64Instruction(encoding) {}
     };
 } // namespace city
 

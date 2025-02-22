@@ -8,14 +8,15 @@ namespace city
     class Amd64Leave : public Amd64Instruction
     {
     public:
-        static Amd64Leave ZO()
+        /// LEAVE
+        [[nodiscard]] static Amd64Leave ZO()
         {
-            Amd64Leave inst;
-
-            inst.SetOpcode({0xC9});
-
-            return inst;
+            return {Amd64Encoding{
+                    .opcode = {0xC9},
+            }};
         }
+
+        Amd64Leave(Amd64Encoding encoding) : Amd64Instruction(encoding) {}
     };
 } // namespace city
 

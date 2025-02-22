@@ -9,7 +9,7 @@ namespace city
     {
     public:
         /// (I)DIV r/m64
-        [[nodiscard]] static Amd64Div M(Register &src, bool is_signed = false, Amd64Access access = Amd64Access::Value, std::int32_t disp = 0)
+        [[nodiscard]] static Amd64Div M(Register &src, bool is_signed = false, Amd64Access access = Amd64Access::Value, std::optional<std::int32_t> disp = std::nullopt)
         {
             std::uint8_t reg = is_signed ? 7 : 6;
             return {Amd64Encoding{
@@ -17,18 +17,19 @@ namespace city
                             .w = true,
                             .b = src.IsExtension(),
                     }},
-                    .opcode = {{0xF7}},
+                    .opcode = {0xF7},
                     .mod{{
                             .access = access,
                             .reg_code = reg,
                             .rm_code = src.GetCode(),
                     }},
-                    .disp = disp != 0 ? disp : std::nullopt,
+                    .disp = disp,
+                    ,
             }};
         }
 
         /// DIV(SS|SD) xmm1, xmm2/m(32|64)
-        [[nodiscard]] static Amd64Div FA(Register &dst, Register &src, std::size_t precision = 8, Amd64Access access = Amd64Access::Value, std::int32_t disp)
+        [[nodiscard]] static Amd64Div FA(Register &dst, Register &src, std::size_t precision = 8, Amd64Access access = Amd64Access::Value, std::optional<std::int32_t> disp = std::nullopt)
         {
             std::uint8_t opcode_leader = precision == 8 ? 0xF2 : 0xF3;
             return {Amd64Encoding{
@@ -36,13 +37,13 @@ namespace city
                             .r = dst.IsExtension(),
                             .b = src.IsExtension(),
                     }},
-                    .opcode = {{opcode_leader, 0x0F, 0x58}},
+                    .opcode = {opcode_leader, 0x0F, 0x5E},
                     .mod{{
                             .access = access,
                             .reg_code = dst.GetCode(),
                             .rm_code = src.GetCode(),
                     }},
-                    .disp = disp != 0 ? disp : std::nullopt,
+                    .disp = disp,
             }};
         }
 

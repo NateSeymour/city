@@ -11,14 +11,13 @@ size_t Amd64Instruction::GetBinarySize() const noexcept
     {
         size++;
     }
-    if (this->encoding_.rex.has_value())
+    if (this->encoding_.rex.has_value() && this->encoding_.rex->ContainsInformation())
     {
         size++;
     }
-    if (this->encoding_.opcode.has_value())
-    {
-        size += this->encoding_.opcode->GetSize();
-    }
+
+    size += this->encoding_.opcode.GetSize();
+
     if (this->encoding_.mod.has_value())
     {
         size++;
@@ -29,7 +28,7 @@ size_t Amd64Instruction::GetBinarySize() const noexcept
     }
     if (this->encoding_.imm.has_value())
     {
-        size += 4;
+        size += this->encoding_.imm->GetSize();
     }
 
     return size;
@@ -41,10 +40,13 @@ size_t Amd64Instruction::AppendToBuffer(std::vector<std::uint8_t> &buffer)
     {
         buffer.push_back(*this->encoding_.legacy_prefix);
     }
-    if (this->encoding_.opcode.has_value())
+    if (this->encoding_.rex.has_value() && this->encoding_.rex->ContainsInformation())
     {
-        buffer.insert(buffer.end(), this->encoding_.opcode->begin(), this->encoding_.opcode->end());
+        buffer.push_back(*this->encoding_.rex);
     }
+
+    buffer.insert(buffer.end(), this->encoding_.opcode.begin(), this->encoding_.opcode.end());
+
     if (this->encoding_.mod.has_value())
     {
         buffer.push_back(*this->encoding_.mod);
@@ -60,8 +62,7 @@ size_t Amd64Instruction::AppendToBuffer(std::vector<std::uint8_t> &buffer)
     }
     if (this->encoding_.imm.has_value())
     {
-        auto imm_buffer = reinterpret_cast<std::uint8_t *>(&this->encoding_.imm.value());
-        buffer.insert(buffer.end(), imm_buffer, imm_buffer + 4);
+        buffer.insert(buffer.end(), this->encoding_.imm->begin(), this->encoding_.imm->end());
     }
 
     return this->GetBinarySize();
