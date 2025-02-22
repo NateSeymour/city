@@ -8,51 +8,45 @@ namespace city
     class Amd64Div : public Amd64Instruction
     {
     public:
-        static Amd64Div M32(Register &src, Amd64Access mod = Amd64Access::Value, std::int32_t disp = 0)
+        /// (I)DIV r/m64
+        [[nodiscard]] static Amd64Div M(Register &src, bool is_signed = false, Amd64Access access = Amd64Access::Value, std::int32_t disp = 0)
         {
-            Amd64Div inst;
-
-            inst.SetOpcode({0xF7});
-            inst.SetModRM(6, src.GetCode(), mod, disp);
-
-            return inst;
+            std::uint8_t reg = is_signed ? 7 : 6;
+            return {Amd64Encoding{
+                    .rex{{
+                            .w = true,
+                            .b = src.IsExtension(),
+                    }},
+                    .opcode = {{0xF7}},
+                    .mod{{
+                            .access = access,
+                            .reg_code = reg,
+                            .rm_code = src.GetCode(),
+                    }},
+                    .disp = disp != 0 ? disp : std::nullopt,
+            }};
         }
 
-        static Amd64Div M64(Register &src, Amd64Access mod = Amd64Access::Value, std::int32_t disp = 0)
+        /// DIV(SS|SD) xmm1, xmm2/m(32|64)
+        [[nodiscard]] static Amd64Div FA(Register &dst, Register &src, std::size_t precision = 8, Amd64Access access = Amd64Access::Value, std::int32_t disp)
         {
-            Amd64Div inst;
-
-            inst.SetREX(nullptr, &src);
-            inst.SetOpcode({0xF7});
-            inst.SetModRM(6, src.GetCode(), mod, disp);
-
-            return inst;
+            std::uint8_t opcode_leader = precision == 8 ? 0xF2 : 0xF3;
+            return {Amd64Encoding{
+                    .rex{{
+                            .r = dst.IsExtension(),
+                            .b = src.IsExtension(),
+                    }},
+                    .opcode = {{opcode_leader, 0x0F, 0x58}},
+                    .mod{{
+                            .access = access,
+                            .reg_code = dst.GetCode(),
+                            .rm_code = src.GetCode(),
+                    }},
+                    .disp = disp != 0 ? disp : std::nullopt,
+            }};
         }
 
-        static Amd64Div MX(Register &src, std::size_t size, Amd64Access mod = Amd64Access::Value, std::int32_t disp = 0)
-        {
-            if (size <= 4)
-            {
-                return Amd64Div::M32(src, mod, disp);
-            }
-
-            if (size <= 8)
-            {
-                return Amd64Div::M64(src, mod, disp);
-            }
-
-            throw std::runtime_error("operands too large");
-        }
-
-        static Amd64Div SDA(Register &dst, Register &src, Amd64Access mod = Amd64Access::Value, std::int32_t disp = 0)
-        {
-            Amd64Div inst{};
-
-            inst.SetOpcode({0xF2, 0x0F, 0x5E});
-            inst.SetModRM(dst.GetCode(), src.GetCode(), mod, disp);
-
-            return inst;
-        }
+        Amd64Div(Amd64Encoding encoding) : Amd64Instruction(encoding) {}
     };
 } // namespace city
 

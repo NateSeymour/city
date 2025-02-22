@@ -1,14 +1,11 @@
 #ifndef X86_64INSTRUCTION_H
 #define X86_64INSTRUCTION_H
 
-#include <array>
 #include <cstdint>
 #include <optional>
 #include "city/ByteBuffer.h"
 #include "city/backend/NativeInstruction.h"
 #include "city/backend/amd64/Amd64.h"
-
-#include <variant>
 
 namespace city
 {
@@ -27,9 +24,16 @@ namespace city
 
     struct Amd64REX
     {
+        /// Operand size
         bool w = false;
+
+        /// REG extension
         bool r = false;
+
+        /// SIB extension
         bool x = false;
+
+        /// R/M extension
         bool b = false;
 
         operator std::uint8_t() const() const noexcept
@@ -56,6 +60,7 @@ namespace city
         std::optional<Amd64REX> rex = std::nullopt;
         std::optional<ByteBuffer<3>> opcode = std::nullopt;
         std::optional<Amd64Mod> mod = std::nullopt;
+        std::optional<std::uint8_t> sib = std::nullopt;
         std::optional<std::int32_t> disp = std::nullopt;
         std::optional<std::int32_t> imm = std::nullopt;
     };
