@@ -17,18 +17,17 @@ namespace city
             }};
         }
 
-        /// CALL m16:64
+        /// CALL r/m64
         [[nodiscard]] static Amd64Call M(Register &dst, Amd64Access access = Amd64Access::Value, std::optional<std::int32_t> disp = std::nullopt) noexcept
         {
             return {Amd64Encoding{
                     .rex{{
-                            .w = true,
                             .b = dst.IsExtension(),
                     }},
                     .opcode = {0xFF},
                     .mod{{
                             .access = access,
-                            .reg_code = 3,
+                            .reg_code = 2,
                             .rm_code = dst.GetCode(),
                     }},
                     .disp = disp,

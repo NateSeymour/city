@@ -21,28 +21,6 @@
 
 namespace city
 {
-    struct BinaryOperation
-    {
-        IRBinaryInstruction &inst;
-        Register &dst;
-        Register &src1;
-        Register &src2;
-        std::size_t opsize;
-        NativeType optype;
-
-        void Persist() const
-        {
-            dst.ClearTempValue();
-            src1.ClearTempValue();
-            src2.ClearTempValue();
-
-            this->inst.GetLHS()->DecrementReadCount();
-            this->inst.GetRHS()->DecrementReadCount();
-
-            dst.InstantiateValue(&inst);
-        }
-    };
-
     class IRTranslator
     {
     protected:
@@ -64,28 +42,60 @@ namespace city
 
         [[nodiscard]] virtual std::span<Register *> GetScratchRegisterBank(NativeType type) = 0;
 
-        [[nodiscard]] Register &AcquireScratchRegister(NativeType type);
-
         /**
-         *
-         * @param inst Instruction to prepare
-         * @param destructive The instruction is destructive, meaning that it overwrites its first source argument. In this case, `dst` and `src1` will be aliases. `src1` will be a
-         * strict copy of the original value.
+         * Returns a reference to an empty, unlocked register.
+         * @param type
          * @return
          */
-        [[nodiscard]] BinaryOperation PrepareBinaryOperation(IRBinaryInstruction &inst, bool destructive = false);
+        [[nodiscard]] RegisterGuard AcquireScratchRegister(NativeType type);
 
         /**
-         * Loads a value into a scratch register. Default behavior is to do nothing if the value is already in a register.
-         * @param value Value to load into a scratch register
-         * @param copy
+         * Move the value out of a register if it has one, locks and returns it.
+         * @param reg
          * @return
          */
-        [[nodiscard]] Register &LoadValue(Value &value, bool copy = false);
+        [[nodiscard]] RegisterGuard AcquireScratchRegister(Register &reg);
+
+        /**
+         * Loads a value into a scratch register and returns guard. Will not copy the value if it is already register-bound.
+         * If the value is non-constant, its ownership will be transferred to the new register. If this is not desired, use IRTranslator::CopyValueR.
+         * @param value Value to load into a scratch register. Ownership is transferred.
+         * @return Register guard
+         */
+        [[nodiscard]] RegisterGuard LoadValueR(Value &value);
+
+        /**
+         * Loads a value into a specific register. Will bump that register value into the stack if it isn't locked, otherwise will throw.
+         * @param dst
+         * @param value
+         * @return
+         */
+        [[nodiscard]] RegisterGuard LoadValueR(RegisterGuard dst, Value &value);
+
+        /**
+         * Copies value into a scratch register and returns guard. If value is already register-bound, will be copied into new register.
+         * Optimal for destructive operations.
+         * @param value Value to copy into register. Ownership is not transferred.
+         * @return
+         */
+        [[nodiscard]] RegisterGuard CopyValueR(Value &value);
+
+        /**
+         * Copies value into a specific scratch register and returns guard. Will throw if value is already in that register.
+         * Optimal for destructive operations.
+         * @param value Value to copy into register. Ownership is not transferred.
+         * @return
+         */
+        [[nodiscard]] RegisterGuard CopyValueR(RegisterGuard dst, Value &value);
+
+        /**
+         * Move value into container. If value is not register-bound, a tmp register is used to facilitate the movement.
+         * @param dst Destination container
+         * @param value Value to be moved. Ownership is transferred.
+         */
+        void MoveValue(Container &dst, Value &value);
 
         [[nodiscard]] std::size_t GetStubIndex(std::string const &name) const;
-
-        void MoveValue(Container &dst, Value &value);
 
     public:
         virtual void TranslateInstruction(AddInst &inst) = 0;

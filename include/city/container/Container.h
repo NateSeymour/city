@@ -12,7 +12,7 @@ namespace city
     enum class ContainerType
     {
         Constant,
-        StackAllocation,
+        Stack,
         Register,
     };
 
@@ -21,7 +21,6 @@ namespace city
         friend class Value;
 
     protected:
-        bool temp_ = false;
         Value *value_ = nullptr;
 
     public:
@@ -36,9 +35,6 @@ namespace city
 
         [[nodiscard]] bool HasValue() const noexcept;
         [[nodiscard]] Value *GetValue() const noexcept;
-
-        [[nodiscard]] bool SetTempValue(Value *value);
-        bool ClearTempValue();
 
         [[nodiscard]] virtual std::size_t GetSize() const noexcept = 0;
         [[nodiscard]] virtual ContainerType GetType() const noexcept = 0;

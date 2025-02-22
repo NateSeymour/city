@@ -40,66 +40,58 @@ void IRTranslator::PersistScratchRegisters()
     this->PersistRegisterBank(this->GetScratchRegisterBank(NativeType::FloatingPoint));
 }
 
-Register &IRTranslator::AcquireScratchRegister(NativeType type)
+RegisterGuard IRTranslator::AcquireScratchRegister(NativeType type)
 {
     auto bank = this->GetScratchRegisterBank(type);
+
+    Register *last_unlocked_register = nullptr;
 
     // Find an unused register and return it
     for (auto reg : bank)
     {
-        if (!reg->HasValue() && reg->GetRegisterPurpose() == RegisterPurpose::General)
+        if (!reg->IsLocked() && !reg->HasValue() && reg->GetRegisterPurpose() == RegisterPurpose::General)
         {
-            return *reg;
+            return {*reg};
+        }
+
+        if (!reg->IsLocked())
+        {
+            last_unlocked_register = reg;
         }
     }
 
     // All gp registers are in use. Put something on the stack.
-    auto victim = bank[(++this->register_dislocation_count_) % bank.size()];
+    if (last_unlocked_register == nullptr)
+    {
+        throw std::runtime_error("All registers are in use for operation! Did you forget to unlock any?");
+    }
+
+    auto victim = last_unlocked_register;
     auto &swap = this->AcquireStackSpace(victim->GetValue()->GetType());
 
-    this->Store(swap, *victim);
+    swap.Store(*this, *victim);
     swap.TakeValue(victim);
 
-    return *victim;
+    return {*victim};
 }
 
-BinaryOperation IRTranslator::PrepareBinaryOperation(IRBinaryInstruction &inst, bool destructive)
+RegisterGuard IRTranslator::AcquireScratchRegister(Register &reg)
 {
-    auto optype = inst.GetType().GetNativeType();
+    RegisterGuard guard{reg};
 
-    auto &lhs = *inst.GetLHS();
-    auto &rhs = *inst.GetRHS();
-
-    std::size_t opsize = inst.GetType().GetSize();
-
-    auto &src1tmp = this->LoadValue(lhs, destructive); // Force copy of src1 if the instruction is destructive.
-    auto &src2tmp = this->LoadValue(rhs);
-
-    Register *dst = nullptr;
-    if (lhs.GetReadCount() == 1 || destructive)
+    if (reg.HasValue())
     {
-        dst = &src1tmp;
-    }
-    else if (rhs.GetReadCount() == 1)
-    {
-        dst = &src2tmp;
-    }
-    else
-    {
-        dst = &this->AcquireScratchRegister(optype);
+        auto value = reg.GetValue();
+        RegisterGuard new_reg = this->AcquireScratchRegister(value->GetType().GetNativeType());
+
+        reg.Load(*this, new_reg.reg);
+        new_reg.reg.TakeValue(&reg);
     }
 
-    return {
-            .inst = inst,
-            .dst = *dst,
-            .src1 = src1tmp,
-            .src2 = src2tmp,
-            .opsize = opsize,
-            .optype = optype,
-    };
+    return std::move(guard);
 }
 
-Register &IRTranslator::LoadValue(Value &value, bool copy)
+RegisterGuard IRTranslator::LoadValueR(Value &value)
 {
     if (!value.IsInstantiated())
     {
@@ -109,20 +101,83 @@ Register &IRTranslator::LoadValue(Value &value, bool copy)
     auto container = value.GetContainer();
 
     // The value is already loaded, so return itself.
-    if (container->GetType() == ContainerType::Register && !copy)
+    if (container->GetType() == ContainerType::Register)
     {
-        return *dynamic_cast<Register *>(container);
+        return {*dynamic_cast<Register *>(container)};
+    }
+    // The value is constant and cannot be moved.
+    else if (container->GetType() == ContainerType::Constant)
+    {
+        return std::move(this->CopyValueR(value));
     }
 
     // Value not loaded
-    auto &reg = this->AcquireScratchRegister(value.GetType().GetNativeType());
-    container->Load(*this, reg);
-    if (!((!copy && reg.TakeValue(container)) || reg.SetTempValue(&value)))
+    auto guard = this->AcquireScratchRegister(value.GetType().GetNativeType());
+    container->Load(*this, guard.reg);
+    guard.reg.TakeValue(container);
+
+    return std::move(guard);
+}
+
+RegisterGuard IRTranslator::LoadValueR(RegisterGuard dst, Value &value)
+{
+    if (!value.IsInstantiated())
     {
-        throw std::runtime_error("failed to set temporary value");
+        throw std::runtime_error("cannot load uninstantiated value!");
     }
 
-    return reg;
+    auto container = value.GetContainer();
+
+    // The value is constant and cannot be moved.
+    if (container->GetType() == ContainerType::Constant)
+    {
+        return std::move(this->CopyValueR(std::move(dst), value));
+    }
+
+    // Value not loaded
+    container->Load(*this, dst.reg);
+    dst.reg.TakeValue(container);
+
+    return std::move(dst);
+}
+
+RegisterGuard IRTranslator::CopyValueR(Value &value)
+{
+    if (!value.IsInstantiated())
+    {
+        throw std::runtime_error("cannot copy uninstantiated value!");
+    }
+
+    auto container = value.GetContainer();
+
+    // Value not loaded
+    auto guard = this->AcquireScratchRegister(value.GetType().GetNativeType());
+    container->Load(*this, guard.reg);
+
+    return std::move(guard);
+}
+
+RegisterGuard IRTranslator::CopyValueR(RegisterGuard dst, Value &value)
+{
+    if (!value.IsInstantiated())
+    {
+        throw std::runtime_error("cannot copy uninstantiated value!");
+    }
+
+    auto container = value.GetContainer();
+
+    // Value not loaded
+    container->Load(*this, dst.reg);
+
+    return std::move(dst);
+}
+
+void IRTranslator::MoveValue(Container &dst, Value &value)
+{
+    auto guard = this->LoadValueR(value);
+
+    dst.Store(*this, guard.reg);
+    dst.TakeValue(value.GetContainer());
 }
 
 std::size_t IRTranslator::GetStubIndex(std::string const &name) const
@@ -130,16 +185,6 @@ std::size_t IRTranslator::GetStubIndex(std::string const &name) const
     this->module_.stubs_.push_back(name);
 
     return this->module_.stubs_.size() - 1;
-}
-
-void IRTranslator::MoveValue(Container &dst, Value &value)
-{
-    auto &tmp = this->LoadValue(value);
-
-    dst.Store(*this, tmp);
-    dst.TakeValue(value.GetContainer());
-
-    tmp.ClearTempValue();
 }
 
 IRTranslator::IRTranslator(NativeModule &module, IRFunction &ir_function) : module_(module), ir_function_(ir_function) {}

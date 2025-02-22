@@ -19,18 +19,41 @@ namespace city
         template<typename IRInstructionType, typename NativeInstructionType>
         void TranslateBinaryInstruction(IRInstructionType &inst)
         {
-            auto op = this->PrepareBinaryOperation(inst);
+            auto type = inst.GetType();
+            auto optype = type.GetNativeType();
+            auto opsize = type.GetSize();
 
-            if (op.optype == NativeType::Integer)
+            auto &lhs = *inst.GetLHS();
+            auto &rhs = *inst.GetRHS();
+
+            Register *dst = nullptr;
+            auto src1 = this->LoadValueR(lhs);
+            auto src2 = this->LoadValueR(rhs);
+
+            if (src1.reg.GetValue()->GetReadCount() <= 1)
             {
-                this->Insert(NativeInstructionType::R(op.dst, op.src1, op.src2, op.opsize));
+                dst = &src1.reg;
             }
-            else if (op.optype == NativeType::FloatingPoint)
+            else if (src2.reg.GetValue()->GetReadCount() <= 1)
             {
-                this->Insert(NativeInstructionType::F(op.dst, op.src1, op.src2, op.opsize));
+                dst = &src2.reg;
+            }
+            else
+            {
+                auto dstguard = this->AcquireScratchRegister(optype);
+                dst = &dstguard.reg;
             }
 
-            op.Persist();
+            if (optype == NativeType::Integer)
+            {
+                this->Insert(NativeInstructionType::R(*dst, src1.reg, src2.reg, opsize));
+            }
+            else if (optype == NativeType::FloatingPoint)
+            {
+                this->Insert(NativeInstructionType::F(*dst, src1.reg, src2.reg, opsize));
+            }
+
+            dst->InstantiateValue(&inst);
         }
 
         void TranslateInstruction(AddInst &inst) override;

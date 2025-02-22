@@ -33,6 +33,11 @@ bool Register::IsExtension() const noexcept
     return this->is_ext_;
 }
 
+bool Register::IsLocked() const noexcept
+{
+    return this->locked_;
+}
+
 RegisterType Register::GetValueType() const noexcept
 {
     return this->value_type_;

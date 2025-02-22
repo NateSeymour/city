@@ -29,6 +29,31 @@ std::span<Register *> Amd64FunctionTranslator::GetScratchRegisterBank(NativeType
     throw std::runtime_error("unknown type");
 }
 
+std::tuple<RegisterGuard, Amd64Access, std::optional<std::int32_t>> Amd64FunctionTranslator::LoadValueRM(Value &value)
+{
+    if (!value.IsInstantiated())
+    {
+        throw std::runtime_error("cannot load uninstantiated value!");
+    }
+
+    auto container = value.GetContainer();
+
+    if (container->GetType() == ContainerType::Stack)
+    {
+        auto stack_container = dynamic_cast<StackAllocationContainer *>(container);
+
+        return {
+                RegisterGuard{this->reg_.r[5]},
+                Amd64Access::DisplacedPointer,
+                stack_container->GetOffset() * -1 - stack_container->GetSize(),
+        };
+    }
+    else
+    {
+        return {std::move(this->LoadValueR(value)), Amd64Access::Value, std::nullopt};
+    }
+}
+
 void Amd64FunctionTranslator::TranslateInstruction(AddInst &inst)
 {
     this->TranslateBinaryInstruction<AddInst, Amd64Add>(inst);
@@ -60,25 +85,21 @@ void Amd64FunctionTranslator::TranslateInstruction(CallInst &inst)
         auto value = args[i];
         auto const &value_type = value->GetType();
 
-        if (!value->IsInstantiated())
-        {
-            throw std::runtime_error("attempted to pass uninstantiated value");
-        }
-
-        auto container = value->GetContainer();
         if (value_type.GetNativeType() == NativeType::Integer)
         {
-            container->Load(*this, *this->reg_.r_args[i]);
+            (void)this->LoadValueR(RegisterGuard{*this->reg_.r_args[i]}, *value);
         }
         else if (value_type.GetNativeType() == NativeType::FloatingPoint)
         {
-            container->Load(*this, *this->reg_.xmm_args[i]);
+            (void)this->LoadValueR(RegisterGuard{*this->reg_.xmm_args[i]}, *value);
         }
     }
 
-    // Make call
-    auto &addr = this->LoadValue(*inst.GetTarget());
-    this->Insert(Amd64Call::M(addr));
+    // Make call (via RAX)
+    {
+        auto addr = this->LoadValueR(RegisterGuard{this->reg_.r[0]}, *inst.GetTarget());
+        this->Insert(Amd64Call::M(addr.reg));
+    }
 
     // Instantiate retval
     auto native_type = inst.GetType().GetNativeType();
@@ -98,14 +119,13 @@ void Amd64FunctionTranslator::TranslateInstruction(RetInst &inst)
     if (retval && retval->IsInstantiated())
     {
         auto native_type = inst.GetType().GetNativeType();
-        auto container = retval->GetContainer();
         if (native_type == NativeType::Integer)
         {
-            container->Load(*this, this->reg_.r[0]);
+            (void)this->LoadValueR(RegisterGuard{this->reg_.r[0]}, *retval);
         }
         else if (native_type == NativeType::FloatingPoint)
         {
-            container->Load(*this, this->reg_.xmm[0]);
+            (void)this->LoadValueR(RegisterGuard{this->reg_.xmm[0]}, *retval);
         }
     }
 
@@ -131,10 +151,10 @@ void Amd64FunctionTranslator::Load(Register &dst, ConstantDataContainer &src)
     }
     else if (value_type.GetNativeType() == NativeType::FloatingPoint)
     {
-        auto &valtmp = this->AcquireScratchRegister(NativeType::Integer);
+        auto valtmp = this->AcquireScratchRegister(NativeType::Integer);
 
-        this->Insert(Amd64Mov::OI(valtmp, src.GetDataBuffer()));
-        this->Insert(Amd64Mov::ADQ(dst, valtmp, value_type.GetSize()));
+        this->Insert(Amd64Mov::OI(valtmp.reg, src.GetDataBuffer()));
+        this->Insert(Amd64Mov::ADQ(dst, valtmp.reg, value_type.GetSize()));
     }
 }
 
@@ -172,8 +192,8 @@ void Amd64FunctionTranslator::Load(Register &dst, StubContainer &src)
 
     auto index = static_cast<std::int32_t>(this->GetStubIndex(*name));
 
-    auto &stub_base_reg = this->LoadValue(this->stub_base_pointer_);
-    this->Insert(Amd64Mov::RM(dst, stub_base_reg, 8, Amd64Access::DisplacedPointer, -8 * (index + 1)));
+    auto stub_base_reg = this->LoadValueR(this->stub_base_pointer_);
+    this->Insert(Amd64Mov::RM(dst, stub_base_reg.reg, 8, Amd64Access::DisplacedPointer, -8 * (index + 1)));
 }
 
 void Amd64FunctionTranslator::Load(Register &dst, Register &src)
@@ -246,9 +266,11 @@ Amd64FunctionTranslator::Amd64FunctionTranslator(NativeModule &module, IRFunctio
 
     // Save stub location
     this->stub_base_pointer_.IncrementReadCount();
-    auto &stub_base_reg = this->AcquireScratchRegister(NativeType::Integer);
-    this->InsertProlog(Amd64Lea::RM(stub_base_reg, this->reg_.r[5], Amd64Access::Pointer, (-1 * this->module_.pc_) - 7)); // Magic number 7 is the size of instruction plus disp
-    stub_base_reg.InstantiateValue(&this->stub_base_pointer_);
+    {
+        auto stub_base_reg = this->AcquireScratchRegister(NativeType::Integer);
+        this->InsertProlog(Amd64Lea::RM(stub_base_reg.reg, this->reg_.r[5], Amd64Access::Pointer, (-1 * this->module_.pc_) - 7)); // Magic number 7 is the size of instruction plus disp
+        stub_base_reg.reg.InstantiateValue(&this->stub_base_pointer_);
+    }
 
     // Function Body
     for (auto &block : this->ir_function_.GetBlocks())

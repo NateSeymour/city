@@ -10,7 +10,6 @@ bool Container::InstantiateValue(Value *value)
         return false;
     }
 
-    this->temp_ = false;
     this->value_ = value;
     this->value_->container_ = this;
 
@@ -24,7 +23,6 @@ bool Container::TakeValue(Container *container)
         return false;
     }
 
-    this->temp_ = false;
     this->value_ = container->value_;
     this->value_->container_ = this;
     container->value_ = nullptr;
@@ -40,29 +38,4 @@ bool Container::HasValue() const noexcept
 Value *Container::GetValue() const noexcept
 {
     return this->value_;
-}
-
-bool Container::SetTempValue(Value *value)
-{
-    if (this->HasValue())
-    {
-        return false;
-    }
-
-    this->temp_ = true;
-    this->value_ = value;
-
-    return true;
-}
-
-bool Container::ClearTempValue()
-{
-    if (!this->temp_)
-    {
-        return false;
-    }
-
-    this->temp_ = false;
-    this->value_ = nullptr;
-    return true;
 }

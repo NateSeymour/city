@@ -15,6 +15,8 @@ namespace city
     protected:
         [[nodiscard]] std::span<Register *> GetScratchRegisterBank(NativeType type) override;
 
+        [[nodiscard]] std::tuple<RegisterGuard, Amd64Access, std::optional<std::int32_t>> LoadValueRM(Value &value);
+
         void TranslateInstruction(AddInst &inst) override;
         void TranslateInstruction(DivInst &inst) override;
         void TranslateInstruction(MulInst &inst) override;
@@ -25,13 +27,23 @@ namespace city
         template<typename IRInstructionType, typename NativeInstructionType>
         void TranslateBinaryInstruction(IRInstructionType &inst)
         {
-            auto op = this->PrepareBinaryOperation(inst, true);
+            auto type = inst.GetType();
+            auto optype = type.GetNativeType();
+            auto opsize = type.GetSize();
 
-            if (op.optype == NativeType::Integer)
+            auto &lhs = *inst.GetLHS();
+            auto &rhs = *inst.GetRHS();
+
+            if (optype == NativeType::Integer)
             {
                 if constexpr (Amd64EncodingRM<NativeInstructionType>::value)
                 {
-                    this->Insert(NativeInstructionType::RM(op.src1, op.src2));
+                    auto dst = this->CopyValueR(lhs);
+                    auto [src, access, disp] = this->LoadValueRM(rhs);
+
+                    this->Insert(NativeInstructionType::RM(dst.reg, src.reg, access, disp));
+
+                    dst.reg.InstantiateValue(&inst);
                 }
                 else if constexpr (Amd64EncodingM<NativeInstructionType>::value)
                 {
@@ -41,12 +53,15 @@ namespace city
                     static_assert("impossible to encode operation");
                 }
             }
-            else if (op.optype == NativeType::FloatingPoint)
+            else if (optype == NativeType::FloatingPoint)
             {
-                this->Insert(NativeInstructionType::AS(op.src1, op.src2));
-            }
+                auto dst = this->CopyValueR(lhs);
+                auto [src, access, disp] = this->LoadValueRM(rhs);
 
-            op.Persist();
+                this->Insert(NativeInstructionType::AS(dst.reg, src.reg, opsize, access, disp));
+
+                dst.reg.InstantiateValue(&inst);
+            }
         }
 
         void Load(Register &dst, ConstantDataContainer &src) override;
@@ -54,7 +69,6 @@ namespace city
         void Load(Register &dst, StubContainer &src) override;
         void Load(Register &dst, Register &src) override;
 
-    protected:
         void Store(StackAllocationContainer &dst, Register &src) override;
         void Store(Register &dst, Register &src) override;
 
