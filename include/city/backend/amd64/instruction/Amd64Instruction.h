@@ -3,82 +3,72 @@
 
 #include <array>
 #include <cstdint>
+#include <optional>
 #include "city/ByteBuffer.h"
 #include "city/backend/NativeInstruction.h"
 #include "city/backend/amd64/Amd64.h"
 
+#include <variant>
+
 namespace city
 {
-    /**
-     * Container to hold x86 maximum prefix size (3 bytes).
-     */
-    using Amd64Prefix = ByteBuffer<3>;
-
-    /**
-     * Container to hold the x86 maximum opcode size (3 bytes).
-     */
-    using Amd64Opcode = ByteBuffer<3>;
-
-    /**
-     * Container to hold the x86 maximum immediate size (8 bytes == 1QW).
-     */
-    using Amd64Immediate = ByteBuffer<8>;
 
     /**
      * Determines the type of access made to into the register.
      * If Pointer, then the value in the register will be treated as a pointer. Instructions will load value from memory location held in pointer.
      * If Value, then the value in the register will be treated as a value.
      */
-    enum class Amd64Mod : std::uint8_t
+    enum class Amd64Access : std::uint8_t
     {
         Pointer = 0x0,
         DisplacedPointer = 0x2,
         Value = 0x3,
     };
 
+    struct Amd64REX
+    {
+        bool w = false;
+        bool r = false;
+        bool x = false;
+        bool b = false;
+
+        operator std::uint8_t() const() const noexcept
+        {
+            return 0b0100'0000 | (w ? 0b1 << 3 : 0) | (r ? 0b1 << 2 : 0) | (x ? 0b1 << 1 : 0) | (b ? 0b1 << 0 : 0);
+        }
+    };
+
+    struct Amd64Mod
+    {
+        Amd64Access access;
+        std::uint8_t reg_code;
+        std::uint8_t rm_code;
+
+        operator std::uint8_t() const() const noexcept
+        {
+            return (0 | (static_cast<std::uint8_t>(access) << 6) | (reg_code << 3) | rm_code);
+        }
+    };
+
+    struct Amd64Encoding
+    {
+        std::optional<std::uint8_t> legacy_prefix = std::nullopt;
+        std::optional<Amd64REX> rex = std::nullopt;
+        std::optional<ByteBuffer<3>> opcode = std::nullopt;
+        std::optional<Amd64Mod> mod = std::nullopt;
+        std::optional<std::int32_t> disp = std::nullopt;
+        std::optional<std::int32_t> imm = std::nullopt;
+    };
+
     class Amd64Instruction : public NativeInstruction
     {
-        Amd64Prefix prefix_ = {};
-        Amd64Opcode opcode_ = {};
-
-        Amd64Mod mod_ = Amd64Mod::Value;
-        bool has_mod_rm_ = false;
-        std::uint8_t mod_rm_ = 0x0;
-
-        bool has_sib_ = false;
-        std::uint8_t sib_ = 0x0;
-
-        bool has_displacement_ = false;
-        std::int32_t displacement_ = 0;
-
-        Amd64Immediate immediate_ = {};
+        Amd64Encoding encoding_;
 
     public:
-        static std::uint8_t const REX_0 = 0b0100'0000;
-        static std::uint8_t const REX_W = 0b0000'1000;
-        static std::uint8_t const REX_R = 0b0000'0100;
-        static std::uint8_t const REX_X = 0b0000'0010;
-        static std::uint8_t const REX_B = 0b0000'0001;
-
         [[nodiscard]] std::size_t GetBinarySize() const noexcept override;
         size_t AppendToBuffer(std::vector<std::uint8_t> &buffer) override;
 
-        void SetREX(Register *reg = nullptr, Register *rm = nullptr);
-
-        void SetPrefix(std::initializer_list<std::uint8_t> bytes);
-        void SetOpcode(std::initializer_list<std::uint8_t> bytes);
-
-        /**
-         * Calculates ModR/M byte using formula from section 2.1.5 of architecture reference manual. Also sets displacement for access.
-         * @param reg Register (R)
-         * @param r_m Register or Memory (R/M)
-         * @param mod Addressing Mode
-         * @param disp Displacement
-         * @return ModR/M
-         */
-        void SetModRM(std::uint8_t reg, std::uint8_t rm, Amd64Mod mod, std::int32_t disp = 0);
-
-        void SetImmediate(std::initializer_list<std::uint8_t> bytes);
+        Amd64Instruction(Amd64Encoding encoding) : encoding_(encoding) {}
     };
 
     template<typename InstructionType>

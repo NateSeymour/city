@@ -98,13 +98,14 @@ void Amd64FunctionTranslator::TranslateInstruction(RetInst &inst)
     if (retval && retval->IsInstantiated())
     {
         auto native_type = inst.GetType().GetNativeType();
+        auto container = retval->GetContainer();
         if (native_type == NativeType::Integer)
         {
-            this->MoveValue(this->reg_.r[0], *retval);
+            container->Load(*this, this->reg_.r[0]);
         }
         else if (native_type == NativeType::FloatingPoint)
         {
-            this->MoveValue(this->reg_.xmm[0], *retval);
+            container->Load(*this, this->reg_.xmm[0]);
         }
     }
 
@@ -123,7 +124,7 @@ void Amd64FunctionTranslator::Load(Register &dst, ConstantDataContainer &src)
         throw std::runtime_error("value is too big");
     }
 
-    auto value_type = dst.GetValue()->GetType();
+    auto value_type = src.GetValue()->GetType();
     if (value_type.GetNativeType() == NativeType::Integer)
     {
         this->Insert(Amd64Mov::OIX(dst, src.GetDataBuffer()));
@@ -135,8 +136,8 @@ void Amd64FunctionTranslator::Load(Register &dst, ConstantDataContainer &src)
         auto &stacktmp = this->AcquireStackSpace(value_type);
 
         this->Insert(Amd64Mov::OIX(valtmp, src.GetDataBuffer()));
-        this->Insert(Amd64Mov::MRX(this->reg_.r[5], valtmp, src.GetSize(), Amd64Mod::DisplacedPointer, stacktmp.GetOffset() * -1));
-        this->Insert(Amd64Mov::SDA(dst, this->reg_.r[5], Amd64Mod::DisplacedPointer, stacktmp.GetOffset() * -1));
+        this->Insert(Amd64Mov::MRX(this->reg_.r[5], valtmp, src.GetSize(), Amd64Access::DisplacedPointer, stacktmp.GetOffset() * -1 - stacktmp.GetSize()));
+        this->Insert(Amd64Mov::SDA(dst, this->reg_.r[5], Amd64Access::DisplacedPointer, stacktmp.GetOffset() * -1 - stacktmp.GetSize()));
     }
 }
 
@@ -146,11 +147,11 @@ void Amd64FunctionTranslator::Load(Register &dst, StackAllocationContainer &src)
 
     if (dst.GetValueType() == RegisterType::Integer)
     {
-        this->Insert(Amd64Mov::RMX(dst, rbp, src.GetSize(), Amd64Mod::DisplacedPointer, src.GetOffset() * -1));
+        this->Insert(Amd64Mov::RMX(dst, rbp, src.GetSize(), Amd64Access::DisplacedPointer, src.GetOffset() * -1 - src.GetSize()));
     }
     else if (dst.GetValueType() == RegisterType::FloatingPoint)
     {
-        this->Insert(Amd64Mov::SDA(dst, rbp, Amd64Mod::DisplacedPointer, src.GetOffset() * -1));
+        this->Insert(Amd64Mov::SDA(dst, rbp, Amd64Access::DisplacedPointer, src.GetOffset() * -1 - src.GetSize()));
     }
 }
 
@@ -167,7 +168,7 @@ void Amd64FunctionTranslator::Load(Register &dst, StubContainer &src)
     auto index = static_cast<std::int32_t>(this->GetStubIndex(*name));
 
     auto &stub_base_reg = this->LoadValue(this->stub_base_pointer_);
-    this->Insert(Amd64Mov::RM64(dst, stub_base_reg, Amd64Mod::DisplacedPointer, -8 * (index + 1)));
+    this->Insert(Amd64Mov::RM64(dst, stub_base_reg, Amd64Access::DisplacedPointer, -8 * (index + 1)));
 }
 
 void Amd64FunctionTranslator::Load(Register &dst, Register &src)
@@ -194,11 +195,11 @@ void Amd64FunctionTranslator::Store(StackAllocationContainer &dst, Register &src
 
     if (src.GetValueType() == RegisterType::Integer)
     {
-        this->Insert(Amd64Mov::MR64(rbp, src, Amd64Mod::DisplacedPointer, dst.GetOffset() * -1));
+        this->Insert(Amd64Mov::MR64(rbp, src, Amd64Access::DisplacedPointer, dst.GetOffset() * -1 - dst.GetSize()));
     }
     else if (src.GetValueType() == RegisterType::FloatingPoint)
     {
-        this->Insert(Amd64Mov::SDA(rbp, src, Amd64Mod::DisplacedPointer, dst.GetOffset() * -1));
+        this->Insert(Amd64Mov::SDA(rbp, src, Amd64Access::DisplacedPointer, dst.GetOffset() * -1 - dst.GetSize()));
     }
 }
 
@@ -241,7 +242,7 @@ Amd64FunctionTranslator::Amd64FunctionTranslator(NativeModule &module, IRFunctio
     // Save stub location
     this->stub_base_pointer_.IncrementReadCount();
     auto &stub_base_reg = this->AcquireScratchRegister(NativeType::Integer);
-    this->InsertProlog(Amd64Lea::RM(stub_base_reg, this->reg_.r[5], Amd64Mod::Pointer, (-1 * this->module_.pc_) - 7)); // Magic number 7 is the size of instruction plus disp
+    this->InsertProlog(Amd64Lea::RM(stub_base_reg, this->reg_.r[5], Amd64Access::Pointer, (-1 * this->module_.pc_) - 7)); // Magic number 7 is the size of instruction plus disp
     stub_base_reg.InstantiateValue(&this->stub_base_pointer_);
 
     // Function Body

@@ -7,17 +7,30 @@ size_t Amd64Instruction::GetBinarySize() const noexcept
 {
     std::size_t size = 0;
 
-    size += this->prefix_.GetSize();
-    size += this->opcode_.GetSize();
-    size += this->has_mod_rm_ ? 1 : 0;
-    size += this->has_sib_ ? 1 : 0;
-
-    if (this->has_displacement_)
+    if (this->encoding_.legacy_prefix.has_value())
+    {
+        size++;
+    }
+    if (this->encoding_.rex.has_value())
+    {
+        size++;
+    }
+    if (this->encoding_.opcode.has_value())
+    {
+        size += this->encoding_.opcode->GetSize();
+    }
+    if (this->encoding_.mod.has_value())
+    {
+        size++;
+    }
+    if (this->encoding_.disp.has_value())
     {
         size += 4;
     }
-
-    size += this->immediate_.GetSize();
+    if (this->encoding_.imm.has_value())
+    {
+        size += 4;
+    }
 
     return size;
 }
@@ -81,7 +94,7 @@ void Amd64Instruction::SetImmediate(std::initializer_list<std::uint8_t> bytes)
     this->immediate_ = bytes;
 }
 
-void Amd64Instruction::SetModRM(std::uint8_t reg, std::uint8_t rm, Amd64Mod mod, std::int32_t disp)
+void Amd64Instruction::SetModRM(std::uint8_t reg, std::uint8_t rm, Amd64Access mod, std::int32_t disp)
 {
     auto breg = reg;
     auto brm = rm;
@@ -92,6 +105,6 @@ void Amd64Instruction::SetModRM(std::uint8_t reg, std::uint8_t rm, Amd64Mod mod,
 
     this->mod_ = mod;
 
-    this->has_displacement_ = mod == Amd64Mod::DisplacedPointer || disp != 0;
+    this->has_displacement_ = mod == Amd64Access::DisplacedPointer || disp != 0;
     this->displacement_ = disp;
 }

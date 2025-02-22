@@ -9,7 +9,7 @@ namespace city
     class Amd64Lea : public Amd64Instruction
     {
     public:
-        [[nodiscard]] static Amd64Lea RM(Register &dst, Register &src, Amd64Mod mod = Amd64Mod::DisplacedPointer, std::int32_t disp = 0)
+        [[nodiscard]] static Amd64Lea RM(Register &dst, Register &src, Amd64Access mod = Amd64Access::DisplacedPointer, std::int32_t disp = 0)
         {
             Amd64Lea inst{};
 

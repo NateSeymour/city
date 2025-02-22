@@ -62,7 +62,7 @@ namespace city
             throw std::runtime_error("data buffer is too big to fit into immediate value");
         }
 
-        static Amd64Mov MR32(Register &dst, Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0) noexcept
+        static Amd64Mov MR32(Register &dst, Register &src, Amd64Access mod = Amd64Access::Value, std::int32_t disp = 0) noexcept
         {
             Amd64Mov inst{};
 
@@ -72,7 +72,7 @@ namespace city
             return inst;
         }
 
-        static Amd64Mov MR64(Register &dst, Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0) noexcept
+        static Amd64Mov MR64(Register &dst, Register &src, Amd64Access mod = Amd64Access::Value, std::int32_t disp = 0) noexcept
         {
             Amd64Mov inst{};
 
@@ -83,7 +83,7 @@ namespace city
             return inst;
         }
 
-        static Amd64Mov MRX(Register &dst, Register &src, std::size_t size, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0)
+        static Amd64Mov MRX(Register &dst, Register &src, std::size_t size, Amd64Access mod = Amd64Access::Value, std::int32_t disp = 0)
         {
             if (size <= 4)
             {
@@ -98,7 +98,7 @@ namespace city
             throw std::runtime_error("data is too big to fit into container");
         }
 
-        static Amd64Mov RM32(Register &dst, Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0) noexcept
+        static Amd64Mov RM32(Register &dst, Register &src, Amd64Access mod = Amd64Access::Value, std::int32_t disp = 0) noexcept
         {
             Amd64Mov inst{};
 
@@ -108,7 +108,7 @@ namespace city
             return inst;
         }
 
-        static Amd64Mov RM64(Register &dst, Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0) noexcept
+        static Amd64Mov RM64(Register &dst, Register &src, Amd64Access mod = Amd64Access::Value, std::int32_t disp = 0) noexcept
         {
             Amd64Mov inst{};
 
@@ -119,7 +119,7 @@ namespace city
             return inst;
         }
 
-        static Amd64Mov RMX(Register &dst, Register &src, std::size_t size, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0)
+        static Amd64Mov RMX(Register &dst, Register &src, std::size_t size, Amd64Access mod = Amd64Access::Value, std::int32_t disp = 0)
         {
             if (size <= 4)
             {
@@ -134,7 +134,7 @@ namespace city
             throw std::runtime_error("data is too big to fit into single register");
         }
 
-        static Amd64Mov SDA(Register &dst, Register &src, Amd64Mod mod = Amd64Mod::Value, std::int32_t disp = 0)
+        static Amd64Mov SDA(Register &dst, Register &src, Amd64Access mod = Amd64Access::Value, std::int32_t disp = 0)
         {
             Amd64Mov inst{};
 
