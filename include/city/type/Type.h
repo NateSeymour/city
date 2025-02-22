@@ -68,6 +68,11 @@ namespace city
             return this->native_type_;
         }
 
+        [[nodiscard]] bool IsSigned() const noexcept
+        {
+            return this->signed_;
+        }
+
         bool operator==(Type const &rhs) const noexcept
         {
             return this->size_ == rhs.size_ && this->native_type_ == rhs.native_type_ && this->signed_ == rhs.signed_;

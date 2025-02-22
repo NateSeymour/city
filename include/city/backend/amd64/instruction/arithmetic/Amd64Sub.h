@@ -66,7 +66,7 @@ namespace city
         }
 
         /// SUB(SS|SD) xmm1, xmm2/m(32|64)
-        [[nodiscard]] static Amd64Sub FA(Register &dst, Register &src, std::size_t precision = 8, Amd64Access access = Amd64Access::Value, std::optional<std::int32_t> disp = std::nullopt)
+        [[nodiscard]] static Amd64Sub AS(Register &dst, Register &src, std::size_t precision = 8, Amd64Access access = Amd64Access::Value, std::optional<std::int32_t> disp = std::nullopt)
         {
             std::uint8_t opcode_leader = precision == 8 ? 0xF2 : 0xF3;
             return {Amd64Encoding{

@@ -78,7 +78,7 @@ void Amd64FunctionTranslator::TranslateInstruction(CallInst &inst)
 
     // Make call
     auto &addr = this->LoadValue(*inst.GetTarget());
-    this->Insert(Amd64Call::M64(addr));
+    this->Insert(Amd64Call::M(addr));
 
     // Instantiate retval
     auto native_type = inst.GetType().GetNativeType();
@@ -119,25 +119,22 @@ void Amd64FunctionTranslator::TranslateInstruction(RetInst &inst)
 
 void Amd64FunctionTranslator::Load(Register &dst, ConstantDataContainer &src)
 {
-    if (src.GetSize() > 8)
-    {
-        throw std::runtime_error("value is too big");
-    }
-
     auto value_type = src.GetValue()->GetType();
     if (value_type.GetNativeType() == NativeType::Integer)
     {
-        this->Insert(Amd64Mov::OIX(dst, src.GetDataBuffer()));
+        this->Insert(Amd64Mov::OI(dst, src.GetDataBuffer()));
+
+        if (value_type.IsSigned())
+        {
+            this->Insert(Amd64Mov::RMSX(dst, dst, value_type.GetSize()));
+        }
     }
-    // Need to take the roundabout way of loading the value first onto the stack via integer move and then into an xmm register.
     else if (value_type.GetNativeType() == NativeType::FloatingPoint)
     {
         auto &valtmp = this->AcquireScratchRegister(NativeType::Integer);
-        auto &stacktmp = this->AcquireStackSpace(value_type);
 
-        this->Insert(Amd64Mov::OIX(valtmp, src.GetDataBuffer()));
-        this->Insert(Amd64Mov::MRX(this->reg_.r[5], valtmp, src.GetSize(), Amd64Access::DisplacedPointer, stacktmp.GetOffset() * -1 - stacktmp.GetSize()));
-        this->Insert(Amd64Mov::SDA(dst, this->reg_.r[5], Amd64Access::DisplacedPointer, stacktmp.GetOffset() * -1 - stacktmp.GetSize()));
+        this->Insert(Amd64Mov::OI(valtmp, src.GetDataBuffer()));
+        this->Insert(Amd64Mov::ADQ(dst, valtmp, value_type.GetSize()));
     }
 }
 
@@ -145,13 +142,21 @@ void Amd64FunctionTranslator::Load(Register &dst, StackAllocationContainer &src)
 {
     auto &rbp = this->reg_.r[5];
 
+    auto value = src.GetValue();
     if (dst.GetValueType() == RegisterType::Integer)
     {
-        this->Insert(Amd64Mov::RMX(dst, rbp, src.GetSize(), Amd64Access::DisplacedPointer, src.GetOffset() * -1 - src.GetSize()));
+        if (value->GetType().IsSigned())
+        {
+            this->Insert(Amd64Mov::RMSX(dst, rbp, src.GetSize(), Amd64Access::DisplacedPointer, src.GetOffset() * -1 - src.GetSize()));
+        }
+        else
+        {
+            this->Insert(Amd64Mov::RM(dst, rbp, src.GetSize(), Amd64Access::DisplacedPointer, src.GetOffset() * -1 - src.GetSize()));
+        }
     }
     else if (dst.GetValueType() == RegisterType::FloatingPoint)
     {
-        this->Insert(Amd64Mov::SDA(dst, rbp, Amd64Access::DisplacedPointer, src.GetOffset() * -1 - src.GetSize()));
+        this->Insert(Amd64Mov::ADQ(dst, rbp, src.GetSize(), Amd64Access::DisplacedPointer, src.GetOffset() * -1 - src.GetSize()));
     }
 }
 
@@ -168,7 +173,7 @@ void Amd64FunctionTranslator::Load(Register &dst, StubContainer &src)
     auto index = static_cast<std::int32_t>(this->GetStubIndex(*name));
 
     auto &stub_base_reg = this->LoadValue(this->stub_base_pointer_);
-    this->Insert(Amd64Mov::RM64(dst, stub_base_reg, Amd64Access::DisplacedPointer, -8 * (index + 1)));
+    this->Insert(Amd64Mov::RM(dst, stub_base_reg, 8, Amd64Access::DisplacedPointer, -8 * (index + 1)));
 }
 
 void Amd64FunctionTranslator::Load(Register &dst, Register &src)
@@ -181,11 +186,11 @@ void Amd64FunctionTranslator::Load(Register &dst, Register &src)
 
     if (dst.GetValueType() == RegisterType::Integer)
     {
-        this->Insert(Amd64Mov::RM64(dst, src));
+        this->Insert(Amd64Mov::RM(dst, src));
     }
     else if (dst.GetValueType() == RegisterType::FloatingPoint)
     {
-        this->Insert(Amd64Mov::SDA(dst, src));
+        this->Insert(Amd64Mov::CS(dst, src));
     }
 }
 
@@ -195,11 +200,11 @@ void Amd64FunctionTranslator::Store(StackAllocationContainer &dst, Register &src
 
     if (src.GetValueType() == RegisterType::Integer)
     {
-        this->Insert(Amd64Mov::MR64(rbp, src, Amd64Access::DisplacedPointer, dst.GetOffset() * -1 - dst.GetSize()));
+        this->Insert(Amd64Mov::MR(rbp, src, dst.GetSize(), Amd64Access::DisplacedPointer, dst.GetOffset() * -1 - dst.GetSize()));
     }
     else if (src.GetValueType() == RegisterType::FloatingPoint)
     {
-        this->Insert(Amd64Mov::SDA(rbp, src, Amd64Access::DisplacedPointer, dst.GetOffset() * -1 - dst.GetSize()));
+        this->Insert(Amd64Mov::CS(rbp, src, dst.GetSize(), Amd64Access::DisplacedPointer, dst.GetOffset() * -1 - dst.GetSize()));
     }
 }
 
@@ -257,8 +262,8 @@ Amd64FunctionTranslator::Amd64FunctionTranslator(NativeModule &module, IRFunctio
     // Stack management
     if (this->stack_depth_ > 0)
     {
-        this->InsertProlog(Amd64Push::M64(this->reg_.r[5]));
-        this->InsertProlog(Amd64Mov::MR64(this->reg_.r[5], this->reg_.r[4]));
-        this->InsertProlog(Amd64Sub::MI64(this->reg_.r[4], this->stack_depth_));
+        this->InsertProlog(Amd64Push::O(this->reg_.r[5]));
+        this->InsertProlog(Amd64Mov::MR(this->reg_.r[5], this->reg_.r[4]));
+        this->InsertProlog(Amd64Sub::MI(this->reg_.r[4], this->stack_depth_));
     }
 }

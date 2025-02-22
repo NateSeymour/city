@@ -8,7 +8,7 @@ namespace city
     class Amd64Push : public Amd64Instruction
     {
     public:
-        [[nodiscard]] static Amd64Push O(Register &src) noexcept
+        [[nodiscard]] static Amd64Push O(Register &src)
         {
             std::uint8_t opcode = 0x50 + src.GetCode();
             return {Amd64Encoding{

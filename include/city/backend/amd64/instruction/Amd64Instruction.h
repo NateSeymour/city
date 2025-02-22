@@ -41,7 +41,7 @@ namespace city
             return w || r || x || b;
         }
 
-        operator std::uint8_t() const() const noexcept
+        operator std::uint8_t() const noexcept
         {
             return 0b0100'0000 | (w ? 0b1 << 3 : 0) | (r ? 0b1 << 2 : 0) | (x ? 0b1 << 1 : 0) | (b ? 0b1 << 0 : 0);
         }
@@ -53,7 +53,7 @@ namespace city
         std::uint8_t reg_code;
         std::uint8_t rm_code;
 
-        operator std::uint8_t() const() const noexcept
+        operator std::uint8_t() const noexcept
         {
             return (0 | (static_cast<std::uint8_t>(access) << 6) | (reg_code << 3) | rm_code);
         }
@@ -82,29 +82,16 @@ namespace city
     };
 
     template<typename InstructionType>
-            struct CInstRM : std::bool_constant < requires()
-    {
-        InstructionType::RMX;
-    } > {};
+    using Amd64EncodingRM = std::bool_constant<requires() { InstructionType::RM; }>;
 
     template<typename InstructionType>
-            struct CInstM : std::bool_constant < requires()
-    {
-        InstructionType::MX;
-    } > {};
+    using Amd64EncodingMR = std::bool_constant<requires() { InstructionType::MR; }>;
 
     template<typename InstructionType>
-            struct CInstMI : std::bool_constant < requires()
-    {
-        InstructionType::MI64;
-    } > {};
+    using Amd64EncodingM = std::bool_constant<requires() { InstructionType::M; }>;
 
     template<typename InstructionType>
-    concept CInstSDA = requires(InstructionType &inst) { InstructionType::SDA; };
-
-    template<typename InstructionType>
-        requires CInstSDA<InstructionType>
-    constexpr bool InstHasSDA = true;
+    using Amd64EncodingAS = std::bool_constant<requires() { InstructionType::AS; }>;
 } // namespace city
 
 #endif // X86_64INSTRUCTION_H

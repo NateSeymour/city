@@ -29,11 +29,11 @@ namespace city
 
             if (op.optype == NativeType::Integer)
             {
-                if constexpr (CInstRM<NativeInstructionType>::value)
+                if constexpr (Amd64EncodingRM<NativeInstructionType>::value)
                 {
-                    this->Insert(NativeInstructionType::RMX(op.src1, op.src2, op.opsize));
+                    this->Insert(NativeInstructionType::RM(op.src1, op.src2));
                 }
-                else if constexpr (CInstM<NativeInstructionType>::value)
+                else if constexpr (Amd64EncodingM<NativeInstructionType>::value)
                 {
                 }
                 else
@@ -43,7 +43,7 @@ namespace city
             }
             else if (op.optype == NativeType::FloatingPoint)
             {
-                this->Insert(NativeInstructionType::SDA(op.src1, op.src2));
+                this->Insert(NativeInstructionType::AS(op.src1, op.src2));
             }
 
             op.Persist();
