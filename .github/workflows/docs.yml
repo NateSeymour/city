@@ -1,4 +1,5 @@
 name: Generate Documentation
+
 on:
   push:
     branches: [ "main" ]

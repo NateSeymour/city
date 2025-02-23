@@ -1,0 +1,27 @@
+name: Windows CI
+
+on: [ push, pull_request ]
+jobs:
+  build:
+    runs-on: windows-2025
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [ Release ]
+        compiler: [ cl, gcc, clang ]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure CMake
+        run: >
+          cmake -B "${{ github.workspace }}/build"
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          -DCMAKE_CXX_COMPILER=${{ matrix.compiler }}
+          -S ${{ github.workspace }}
+
+      - name: Build
+        run: cmake --build "${{ github.workspace }}/build" --config ${{ matrix.build_type }}
+
+      - name: Test
+        working-directory: "${{ github.workspace }}/build"
+        run: .\Release\city-test.exe
