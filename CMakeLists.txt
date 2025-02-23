@@ -102,6 +102,8 @@ add_library(city
         include/city/backend/aarch64/instruction/control/AArch64B.h
         include/city/backend/aarch64/instruction/memory/AArch64Ldr.h
         include/city/backend/aarch64/instruction/memory/AArch64Str.h
+        include/city/backend/amd64/instruction/arithmetic/Amd64Cqo.h
+        include/city/backend/amd64/instruction/arithmetic/Amd64Xor.h
 )
 target_include_directories(city PUBLIC include)
 

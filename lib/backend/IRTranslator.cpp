@@ -40,7 +40,7 @@ void IRTranslator::PersistScratchRegisters()
     this->PersistRegisterBank(this->GetScratchRegisterBank(NativeType::FloatingPoint));
 }
 
-RegisterGuard IRTranslator::AcquireScratchRegister(NativeType type)
+Register &IRTranslator::AcquireScratchRegister(NativeType type)
 {
     auto bank = this->GetScratchRegisterBank(type);
 
@@ -75,23 +75,21 @@ RegisterGuard IRTranslator::AcquireScratchRegister(NativeType type)
     return {*victim};
 }
 
-RegisterGuard IRTranslator::AcquireScratchRegister(Register &reg)
+Register &IRTranslator::AcquireScratchRegister(Register &reg)
 {
-    RegisterGuard guard{reg};
-
     if (reg.HasValue())
     {
         auto value = reg.GetValue();
-        RegisterGuard new_reg = this->AcquireScratchRegister(value->GetType().GetNativeType());
+        auto &new_reg = this->AcquireScratchRegister(value->GetType().GetNativeType());
 
-        reg.Load(*this, new_reg.reg);
-        new_reg.reg.TakeValue(&reg);
+        reg.Load(*this, new_reg);
+        new_reg.TakeValue(&reg);
     }
 
-    return std::move(guard);
+    return reg;
 }
 
-RegisterGuard IRTranslator::LoadValueR(Value &value)
+Register &IRTranslator::LoadValueR(Value &value)
 {
     if (!value.IsInstantiated())
     {
@@ -103,23 +101,23 @@ RegisterGuard IRTranslator::LoadValueR(Value &value)
     // The value is already loaded, so return itself.
     if (container->GetType() == ContainerType::Register)
     {
-        return {*dynamic_cast<Register *>(container)};
+        return *dynamic_cast<Register *>(container);
     }
     // The value is constant and cannot be moved.
     else if (container->GetType() == ContainerType::Constant)
     {
-        return std::move(this->CopyValueR(value));
+        return this->CopyValueR(value);
     }
 
     // Value not loaded
-    auto guard = this->AcquireScratchRegister(value.GetType().GetNativeType());
-    container->Load(*this, guard.reg);
-    guard.reg.TakeValue(container);
+    auto &dst = this->AcquireScratchRegister(value.GetType().GetNativeType());
+    container->Load(*this, dst);
+    dst.TakeValue(container);
 
-    return std::move(guard);
+    return dst;
 }
 
-RegisterGuard IRTranslator::LoadValueR(RegisterGuard dst, Value &value)
+Register &IRTranslator::LoadValueR(Register &dst, Value &value)
 {
     if (!value.IsInstantiated())
     {
@@ -131,17 +129,17 @@ RegisterGuard IRTranslator::LoadValueR(RegisterGuard dst, Value &value)
     // The value is constant and cannot be moved.
     if (container->GetType() == ContainerType::Constant)
     {
-        return std::move(this->CopyValueR(std::move(dst), value));
+        return this->CopyValueR(dst, value);
     }
 
     // Value not loaded
-    container->Load(*this, dst.reg);
-    dst.reg.TakeValue(container);
+    container->Load(*this, dst);
+    dst.TakeValue(container);
 
-    return std::move(dst);
+    return dst;
 }
 
-RegisterGuard IRTranslator::CopyValueR(Value &value)
+Register &IRTranslator::CopyValueR(Value &value)
 {
     if (!value.IsInstantiated())
     {
@@ -151,13 +149,13 @@ RegisterGuard IRTranslator::CopyValueR(Value &value)
     auto container = value.GetContainer();
 
     // Value not loaded
-    auto guard = this->AcquireScratchRegister(value.GetType().GetNativeType());
-    container->Load(*this, guard.reg);
+    auto &dst = this->AcquireScratchRegister(value.GetType().GetNativeType());
+    container->Load(*this, dst);
 
-    return std::move(guard);
+    return dst;
 }
 
-RegisterGuard IRTranslator::CopyValueR(RegisterGuard dst, Value &value)
+Register &IRTranslator::CopyValueR(Register &dst, Value &value)
 {
     if (!value.IsInstantiated())
     {
@@ -167,16 +165,16 @@ RegisterGuard IRTranslator::CopyValueR(RegisterGuard dst, Value &value)
     auto container = value.GetContainer();
 
     // Value not loaded
-    container->Load(*this, dst.reg);
+    container->Load(*this, dst);
 
-    return std::move(dst);
+    return dst;
 }
 
 void IRTranslator::MoveValue(Container &dst, Value &value)
 {
-    auto guard = this->LoadValueR(value);
+    auto &tmp = this->LoadValueR(value);
 
-    dst.Store(*this, guard.reg);
+    dst.Store(*this, tmp);
     dst.TakeValue(value.GetContainer());
 }
 

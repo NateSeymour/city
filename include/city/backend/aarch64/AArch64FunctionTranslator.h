@@ -27,8 +27,8 @@ namespace city
             auto &rhs = *inst.GetRHS();
 
             Register *dst = nullptr;
-            auto src1 = this->LoadValueR(lhs);
-            auto src2 = this->LoadValueR(rhs);
+            RegisterGuard src1 = this->LoadValueR(lhs);
+            RegisterGuard src2 = this->LoadValueR(rhs);
 
             if (src1.reg.GetValue()->GetReadCount() <= 1)
             {
@@ -40,8 +40,7 @@ namespace city
             }
             else
             {
-                auto dstguard = this->AcquireScratchRegister(optype);
-                dst = &dstguard.reg;
+                dst = &this->AcquireScratchRegister(optype);
             }
 
             if (optype == NativeType::Integer)

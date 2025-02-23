@@ -47,14 +47,14 @@ namespace city
          * @param type
          * @return
          */
-        [[nodiscard]] RegisterGuard AcquireScratchRegister(NativeType type);
+        [[nodiscard]] Register &AcquireScratchRegister(NativeType type);
 
         /**
-         * Move the value out of a register if it has one, locks and returns it.
+         * Move the value out of a register if it has one and returns it.
          * @param reg
          * @return
          */
-        [[nodiscard]] RegisterGuard AcquireScratchRegister(Register &reg);
+        [[nodiscard]] Register &AcquireScratchRegister(Register &reg);
 
         /**
          * Loads a value into a scratch register and returns guard. Will not copy the value if it is already register-bound.
@@ -62,7 +62,7 @@ namespace city
          * @param value Value to load into a scratch register. Ownership is transferred.
          * @return Register guard
          */
-        [[nodiscard]] RegisterGuard LoadValueR(Value &value);
+        [[nodiscard]] Register &LoadValueR(Value &value);
 
         /**
          * Loads a value into a specific register. Will bump that register value into the stack if it isn't locked, otherwise will throw.
@@ -70,7 +70,7 @@ namespace city
          * @param value
          * @return
          */
-        [[nodiscard]] RegisterGuard LoadValueR(RegisterGuard dst, Value &value);
+        [[nodiscard]] Register &LoadValueR(Register &dst, Value &value);
 
         /**
          * Copies value into a scratch register and returns guard. If value is already register-bound, will be copied into new register.
@@ -78,7 +78,7 @@ namespace city
          * @param value Value to copy into register. Ownership is not transferred.
          * @return
          */
-        [[nodiscard]] RegisterGuard CopyValueR(Value &value);
+        [[nodiscard]] Register &CopyValueR(Value &value);
 
         /**
          * Copies value into a specific scratch register and returns guard. Will throw if value is already in that register.
@@ -86,7 +86,7 @@ namespace city
          * @param value Value to copy into register. Ownership is not transferred.
          * @return
          */
-        [[nodiscard]] RegisterGuard CopyValueR(RegisterGuard dst, Value &value);
+        [[nodiscard]] Register &CopyValueR(Register &dst, Value &value);
 
         /**
          * Move value into container. If value is not register-bound, a tmp register is used to facilitate the movement.

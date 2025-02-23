@@ -77,10 +77,14 @@ namespace city
     struct RegisterGuard
     {
         Register &reg;
+        bool released_ = false;
 
         RegisterGuard(RegisterGuard const &) = delete;
 
-        RegisterGuard(RegisterGuard &&) = default;
+        RegisterGuard(RegisterGuard &&other) noexcept : reg(other.reg)
+        {
+            other.released_ = true;
+        }
 
         RegisterGuard(Register &reg) : reg(reg)
         {
@@ -94,7 +98,10 @@ namespace city
 
         ~RegisterGuard()
         {
-            reg.Unlock();
+            if (!this->released_)
+            {
+                reg.Unlock();
+            }
         }
     };
 } // namespace city

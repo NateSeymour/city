@@ -149,7 +149,7 @@ void AArch64FunctionTranslator::Load(Register &dst, ConstantDataContainer &src)
     }
     else if (dst.GetValueType() == RegisterType::FloatingPoint)
     {
-        tmpdst = &this->AcquireScratchRegister(NativeType::Integer).reg;
+        tmpdst = &this->AcquireScratchRegister(NativeType::Integer);
     }
 
     // Load the value 16 bits at a time

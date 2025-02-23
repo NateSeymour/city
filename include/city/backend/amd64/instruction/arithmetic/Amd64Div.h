@@ -9,6 +9,7 @@ namespace city
     {
     public:
         /// (I)DIV r/m64
+        /// "Unsigned divide RDX:RAX by r/m64, with result stored in RAX := Quotient, RDX := Remainder."
         [[nodiscard]] static Amd64Div M(Register &src, bool is_signed = false, Amd64Access access = Amd64Access::Value, std::optional<std::int32_t> disp = std::nullopt)
         {
             std::uint8_t reg = is_signed ? 7 : 6;
