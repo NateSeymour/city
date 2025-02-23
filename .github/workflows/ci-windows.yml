@@ -10,7 +10,7 @@ jobs:
         config:
           - name: Windows Latest MSVC
             build_type: Release
-            generator: Visual Studio 2022
+            generator: Visual Studio 17 2022
             sys: none
             cc: cl
             cxx: cl
@@ -36,7 +36,10 @@ jobs:
         if: ${{ matrix.config.sys != 'none' }}
         with:
           msystem: ${{ matrix.config.sys }}
-          install: mingw-w64-${{matrix.config.env}}-${{matrix.config.cc}} ninja
+          install: mingw-w64-${{matrix.config.env}}-${{matrix.config.cc}}
+
+      - name: Install Ninja
+        run: choco install ninja
 
       - name: Configure CMake
         run: >
