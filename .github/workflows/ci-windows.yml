@@ -66,12 +66,12 @@ jobs:
       - shell: msys2 {0}
         name: Build MSYS2
         if: ${{ matrix.config.sys != 'none' }}
-        run: cmake --build "./build" --config ${{ matrix.config.build_type }}
+        run: cmake --build "./build" --config ${{ matrix.config.build_type }} --target city-test
 
       - shell: cmd
         name: Build MSVC
         if: ${{ matrix.config.sys == 'none' }}
-        run: cmake --build "${{ github.workspace }}/build" --config ${{ matrix.config.build_type }}
+        run: cmake --build "${{ github.workspace }}/build" --config ${{ matrix.config.build_type }} --target city-test
 
       - name: Test MSVC
         if: ${{ matrix.config.generator == 'Visual Studio 17 2022'}}
