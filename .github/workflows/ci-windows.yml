@@ -3,25 +3,37 @@ name: Windows CI
 on: [ push, pull_request ]
 jobs:
   build:
-    runs-on: windows-2025
+    runs-on: windows-latest
     strategy:
       fail-fast: false
       matrix:
         config:
           - name: Windows Latest MSVC
             build_type: Release
+            sys: none
             cc: cl
             cxx: cl
           - name: Windows Latest GCC
             build_type: Release
+            sys: ucrt64
+            env: ucrt-x86_64
             cc: gcc
             cxx: g++
           - name: Windows Latest Clang
             build_type: Release
+            sys: clang64
+            env: clang-x86_64
             cc: clang
             cxx: clang++
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2.27.0
+        if: ${{ matrix.config.cc != 'cl' }}
+        with:
+          msystem: ${{ matrix.config.sys }}
+          install: mingw-w64-${{matrix.config.env}}-${{matrix.config.cc}}
 
       - name: Configure CMake
         run: >
