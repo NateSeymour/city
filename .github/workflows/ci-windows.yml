@@ -11,20 +11,20 @@ jobs:
           - name: Windows Latest MSVC
             build_type: Release
             sys: none
-            cc: cl
-            cxx: cl
+            cc: cl.exe
+            cxx: cl.exe
           - name: Windows Latest GCC
             build_type: Release
             sys: ucrt64
             env: ucrt-x86_64
-            cc: gcc
-            cxx: g++
+            cc: gcc.exe
+            cxx: g++.exe
           - name: Windows Latest Clang
             build_type: Release
             sys: clang64
             env: clang-x86_64
-            cc: clang
-            cxx: clang++
+            cc: clang.exe
+            cxx: clang++.exe
     steps:
       - uses: actions/checkout@v4
 
@@ -34,6 +34,9 @@ jobs:
         with:
           msystem: ${{ matrix.config.sys }}
           install: mingw-w64-${{matrix.config.env}}-${{matrix.config.cc}}
+      
+      - name: Test Compiler
+        run: ${{matrix.config.cc}} --version
 
       - name: Configure CMake
         run: >
