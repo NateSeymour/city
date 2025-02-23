@@ -68,7 +68,7 @@ jobs:
         if: ${{ matrix.config.sys != 'none' }}
         run: cmake --build "./build" --config ${{ matrix.config.build_type }}
 
-      - shell: msys2 {0}
+      - shell: cmd
         name: Build MSVC
         if: ${{ matrix.config.sys == 'none' }}
         run: cmake --build "${{ github.workspace }}/build" --config ${{ matrix.config.build_type }}
