@@ -73,6 +73,13 @@ jobs:
         if: ${{ matrix.config.sys == 'none' }}
         run: cmake --build "${{ github.workspace }}/build" --config ${{ matrix.config.build_type }} --target city-test
 
-      - name: Test
+      - shell: msys2 {0}
+        name: Test MSYS2
+        if: ${{ matrix.config.sys != 'none' }}
+        run: ./build/city-test
+
+      - shell: cmd
+        name: Test MSVC
+        if: ${{ matrix.config.sys == 'none' }}
         working-directory: "${{ github.workspace }}/build"
         run: .\Release\city-test.exe
