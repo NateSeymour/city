@@ -1,0 +1,29 @@
+name: MacOS CI
+
+on: [ push, pull ]
+jobs:
+  build:
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - arch: x86_64
+          - arch: arm64
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure CMake
+        run: >
+          cmake -B "${{ github.workspace }}/build"
+          -G Ninja
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_OSX_ARCHITECTURES=${{ matrix.config.arch }}
+          -S ${{ github.workspace }}
+
+      - name: Build
+        run: cmake --build "${{ github.workspace }}/build" --config Release
+        
+      - name: Run Tests
+        working-directory: "${{ github.workspace }}/build"
+        run: ./city-test

@@ -45,12 +45,12 @@ jobs:
         name: Configure CMake
         if: ${{ matrix.config.sys != 'none' }}
         run: >
-          cmake -B "${{ github.workspace }}/build"
+          cmake -B "./build"
           -G "${{ matrix.config.generator }}"
           -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
           -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }}.exe
           -DCMAKE_C_COMPILER=${{ matrix.config.cc }}.exe
-          -S ./city
+          -S .
 
       - shell: cmd
         name: Configure CMake
