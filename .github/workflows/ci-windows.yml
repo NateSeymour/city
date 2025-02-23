@@ -41,8 +41,9 @@ jobs:
           msystem: ${{ matrix.config.sys }}
           install: mingw-w64-${{matrix.config.env}}-${{matrix.config.cc}} ninja
 
-      - shell: ${{matrix.config.shell}}
+      - shell: msys2 {0}
         name: Configure CMake
+        if: ${{ matrix.config.sys != 'none' }}
         run: >
           cmake -B "${{ github.workspace }}/build"
           -G "${{ matrix.config.generator }}"
@@ -51,8 +52,18 @@ jobs:
           -DCMAKE_C_COMPILER=${{ matrix.config.cc }}.exe
           -S ${{ github.workspace }}
 
-      - shell: ${{matrix.config.shell}}
-        name: Build
+      - shell: cmd
+        name: Configure CMake
+        if: ${{ matrix.config.sys == 'none' }}
+        run: >
+          cmake -B "${{ github.workspace }}/build"
+          -G "${{ matrix.config.generator }}"
+          -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
+          -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }}.exe
+          -DCMAKE_C_COMPILER=${{ matrix.config.cc }}.exe
+          -S ${{ github.workspace }}
+
+      - name: Build
         run: cmake --build "${{ github.workspace }}/build" --config ${{ matrix.config.build_type }}
 
       - name: Test MSVC
