@@ -36,7 +36,7 @@ jobs:
           install: mingw-w64-${{matrix.config.env}}-${{matrix.config.cc}}
 
       - name: Test Compiler
-        run: ${{matrix.config.cc}} --version
+        run: ${{matrix.config.cc}}.exe --version
 
       - name: Configure CMake
         run: >
