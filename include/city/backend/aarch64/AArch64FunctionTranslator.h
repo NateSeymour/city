@@ -30,11 +30,12 @@ namespace city
             RegisterGuard src1 = this->LoadValueR(lhs);
             RegisterGuard src2 = this->LoadValueR(rhs);
 
-            if (src1.reg.GetValue()->GetReadCount() <= 1)
+            // Src registers will not have value if none was able to be moved in. Thus, they can be reused for dst.
+            if (!src1.reg.HasValue() || lhs.GetReadCount() <= 1)
             {
                 dst = &src1.reg;
             }
-            else if (src2.reg.GetValue()->GetReadCount() <= 1)
+            else if (!src2.reg.HasValue() || lhs.GetReadCount() <= 1)
             {
                 dst = &src2.reg;
             }
@@ -51,6 +52,9 @@ namespace city
             {
                 this->Insert(NativeInstructionType::F(*dst, src1.reg, src2.reg, opsize));
             }
+
+            lhs.DecrementReadCount();
+            rhs.DecrementReadCount();
 
             dst->InstantiateValue(&inst);
         }

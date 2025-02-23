@@ -33,6 +33,20 @@ namespace city
         } dpmi;
         static_assert(sizeof(DPMovI) == 4);
 
+        /// Data Processing Bitfield (Immediate)
+        struct DPBI
+        {
+            unsigned rd : 5 = 0b0;
+            unsigned rn : 5 = 0b0;
+            unsigned imms : 6 = 0b0;
+            unsigned immr : 6 = 0b0;
+            unsigned n : 1 = 0b0;
+            unsigned op0 : 6 = 0b1001'10;
+            unsigned opc : 2 = 0b0;
+            unsigned sf : 1 = 0b1;
+        } dpbi;
+        static_assert(sizeof(DPBI) == 4);
+
         struct DPAddSubExt
         {
             unsigned rd : 5 = 0b0;

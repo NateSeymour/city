@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.29)
-project(city VERSION 0.4.1)
+project(city VERSION 0.4.2)
 
 set(CMAKE_CXX_STANDARD 23)
 
@@ -104,6 +104,7 @@ add_library(city
         include/city/backend/aarch64/instruction/memory/AArch64Str.h
         include/city/backend/amd64/instruction/arithmetic/Amd64Cqo.h
         include/city/backend/amd64/instruction/arithmetic/Amd64Xor.h
+        include/city/backend/aarch64/instruction/arithmetic/AArch64Sxt.h
 )
 target_include_directories(city PUBLIC include)
 

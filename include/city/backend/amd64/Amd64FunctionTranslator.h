@@ -88,6 +88,9 @@ namespace city
 
                 dst.reg.InstantiateValue(&inst);
             }
+
+            lhs.DecrementReadCount();
+            rhs.DecrementReadCount();
         }
 
         void Load(Register &dst, ConstantDataContainer &src) override;

@@ -7,6 +7,7 @@
 #include "city/backend/aarch64/instruction/arithmetic/AArch64Div.h"
 #include "city/backend/aarch64/instruction/arithmetic/AArch64Mul.h"
 #include "city/backend/aarch64/instruction/arithmetic/AArch64Sub.h"
+#include "city/backend/aarch64/instruction/arithmetic/AArch64Sxt.h"
 #include "city/backend/aarch64/instruction/control/AArch64B.h"
 #include "city/backend/aarch64/instruction/control/AArch64Ret.h"
 #include "city/backend/aarch64/instruction/memory/AArch64Adr.h"
@@ -136,10 +137,7 @@ void AArch64FunctionTranslator::TranslateInstruction(RetInst &inst)
 
 void AArch64FunctionTranslator::Load(Register &dst, ConstantDataContainer &src)
 {
-    if (src.GetSize() > 8)
-    {
-        throw std::runtime_error("value is too big");
-    }
+    auto value_type = src.GetValue()->GetType();
 
     // Acquire temporary register to load value into
     Register *tmpdst = nullptr;
@@ -155,7 +153,7 @@ void AArch64FunctionTranslator::Load(Register &dst, ConstantDataContainer &src)
     // Load the value 16 bits at a time
     auto buffer = reinterpret_cast<std::uint16_t const *>(src.GetDataBuffer().data());
     this->Insert(AArch64Mov::I(*tmpdst, buffer[0], 0));
-    auto buffer_size = src.GetSize();
+    auto buffer_size = std::min(src.GetSize(), static_cast<std::size_t>(8));
     for (int i = 1; i < buffer_size / 2; i++)
     {
         std::uint16_t value = buffer[i];
@@ -168,8 +166,10 @@ void AArch64FunctionTranslator::Load(Register &dst, ConstantDataContainer &src)
         this->Insert(AArch64Mov::I(*tmpdst, value, i, false));
     }
 
-    // TODO: Sign extend if necessary
-
+    if (dst.GetValueType() == RegisterType::Integer && value_type.IsSigned() && buffer_size < 8)
+    {
+        this->Insert(AArch64Sxt::R(*tmpdst, *tmpdst, buffer_size));
+    }
     if (dst.GetValueType() == RegisterType::FloatingPoint)
     {
         this->Insert(AArch64Mov::FR(dst, *tmpdst));
