@@ -39,7 +39,7 @@ jobs:
         if: ${{ matrix.config.sys != 'none' }}
         with:
           msystem: ${{ matrix.config.sys }}
-          install: mingw-w64-${{matrix.config.env}}-${{matrix.config.cc}} ninja
+          install: mingw-w64-${{matrix.config.env}}-${{matrix.config.cc}} ninja cmake
 
       - shell: msys2 {0}
         name: Configure CMake
