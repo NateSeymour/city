@@ -50,7 +50,7 @@ jobs:
           -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
           -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }}.exe
           -DCMAKE_C_COMPILER=${{ matrix.config.cc }}.exe
-          -S ${{ github.workspace }}
+          -S ./city
 
       - shell: cmd
         name: Configure CMake
