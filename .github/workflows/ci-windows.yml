@@ -11,12 +11,14 @@ jobs:
           - name: Windows Latest MSVC
             build_type: Release
             generator: Visual Studio 17 2022
+            shell: cmd
             sys: none
             cc: cl
             cxx: cl
           - name: Windows Latest GCC
             build_type: Release
             generator: Ninja
+            shell: msys2 {0}
             sys: ucrt64
             env: ucrt-x86_64
             cc: gcc
@@ -24,6 +26,7 @@ jobs:
           - name: Windows Latest Clang
             build_type: Release
             generator: Ninja
+            shell: msys2 {0}
             sys: clang64
             env: clang-x86_64
             cc: clang
@@ -36,12 +39,10 @@ jobs:
         if: ${{ matrix.config.sys != 'none' }}
         with:
           msystem: ${{ matrix.config.sys }}
-          install: mingw-w64-${{matrix.config.env}}-${{matrix.config.cc}}
+          install: mingw-w64-${{matrix.config.env}}-${{matrix.config.cc}} ninja
 
-      - name: Install Ninja
-        run: choco install ninja
-
-      - name: Configure CMake
+      - shell: ${{matrix.config.shell}}
+        name: Configure CMake
         run: >
           cmake -B "${{ github.workspace }}/build"
           -G "${{ matrix.config.generator }}"
@@ -50,9 +51,16 @@ jobs:
           -DCMAKE_C_COMPILER=${{ matrix.config.cc }}.exe
           -S ${{ github.workspace }}
 
-      - name: Build
+      - shell: ${{matrix.config.shell}}
+        name: Build
         run: cmake --build "${{ github.workspace }}/build" --config ${{ matrix.config.build_type }}
 
-      - name: Test
+      - name: Test MSVC
+        if: ${{ matrix.config.generator == 'Visual Studio 17 2022'}}
         working-directory: "${{ github.workspace }}/build"
         run: .\Release\city-test.exe
+
+      - name: Test MSYS2
+        if: ${{ matrix.config.generator == 'Ninja'}}
+        working-directory: "${{ github.workspace }}/build"
+        run: .\city-test.exe
