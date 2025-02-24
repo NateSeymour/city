@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <map>
 #include "city/Symbol.h"
 
 namespace city
@@ -31,7 +32,7 @@ namespace city
     protected:
         std::string name_;
         std::vector<std::uint8_t> cdata_;
-        std::vector<std::string> stubs_;
+        std::map<std::string, std::size_t> stubs_;
         std::vector<std::uint8_t> text_;
 
         SymbolTable symtab_;

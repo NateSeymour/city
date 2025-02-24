@@ -29,4 +29,4 @@ jobs:
 
       - name: Run Tests
         working-directory: "${{ github.workspace }}/build"
-        run: ./city-test
+        run: ./city-test --gtest_shuffle

@@ -48,7 +48,7 @@ Assembly JIT::Link() const
 
     // Process Modules
     std::size_t module_offset = 0;
-    std::vector<std::pair<std::string, void **>> stubs;
+    std::map<std::string, void **> stubs;
     for (auto const &[name, module] : this->modules_)
     {
         auto insertion_addr = static_cast<std::uint8_t *>(assembly.text_.GetAddressAtOffset(module_offset));
@@ -58,9 +58,9 @@ Assembly JIT::Link() const
         insertion_addr += module.cdata_.size();
         insertion_addr += module.stubs_.size() * sizeof(void *);
 
-        for (int i = 0; i < module.stubs_.size(); i++)
+        for (auto const &[name, index] : module.stubs_)
         {
-            stubs.emplace_back(module.stubs_[i], reinterpret_cast<void **>(insertion_addr - ((i + 1) * sizeof(void *))));
+            stubs[name] = reinterpret_cast<void **>(insertion_addr - (index + 1) * sizeof(void *));
         }
 
         memcpy(insertion_addr, module.text_.data(), module.text_.size());

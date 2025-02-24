@@ -180,9 +180,15 @@ void IRTranslator::MoveValue(Container &dst, Value &value)
 
 std::size_t IRTranslator::GetStubIndex(std::string const &name) const
 {
-    this->module_.stubs_.push_back(name);
+    if (this->module_.stubs_.contains(name))
+    {
+        return this->module_.stubs_.at(name);
+    }
 
-    return this->module_.stubs_.size() - 1;
+    std::size_t index = this->module_.stubs_.size();
+    this->module_.stubs_[name] = index;
+
+    return index;
 }
 
 IRTranslator::IRTranslator(NativeModule &module, IRFunction &ir_function) : module_(module), ir_function_(ir_function) {}

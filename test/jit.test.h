@@ -16,7 +16,7 @@ extern "C"
 class JITTestRunner : public testing::Test
 {
 protected:
-    static constexpr int TEST_ROUNDS = 1000;
+    static constexpr int TEST_ROUNDS = 10000;
 
     city::JIT jit;
 
