@@ -96,7 +96,7 @@ void Amd64FunctionTranslator::TranslateInstruction(CallInst &inst)
     }
 
     // Make call (via RAX)
-    auto &addr = this->LoadValueR(this->reg_.r[0], *inst.GetTarget());
+    auto &addr = this->CopyValueR(this->reg_.r[0], *inst.GetTarget());
     this->Insert(Amd64Call::M(addr));
 
     // Instantiate retval
@@ -190,8 +190,8 @@ void Amd64FunctionTranslator::Load(Register &dst, StubContainer &src)
 
     auto index = static_cast<std::int32_t>(this->GetStubIndex(*name));
 
-    auto &stub_base_reg = this->LoadValueR(this->stub_base_pointer_);
-    this->Insert(Amd64Mov::RM(dst, stub_base_reg, 8, Amd64Access::DisplacedPointer, -8 * (index + 1)));
+    (void)this->CopyValueR(dst, this->stub_base_pointer_);
+    this->Insert(Amd64Mov::RM(dst, dst, 8, Amd64Access::DisplacedPointer, -8 * (index + 1)));
 }
 
 void Amd64FunctionTranslator::Load(Register &dst, Register &src)
