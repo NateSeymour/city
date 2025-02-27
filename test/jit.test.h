@@ -48,11 +48,17 @@ protected:
     }
 
     template<typename OperandType, typename BuilderFunctionType, typename VerificationType>
-    void TestBinOp(char const *opname, BuilderFunctionType builder_fn, VerificationType verify)
+    void TestBinOp(char const *opname, BuilderFunctionType builder_fn, VerificationType verify, bool allow_rhs_zero = true)
     {
         for (int i = 0; i < TEST_ROUNDS; i++)
         {
             auto values = this->GetRandomPair<OperandType>();
+
+            // Used to stop divide-by-zero errors
+            if (!allow_rhs_zero && values.second == static_cast<OperandType>(0))
+            {
+                values.second++;
+            }
 
             auto assembly = this->BuildTestModule([&](city::IRBuilder &builder) {
                 (void)builder.CreateFunction(opname, city::Type::Get<OperandType>());
@@ -72,7 +78,7 @@ protected:
     }
 
     template<typename OperandType, typename BuilderFunctionType, typename VerificationType>
-    void TestBinOpArgs(char const *opname, BuilderFunctionType builder_fn, VerificationType verify)
+    void TestBinOpArgs(char const *opname, BuilderFunctionType builder_fn, VerificationType verify, bool allow_rhs_zero = true)
     {
         auto assembly = this->BuildTestModule([&](city::IRBuilder &builder) {
             std::vector<city::Type> arg_types{2, city::Type::Get<OperandType>()};
@@ -87,6 +93,12 @@ protected:
         for (int i = 0; i < TEST_ROUNDS; i++)
         {
             auto values = this->GetRandomPair<OperandType>();
+
+            // Used to stop divide-by-zero errors
+            if (!allow_rhs_zero && values.second == static_cast<OperandType>(0))
+            {
+                values.second++;
+            }
 
             auto value = test(values.first, values.second);
             ASSERT_EQ(value, verify(values.first, values.second));

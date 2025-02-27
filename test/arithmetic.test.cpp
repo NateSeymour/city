@@ -146,42 +146,42 @@ TEST_F(JITTestRunner, FP64Multiplication)
 
 TEST_F(JITTestRunner, Int16Division)
 {
-    this->TestBinOp<std::int16_t>("div_int16", &city::IRBuilder::InsertDivInst, div<std::int16_t>);
+    this->TestBinOp<std::int16_t>("div_int16", &city::IRBuilder::InsertDivInst, div<std::int16_t>, false);
 }
 
 TEST_F(JITTestRunner, UInt16Division)
 {
-    this->TestBinOp<std::uint16_t>("div_uint16", &city::IRBuilder::InsertDivInst, div<std::uint16_t>);
+    this->TestBinOp<std::uint16_t>("div_uint16", &city::IRBuilder::InsertDivInst, div<std::uint16_t>, false);
 }
 
 TEST_F(JITTestRunner, Int32Division)
 {
-    this->TestBinOp<std::int32_t>("div_int32", &city::IRBuilder::InsertDivInst, div<std::int32_t>);
+    this->TestBinOp<std::int32_t>("div_int32", &city::IRBuilder::InsertDivInst, div<std::int32_t>, false);
 }
 
 TEST_F(JITTestRunner, UInt32Division)
 {
-    this->TestBinOp<std::uint32_t>("div_uint32", &city::IRBuilder::InsertDivInst, div<std::uint32_t>);
+    this->TestBinOp<std::uint32_t>("div_uint32", &city::IRBuilder::InsertDivInst, div<std::uint32_t>, false);
 }
 
 TEST_F(JITTestRunner, Int64Division)
 {
-    this->TestBinOp<std::int64_t>("div_int64", &city::IRBuilder::InsertDivInst, div<std::int64_t>);
+    this->TestBinOp<std::int64_t>("div_int64", &city::IRBuilder::InsertDivInst, div<std::int64_t>, false);
 }
 
 TEST_F(JITTestRunner, UInt64Division)
 {
-    this->TestBinOp<std::uint64_t>("div_uint64", &city::IRBuilder::InsertDivInst, div<std::uint64_t>);
+    this->TestBinOp<std::uint64_t>("div_uint64", &city::IRBuilder::InsertDivInst, div<std::uint64_t>, false);
 }
 
 TEST_F(JITTestRunner, FP32Division)
 {
-    this->TestBinOp<float>("div_fp32", &city::IRBuilder::InsertDivInst, div<float>);
+    this->TestBinOp<float>("div_fp32", &city::IRBuilder::InsertDivInst, div<float>, false);
 }
 
 TEST_F(JITTestRunner, FP64Division)
 {
-    this->TestBinOp<double>("div_fp64", &city::IRBuilder::InsertDivInst, div<double>);
+    this->TestBinOp<double>("div_fp64", &city::IRBuilder::InsertDivInst, div<double>, false);
 }
 
 TEST_F(JITTestRunner, Int16AdditionArgs)
@@ -306,40 +306,40 @@ TEST_F(JITTestRunner, FP64MultiplicationArgs)
 
 TEST_F(JITTestRunner, Int16DivisionArgs)
 {
-    this->TestBinOpArgs<std::int16_t>("div_int16", &city::IRBuilder::InsertDivInst, div<std::int16_t>);
+    this->TestBinOpArgs<std::int16_t>("div_int16", &city::IRBuilder::InsertDivInst, div<std::int16_t>, false);
 }
 
 TEST_F(JITTestRunner, UInt16DivisionArgs)
 {
-    this->TestBinOpArgs<std::uint16_t>("div_uint16", &city::IRBuilder::InsertDivInst, div<std::uint16_t>);
+    this->TestBinOpArgs<std::uint16_t>("div_uint16", &city::IRBuilder::InsertDivInst, div<std::uint16_t>, false);
 }
 
 TEST_F(JITTestRunner, Int32DivisionArgs)
 {
-    this->TestBinOpArgs<std::int32_t>("div_int32", &city::IRBuilder::InsertDivInst, div<std::int32_t>);
+    this->TestBinOpArgs<std::int32_t>("div_int32", &city::IRBuilder::InsertDivInst, div<std::int32_t>, false);
 }
 
 TEST_F(JITTestRunner, UInt32DivisionArgs)
 {
-    this->TestBinOpArgs<std::uint32_t>("div_uint32", &city::IRBuilder::InsertDivInst, div<std::uint32_t>);
+    this->TestBinOpArgs<std::uint32_t>("div_uint32", &city::IRBuilder::InsertDivInst, div<std::uint32_t>, false);
 }
 
 TEST_F(JITTestRunner, Int64DivisionArgs)
 {
-    this->TestBinOpArgs<std::int64_t>("div_int64", &city::IRBuilder::InsertDivInst, div<std::int64_t>);
+    this->TestBinOpArgs<std::int64_t>("div_int64", &city::IRBuilder::InsertDivInst, div<std::int64_t>, false);
 }
 
 TEST_F(JITTestRunner, UInt64DivisionArgs)
 {
-    this->TestBinOpArgs<std::uint64_t>("div_uint64", &city::IRBuilder::InsertDivInst, div<std::uint64_t>);
+    this->TestBinOpArgs<std::uint64_t>("div_uint64", &city::IRBuilder::InsertDivInst, div<std::uint64_t>, false);
 }
 
 TEST_F(JITTestRunner, FP32DivisionArgs)
 {
-    this->TestBinOpArgs<float>("div_fp32", &city::IRBuilder::InsertDivInst, div<float>);
+    this->TestBinOpArgs<float>("div_fp32", &city::IRBuilder::InsertDivInst, div<float>, false);
 }
 
 TEST_F(JITTestRunner, FP64DivisionArgs)
 {
-    this->TestBinOpArgs<double>("div_fp64", &city::IRBuilder::InsertDivInst, div<double>);
+    this->TestBinOpArgs<double>("div_fp64", &city::IRBuilder::InsertDivInst, div<double>, false);
 }
