@@ -13,10 +13,39 @@ Value *IRBuilder::ReserveValue(Type type)
 
 IRBuilder::IRBuilder(IRModule &module) : module_(module) {}
 
-IRBlock &IRBuilder::CreateBlock()
+IRBlock *IRBuilder::InsertBlock() const
 {
-    auto &insert_function = this->insert_point_->parent_function_;
-    return insert_function.AppendBlock();
+    if (this->block_ == nullptr)
+    {
+        return nullptr;
+    }
+
+    return &this->block_->InsertBlock();
+}
+
+void IRBuilder::SetInsertPoint(IRBlock &block) noexcept
+{
+    this->block_ = &block;
+}
+
+void IRBuilder::SetInsertPoint(IRFunction *function) noexcept
+{
+    if (function == nullptr)
+    {
+        return;
+    }
+
+    this->SetInsertPoint(function->GetLastBlock());
+}
+
+IRBlock *IRBuilder::GetInsertPoint() const
+{
+    return this->block_;
+}
+
+IRFunction *IRBuilder::GetInsertFunction() const
+{
+    return &this->block_->parent_;
 }
 
 IRFunction *IRBuilder::CreateFunction(std::string const &name)
@@ -46,26 +75,6 @@ IRFunction *IRBuilder::CreateFunction(std::string const &name, Type ret, std::ve
     return function;
 }
 
-void IRBuilder::SetInsertPoint(IRBlock &block) noexcept
-{
-    this->insert_point_ = &block;
-}
-
-void IRBuilder::SetInsertPoint(IRFunction *function) noexcept
-{
-    this->SetInsertPoint(function->GetLastBlock());
-}
-
-IRBlock &IRBuilder::GetInsertPoint() const
-{
-    return *this->insert_point_;
-}
-
-IRFunction *IRBuilder::GetInsertFunction() const
-{
-    return &this->insert_point_->parent_function_;
-}
-
 Value *IRBuilder::CreateConstant(Type type, std::vector<std::uint8_t> const &data)
 {
     // Append the constant data to the module
@@ -76,15 +85,25 @@ Value *IRBuilder::CreateConstant(Type type, std::vector<std::uint8_t> const &dat
 
 CallInst *IRBuilder::InsertCallInst(Function *function, std::vector<Value *> const &args)
 {
-    return this->ReserveInstruction<CallInst>(function, args);
+    if (this->block_ == nullptr)
+    {
+        return nullptr;
+    }
+
+    return this->block_->InsertInstruction<CallInst>(function, args);
 }
 
 RetInst *IRBuilder::InsertRetInst(Value *retval)
 {
+    if (this->block_ == nullptr)
+    {
+        return nullptr;
+    }
+
     if (!retval)
     {
         retval = this->ReserveValue(Type::Get<void>());
     }
 
-    return this->ReserveInstruction<RetInst>(retval);
+    return this->block_->InsertInstruction<RetInst>(retval);
 }

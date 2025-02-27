@@ -191,4 +191,21 @@ std::size_t IRTranslator::GetStubIndex(std::string const &name) const
     return index;
 }
 
+void IRTranslator::TranslateAllIRBlocks()
+{
+    auto block = &this->ir_function_.GetFirstBlock();
+    do
+    {
+        for (auto &instruction : block->GetInstructions())
+        {
+            instruction->Apply(this);
+        }
+
+        if (block->IsConditional())
+        {
+            // TODO: Perform cleanup!
+        }
+    } while ((block = block->GetSuccessor()));
+}
+
 IRTranslator::IRTranslator(NativeModule &module, IRFunction &ir_function) : module_(module), ir_function_(ir_function) {}

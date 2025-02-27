@@ -97,6 +97,8 @@ namespace city
 
         [[nodiscard]] std::size_t GetStubIndex(std::string const &name) const;
 
+        void TranslateAllIRBlocks();
+
     public:
         virtual void TranslateInstruction(AddInst &inst) = 0;
         virtual void TranslateInstruction(DivInst &inst) = 0;

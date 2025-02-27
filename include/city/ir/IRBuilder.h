@@ -27,24 +27,20 @@ namespace city
         friend class IRModule;
 
         IRModule &module_;
-        IRBlock *insert_point_ = nullptr;
+        IRBlock *block_ = nullptr;
 
     protected:
         [[nodiscard]] Value *ReserveValue(Type type);
-
-        template<typename T, typename... Args>
-            requires std::derived_from<T, IRInstruction>
-        [[nodiscard]] T *ReserveInstruction(Args... args)
-        {
-            auto &instructions = this->insert_point_->instructions_;
-            auto &instruction = instructions.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
-            return dynamic_cast<T *>(instruction.get());
-        }
 
         template<typename BinaryInstructionType>
             requires std::derived_from<BinaryInstructionType, IRBinaryInstruction>
         [[nodiscard]] BinaryInstructionType *InsertBinaryInst(Value *lhs, Value *rhs)
         {
+            if (this->block_ == nullptr)
+            {
+                return nullptr;
+            }
+
             auto lhs_type = lhs->GetType();
             auto rhs_type = rhs->GetType();
 
@@ -53,18 +49,18 @@ namespace city
                 throw std::runtime_error("incompatible types");
             }
 
-            return this->ReserveInstruction<BinaryInstructionType>(lhs_type, lhs, rhs);
+            return this->block_->InsertInstruction<BinaryInstructionType>(lhs_type, lhs, rhs);
         }
 
         explicit IRBuilder(IRModule &module);
 
     public:
         // Blocks
-        [[nodiscard]] IRBlock &CreateBlock();
+        [[nodiscard]] IRBlock *InsertBlock() const;
 
         void SetInsertPoint(IRBlock &block) noexcept;
         void SetInsertPoint(IRFunction *function) noexcept;
-        [[nodiscard]] IRBlock &GetInsertPoint() const;
+        [[nodiscard]] IRBlock *GetInsertPoint() const;
         [[nodiscard]] IRFunction *GetInsertFunction() const;
 
         // Functions

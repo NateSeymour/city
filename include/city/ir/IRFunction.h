@@ -20,15 +20,13 @@ namespace city
 
     protected:
         std::vector<Value *> arg_values_;
-        std::list<IRBlock> blocks_;
+        std::unique_ptr<IRBlock> first_block_;
 
     public:
         [[nodiscard]] std::vector<Value *> const &GetArgumentValues() const noexcept;
 
-        [[nodiscard]] IRBlock &GetFirstBlock() noexcept;
-        [[nodiscard]] IRBlock &GetLastBlock() noexcept;
-        [[nodiscard]] std::list<IRBlock> const &GetBlocks() const noexcept;
-        [[nodiscard]] IRBlock &AppendBlock();
+        [[nodiscard]] IRBlock &GetFirstBlock() const noexcept;
+        [[nodiscard]] IRBlock &GetLastBlock() const noexcept;
 
         IRFunction(std::string name, Type return_type, std::vector<Type> argument_types, std::vector<Value *> argument_values);
     };

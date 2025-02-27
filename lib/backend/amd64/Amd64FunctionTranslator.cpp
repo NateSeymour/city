@@ -275,13 +275,7 @@ Amd64FunctionTranslator::Amd64FunctionTranslator(NativeModule &module, IRFunctio
     stub_base_reg.InstantiateValue(&this->stub_base_pointer_);
 
     // Function Body
-    for (auto &block : this->ir_function_.GetBlocks())
-    {
-        for (auto &instruction : block.GetInstructions())
-        {
-            instruction->Apply(this);
-        }
-    }
+    this->TranslateAllIRBlocks();
 
     // Stack management
     if (this->stack_depth_ > 0)

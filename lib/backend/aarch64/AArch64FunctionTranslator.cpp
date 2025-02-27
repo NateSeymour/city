@@ -281,13 +281,7 @@ AArch64FunctionTranslator::AArch64FunctionTranslator(NativeModule &module, IRFun
     stub_base_reg.InstantiateValue(&this->stub_base_pointer_);
 
     // Function Body
-    for (auto &block : this->ir_function_.GetBlocks())
-    {
-        for (auto &instruction : block.GetInstructions())
-        {
-            instruction->Apply(this);
-        }
-    }
+    this->TranslateAllIRBlocks();
 
     // Generate Prolog
     if (this->stack_depth_ > 0)

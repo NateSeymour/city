@@ -2,24 +2,21 @@
 
 using namespace city;
 
-IRBlock &IRFunction::GetFirstBlock() noexcept
+IRBlock &IRFunction::GetFirstBlock() const noexcept
 {
-    return this->blocks_.front();
+    return *this->first_block_;
 }
 
-IRBlock &IRFunction::GetLastBlock() noexcept
+IRBlock &IRFunction::GetLastBlock() const noexcept
 {
-    return this->blocks_.back();
-}
+    auto last_block = &this->GetFirstBlock();
 
-std::list<IRBlock> const &IRFunction::GetBlocks() const noexcept
-{
-    return this->blocks_;
-}
+    while (last_block->GetSuccessor() != nullptr)
+    {
+        last_block = last_block->GetSuccessor();
+    }
 
-IRBlock &IRFunction::AppendBlock()
-{
-    return this->blocks_.emplace_back(*this);
+    return *last_block;
 }
 
 std::vector<Value *> const &IRFunction::GetArgumentValues() const noexcept
@@ -30,5 +27,5 @@ std::vector<Value *> const &IRFunction::GetArgumentValues() const noexcept
 IRFunction::IRFunction(std::string name, Type return_type, std::vector<Type> argument_types, std::vector<Value *> argument_values) :
     Function(std::move(name), return_type, std::move(argument_types)), arg_values_(std::move(argument_values))
 {
-    (void)this->AppendBlock();
+    this->first_block_ = std::make_unique<IRBlock>(*this);
 }
