@@ -23,11 +23,17 @@ protected:
     std::unordered_map<std::string, city::Function *> stdlib;
 
     template<typename T>
+    [[nodiscard]] T GetRandomNumber() const
+    {
+        return static_cast<T>(std::rand()) + (static_cast<T>(std::rand()) / RAND_MAX);
+    }
+
+    template<typename T>
     [[nodiscard]] std::pair<T, T> GetRandomPair() const
     {
         return {
-                static_cast<T>(std::rand()) + (static_cast<T>(std::rand()) / RAND_MAX),
-                static_cast<T>(std::rand()) + (static_cast<T>(std::rand()) / RAND_MAX),
+                this->GetRandomNumber<T>(),
+                this->GetRandomNumber<T>(),
         };
     }
 

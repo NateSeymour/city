@@ -3,12 +3,15 @@
 
 #include <memory>
 #include <vector>
+
+#include "city/ir/IRCondition.h"
 #include "city/ir/instruction/IRInstruction.h"
 
 namespace city
 {
     class IRBuilder;
     class IRFunction;
+    class IRConditionalBlock;
 
     /**
      * Represents a simple block of IR code. Implemented as a doubly-linked list.
@@ -16,8 +19,6 @@ namespace city
      * Each block may contain only one branching instruction (with the exception of subroutine calls). This is enforced by it IR builder.
      * This branching instruction should be the final instruction of the block.
      * If a block does not end in a branching instruction, then it is assumed that a fall-through to its successor is desired.
-     *
-     * Additionally, a block must be marked as conditional if it is not always called.
      */
     class IRBlock
     {
@@ -33,11 +34,8 @@ namespace city
         /// Indicates that this block is finished and no more instructions may be added.
         bool terminated_ = false;
 
-        /// The block before this one in the parent function. Is `nullptr` if this is the first block.
-        IRBlock *predecessor_ = nullptr;
-
-        /// Block that follows this function.
-        std::unique_ptr<IRBlock> successor_ = nullptr;
+        /// Block that follows this function. Potentially shared by multiple blocks.
+        std::shared_ptr<IRBlock> successor_ = nullptr;
 
         std::vector<std::unique_ptr<IRInstruction>> instructions_;
 
@@ -53,24 +51,20 @@ namespace city
             return nullptr;
         }
 
-        void SetConditional(bool conditional);
-
         /**
-         * Inserts a new block following this one, optionally terminating the current block.
-         * @param terminate Terminate the current block.
+         * Inserts a new block following this one.
          * @return
          */
-        [[nodiscard]] IRBlock &InsertBlock(bool terminate = true);
+        [[nodiscard]] virtual IRBlock &InsertBlock();
+
+        [[nodiscard]] virtual IRConditionalBlock &InsertConditionalBlock(Value *lhs, BinaryCondition condition, Value *rhs);
 
     public:
-        [[nodiscard]] bool IsConditional() const noexcept;
-
-        [[nodiscard]] IRBlock *GetPredecessor() const noexcept;
         [[nodiscard]] IRBlock *GetSuccessor() const noexcept;
 
         [[nodiscard]] std::vector<std::unique_ptr<IRInstruction>> const &GetInstructions() const noexcept;
 
-        explicit IRBlock(IRFunction &parent, IRBlock *predecessor = nullptr);
+        explicit IRBlock(IRFunction &parent);
     };
 } // namespace city
 

@@ -1,34 +1,19 @@
-#include <city/ir/block/IRBlock.h>
+#include "city/ir/block/IRBlock.h"
+#include "city/ir/block/IRConditionalBlock.h"
 
 using namespace city;
-
-bool IRBlock::IsConditional() const noexcept
-{
-    return this->conditional_;
-}
-
-IRBlock *IRBlock::GetPredecessor() const noexcept
-{
-    return this->predecessor_;
-}
 
 IRBlock *IRBlock::GetSuccessor() const noexcept
 {
     return this->successor_.get();
 }
 
-void IRBlock::SetConditional(bool conditional)
+IRBlock &IRBlock::InsertBlock()
 {
-    this->conditional_ = conditional;
-}
-
-IRBlock &IRBlock::InsertBlock(bool terminate)
-{
-    auto new_block = std::make_unique<IRBlock>(this->parent_, this);
+    auto new_block = std::make_shared<IRBlock>(this->parent_);
 
     if (this->successor_ != nullptr)
     {
-        this->successor_->predecessor_ = new_block.get();
         new_block->successor_ = std::move(this->successor_);
     }
 
@@ -36,9 +21,22 @@ IRBlock &IRBlock::InsertBlock(bool terminate)
     return *this->successor_;
 }
 
+IRConditionalBlock &IRBlock::InsertConditionalBlock(Value *lhs, BinaryCondition condition, Value *rhs)
+{
+    auto new_block = std::make_shared<IRConditionalBlock>(this->parent_, lhs, condition, rhs);
+
+    if (this->successor_ != nullptr)
+    {
+        new_block->successor_ = std::move(this->successor_);
+    }
+
+    this->successor_ = std::move(new_block);
+    return dynamic_cast<IRConditionalBlock &>(*this->successor_);
+}
+
 std::vector<std::unique_ptr<IRInstruction>> const &IRBlock::GetInstructions() const noexcept
 {
     return this->instructions_;
 }
 
-IRBlock::IRBlock(IRFunction &parent, IRBlock *predecessor) : parent_(parent), predecessor_(predecessor) {}
+IRBlock::IRBlock(IRFunction &parent) : parent_(parent) {}

@@ -105,6 +105,9 @@ add_library(city
         include/city/backend/amd64/instruction/arithmetic/Amd64Cqo.h
         include/city/backend/amd64/instruction/arithmetic/Amd64Xor.h
         include/city/backend/aarch64/instruction/arithmetic/AArch64Sxt.h
+        include/city/ir/block/IRConditionalBlock.h
+        lib/ir/block/IRConditionalBlock.cpp
+        include/city/ir/IRCondition.h
 )
 target_include_directories(city PUBLIC include)
 
@@ -130,6 +133,7 @@ if (CITY_ENABLE_TESTS)
             test/jit.test.h
             test/functional.test.cpp
             test/jit.test.cpp
+            test/branching.test.cpp
     )
     target_link_libraries(city-test PRIVATE city GTest::gtest_main)
 endif ()

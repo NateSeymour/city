@@ -6,8 +6,10 @@
 #include <cstring>
 #include <stdexcept>
 #include <type_traits>
+#include "IRCondition.h"
 #include "IRFunction.h"
 #include "block/IRBlock.h"
+#include "block/IRConditionalBlock.h"
 #include "city/container/ConstantDataContainer.h"
 #include "city/type/Type.h"
 #include "city/value/Value.h"
@@ -107,6 +109,8 @@ namespace city
         // Instructions - Control
         [[nodiscard]] CallInst *InsertCallInst(Function *function, std::vector<Value *> const &args = {});
         RetInst *InsertRetInst(Value *retval = nullptr);
+
+        [[nodiscard]] IRConditionalBlock *CreateCondition(Value *lhs, BinaryCondition condition, Value *rhs);
 
         // Constructors
         IRBuilder() = delete;
