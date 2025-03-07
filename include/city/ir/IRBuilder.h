@@ -58,7 +58,7 @@ namespace city
 
     public:
         // Blocks
-        [[nodiscard]] IRBlock *InsertBlock() const;
+        IRBlock &InsertBlock();
 
         void SetInsertPoint(IRBlock &block) noexcept;
         void SetInsertPoint(IRFunction *function) noexcept;

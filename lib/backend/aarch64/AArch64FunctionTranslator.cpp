@@ -4,6 +4,7 @@
 #include <stdexcept>
 
 #include "city/backend/aarch64/instruction/arithmetic/AArch64Add.h"
+#include "city/backend/aarch64/instruction/arithmetic/AArch64Cmp.h"
 #include "city/backend/aarch64/instruction/arithmetic/AArch64Div.h"
 #include "city/backend/aarch64/instruction/arithmetic/AArch64Mul.h"
 #include "city/backend/aarch64/instruction/arithmetic/AArch64Sub.h"
@@ -14,6 +15,8 @@
 #include "city/backend/aarch64/instruction/memory/AArch64Ldr.h"
 #include "city/backend/aarch64/instruction/memory/AArch64Mov.h"
 #include "city/backend/aarch64/instruction/memory/AArch64Str.h"
+
+#include "city/ir/block/IRConditionalBlock.h"
 
 using namespace city;
 
@@ -29,6 +32,15 @@ std::span<Register *> AArch64FunctionTranslator::GetScratchRegisterBank(NativeTy
     }
 
     throw std::runtime_error("unknown type");
+}
+
+void AArch64FunctionTranslator::ProcessCondition(IRConditionalBlock &block)
+{
+    auto &lhstmp = this->LoadValueR(*block.GetLHS());
+    auto &rhstmp = this->LoadValueR(*block.GetRHS());
+
+    this->Insert(AArch64Cmp::R(lhstmp, rhstmp));
+    this->Insert(AArch64B::I(1, AArch64ConditionTranslationMap.at(block.GetCondition())));
 }
 
 void AArch64FunctionTranslator::TranslateInstruction(AddInst &inst)

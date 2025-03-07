@@ -173,6 +173,17 @@ namespace city
         } ubr;
         static_assert(sizeof(UBR) == 4);
 
+        /// Conditional Branch (Immediate)
+        struct CBI
+        {
+            unsigned cond : 4 = 0b0;
+            unsigned o0 : 1 = 0b0;
+            unsigned imm : 19 = 0b0;
+            unsigned o1 : 1 = 0b0;
+            unsigned op0 : 7 = 0b0101'010;
+        } cbi;
+        static_assert(sizeof(CBI) == 4);
+
         /// Load-Store Register (Unsigned Immediate)
         struct LSRUI
         {

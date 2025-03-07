@@ -1,6 +1,8 @@
 #include "city/backend/IRTranslator.h"
 #include <stdexcept>
 
+#include "city/ir/block/IRConditionalBlock.h"
+
 using namespace city;
 
 void IRTranslator::AlignStack(unsigned int alignment) noexcept
@@ -191,20 +193,33 @@ std::size_t IRTranslator::GetStubIndex(std::string const &name) const
     return index;
 }
 
+void IRTranslator::TranslateBlock(IRBlock &block)
+{
+    for (auto &instruction : block.GetInstructions())
+    {
+        instruction->Apply(this);
+    }
+}
+
+void IRTranslator::TranslateBlock(IRConditionalBlock &block)
+{
+    // Process condition
+    this->ProcessCondition(block);
+
+    for (auto child : {&block.GetTrueBlock(), &block.GetElseBlock()})
+    {
+        child->Apply(*this);
+
+        // TODO: Cleanup
+    }
+}
+
 void IRTranslator::TranslateAllIRBlocks()
 {
     auto block = &this->ir_function_.GetFirstBlock();
     do
     {
-        for (auto &instruction : block->GetInstructions())
-        {
-            instruction->Apply(this);
-        }
-
-        if (block->IsConditional())
-        {
-            // TODO: Perform cleanup!
-        }
+        block->Apply(*this);
     } while ((block = block->GetSuccessor()));
 }
 

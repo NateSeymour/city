@@ -13,14 +13,9 @@ Value *IRBuilder::ReserveValue(Type type)
 
 IRBuilder::IRBuilder(IRModule &module) : module_(module) {}
 
-IRBlock *IRBuilder::InsertBlock() const
+IRBlock &IRBuilder::InsertBlock()
 {
-    if (this->block_ == nullptr)
-    {
-        return nullptr;
-    }
-
-    return &this->block_->InsertBlock();
+    return *(this->block_ = &this->block_->InsertBlock());
 }
 
 void IRBuilder::SetInsertPoint(IRBlock &block) noexcept
@@ -106,4 +101,9 @@ RetInst *IRBuilder::InsertRetInst(Value *retval)
     }
 
     return this->block_->InsertInstruction<RetInst>(retval);
+}
+
+IRConditionalBlock *IRBuilder::CreateCondition(Value *lhs, BinaryCondition condition, Value *rhs)
+{
+    return &this->block_->InsertConditionalBlock(lhs, condition, rhs);
 }

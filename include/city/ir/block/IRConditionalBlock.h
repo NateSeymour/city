@@ -19,7 +19,14 @@ namespace city
         /// Block to be executed if the condition evaluates FALSE.
         std::unique_ptr<IRBlock> else_block_;
 
+        void Apply(IRTranslator &translator) override;
+
     public:
+        [[nodiscard]] BinaryCondition GetCondition() const noexcept;
+
+        [[nodiscard]] Value *GetLHS() const noexcept;
+        [[nodiscard]] Value *GetRHS() const noexcept;
+
         [[nodiscard]] IRBlock &GetTrueBlock() const;
         [[nodiscard]] IRBlock &GetElseBlock() const;
 

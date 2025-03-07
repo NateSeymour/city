@@ -18,7 +18,16 @@ TEST_F(JITTestRunner, SimpleIfStatement)
         city::Value *lhs = test->GetArgumentValues()[0];
         city::Value *rhs = test->GetArgumentValues()[1];
 
-        city::IRBlock *true_block = builder.CreateCondition(lhs, city::BinaryCondition::GreaterThan, rhs);
+        city::IRConditionalBlock *condition = builder.CreateCondition(lhs, city::BinaryCondition::GreaterThan, rhs);
+
+        builder.SetInsertPoint(condition->GetTrueBlock());
+        builder.InsertRetInst(builder.CreateConstant(1));
+
+        builder.SetInsertPoint(condition->GetElseBlock());
+        builder.InsertRetInst(builder.CreateConstant(0));
+
+        builder.InsertBlock();
+        builder.InsertRetInst(builder.CreateConstant(-1));
     });
 
     auto test = assembly["test"].ToPointer<int(int, int)>();

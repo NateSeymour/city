@@ -9,6 +9,7 @@
 
 namespace city
 {
+    class IRTranslator;
     class IRBuilder;
     class IRFunction;
     class IRConditionalBlock;
@@ -22,6 +23,7 @@ namespace city
      */
     class IRBlock
     {
+        friend class IRTranslator;
         friend class IRBuilder;
         friend class IRFunction;
 
@@ -58,6 +60,8 @@ namespace city
         [[nodiscard]] virtual IRBlock &InsertBlock();
 
         [[nodiscard]] virtual IRConditionalBlock &InsertConditionalBlock(Value *lhs, BinaryCondition condition, Value *rhs);
+
+        virtual void Apply(IRTranslator &translator);
 
     public:
         [[nodiscard]] IRBlock *GetSuccessor() const noexcept;

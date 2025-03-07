@@ -1,4 +1,5 @@
 #include "city/ir/block/IRBlock.h"
+#include "city/backend/IRTranslator.h"
 #include "city/ir/block/IRConditionalBlock.h"
 
 using namespace city;
@@ -32,6 +33,11 @@ IRConditionalBlock &IRBlock::InsertConditionalBlock(Value *lhs, BinaryCondition 
 
     this->successor_ = std::move(new_block);
     return dynamic_cast<IRConditionalBlock &>(*this->successor_);
+}
+
+void IRBlock::Apply(IRTranslator &translator)
+{
+    translator.TranslateBlock(*this);
 }
 
 std::vector<std::unique_ptr<IRInstruction>> const &IRBlock::GetInstructions() const noexcept

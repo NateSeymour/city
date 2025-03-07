@@ -1,6 +1,9 @@
 #include "city/backend/aarch64/AArch64.h"
+#include "city/Interop.h"
 #include "city/backend/aarch64/AArch64FunctionTranslator.h"
 #include "city/ir/IRModule.h"
+
+#if defined(CITY_ENABLE_AARCH64)
 
 using namespace city;
 
@@ -36,3 +39,5 @@ NativeModule AArch64::BuildIRModule(IRModule &&ir_module)
 
     return module;
 }
+
+#endif

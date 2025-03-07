@@ -42,6 +42,8 @@ namespace city
 
         [[nodiscard]] virtual std::span<Register *> GetScratchRegisterBank(NativeType type) = 0;
 
+        virtual void ProcessCondition(IRConditionalBlock &block) = 0;
+
         /**
          * Returns a reference to an empty, unlocked register.
          * @param type
@@ -97,8 +99,6 @@ namespace city
 
         [[nodiscard]] std::size_t GetStubIndex(std::string const &name) const;
 
-        void TranslateAllIRBlocks();
-
     public:
         virtual void TranslateInstruction(AddInst &inst) = 0;
         virtual void TranslateInstruction(DivInst &inst) = 0;
@@ -106,6 +106,11 @@ namespace city
         virtual void TranslateInstruction(SubInst &inst) = 0;
         virtual void TranslateInstruction(CallInst &inst) = 0;
         virtual void TranslateInstruction(RetInst &inst) = 0;
+
+        virtual void TranslateBlock(IRBlock &block);
+        virtual void TranslateBlock(IRConditionalBlock &block);
+
+        void TranslateAllIRBlocks();
 
         virtual void Load(Register &dst, ConstantDataContainer &src) = 0;
         virtual void Load(Register &dst, StackAllocationContainer &src) = 0;

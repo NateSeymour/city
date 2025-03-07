@@ -1,6 +1,27 @@
 #include "city/ir/block/IRConditionalBlock.h"
+#include "city/backend/IRTranslator.h"
 
 using namespace city;
+
+void IRConditionalBlock::Apply(IRTranslator &translator)
+{
+    translator.TranslateBlock(*this);
+}
+
+BinaryCondition IRConditionalBlock::GetCondition() const noexcept
+{
+    return this->condition_;
+}
+
+Value *IRConditionalBlock::GetLHS() const noexcept
+{
+    return this->lhs_;
+}
+
+Value *IRConditionalBlock::GetRHS() const noexcept
+{
+    return this->rhs_;
+}
 
 IRBlock &IRConditionalBlock::GetTrueBlock() const
 {

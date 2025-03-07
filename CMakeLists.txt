@@ -108,6 +108,10 @@ add_library(city
         include/city/ir/block/IRConditionalBlock.h
         lib/ir/block/IRConditionalBlock.cpp
         include/city/ir/IRCondition.h
+        include/city/Interop.h
+        include/city/backend/aarch64/instruction/arithmetic/AArch64Cmp.h
+        include/city/backend/aarch64/AArch64Condition.h
+        lib/backend/aarch64/AArch64Condition.cpp
 )
 target_include_directories(city PUBLIC include)
 

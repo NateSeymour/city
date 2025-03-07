@@ -1,5 +1,8 @@
 #include "city/backend/amd64/Amd64.h"
+#include "city/Interop.h"
 #include "city/backend/amd64/Amd64FunctionTranslator.h"
+
+#if defined(CITY_ENABLE_AMD64)
 
 using namespace city;
 
@@ -35,3 +38,5 @@ NativeModule Amd64::BuildIRModule(IRModule &&ir_module)
 
     return module;
 }
+
+#endif

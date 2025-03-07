@@ -16,6 +16,8 @@ namespace city
     protected:
         [[nodiscard]] std::span<Register *> GetScratchRegisterBank(NativeType type) override;
 
+        void ProcessCondition(IRConditionalBlock &block) override;
+
         template<typename IRInstructionType, typename NativeInstructionType>
         void TranslateBinaryInstruction(IRInstructionType &inst)
         {
