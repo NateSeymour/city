@@ -1,6 +1,7 @@
 #ifndef IRTRANSLATOR_H
 #define IRTRANSLATOR_H
 
+#include <map>
 #include <memory>
 #include <span>
 #include <vector>
@@ -34,6 +35,12 @@ namespace city
 
         std::uint64_t register_dislocation_count_ = 0;
 
+        /// Map of the insertion points (PC-relative to the beginning of the function TEXT section) of all branch targets (labels).
+        std::map<IRBlock *, std::size_t> block_insertion_points_;
+
+        /// Map of all the instructions with PC-relative targets (instruction index) to their targets.
+        std::map<std::size_t, IRBlock *> pc_link_refs_;
+
         void AlignStack(unsigned int alignment) noexcept;
 
         [[nodiscard]] StackAllocationContainer &AcquireStackSpace(Type type);
@@ -42,7 +49,9 @@ namespace city
 
         [[nodiscard]] virtual std::span<Register *> GetScratchRegisterBank(NativeType type) = 0;
 
-        virtual void ProcessCondition(IRConditionalBlock &block) = 0;
+        [[nodiscard]] virtual std::size_t GetCurrentInstructionIndex() const = 0;
+
+        virtual void ResolvePCRelativeBranches() = 0;
 
         /**
          * Returns a reference to an empty, unlocked register.
@@ -108,7 +117,7 @@ namespace city
         virtual void TranslateInstruction(RetInst &inst) = 0;
 
         virtual void TranslateBlock(IRBlock &block);
-        virtual void TranslateBlock(IRConditionalBlock &block);
+        virtual void TranslateBlock(IRConditionalBlock &block) = 0;
 
         void TranslateAllIRBlocks();
 

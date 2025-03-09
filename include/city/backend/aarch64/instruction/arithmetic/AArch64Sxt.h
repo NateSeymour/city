@@ -14,17 +14,15 @@ namespace city
         {
             std::uint8_t imms = 0xFF >> (5 - (size / 2));
 
-            return {{AArch64Encoding{
-                    .dpbi{
-                            .rd = dst.GetCode(),
-                            .rn = src.GetCode(),
-                            .imms = imms,
-                            .immr = 0b0,
-                            .n = 0b1,
-                            .opc = 0b00,
-                            .sf = 0b1,
-                    },
-            }}};
+            return {AArch64EncDPBI{
+                    .rd = dst.GetCode(),
+                    .rn = src.GetCode(),
+                    .imms = imms,
+                    .immr = 0b0,
+                    .n = 0b1,
+                    .opc = 0b00,
+                    .sf = 0b1,
+            }};
         }
 
         AArch64Sxt(AArch64Encoding encoding) : AArch64Instruction(encoding) {}

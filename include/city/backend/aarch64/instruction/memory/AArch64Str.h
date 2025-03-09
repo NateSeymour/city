@@ -18,31 +18,27 @@ namespace city
                 opsize++;
             }
 
-            return {AArch64Encoding{
-                    .lsrui{
-                            .rt = dst.GetCode(),
-                            .rm = src1.GetCode(),
-                            .imm = src2,
-                            .opc = 0b00,
-                            .v = 0b0,
-                            .size = opsize,
-                    },
+            return {AArch64EncLSRUI{
+                    .rt = dst.GetCode(),
+                    .rm = src1.GetCode(),
+                    .imm = src2,
+                    .opc = 0b00,
+                    .v = 0b0,
+                    .size = opsize,
             }};
         }
 
         [[nodiscard]] static AArch64Str P(Register &dst, std::int16_t src1, Register &src2, Register &src3, std::size_t size = 8)
         {
             unsigned opc = (size / 8) << 1;
-            return {AArch64Encoding{
-                    .lsrpo{
-                            .rt = src2.GetCode(),
-                            .rn = dst.GetCode(),
-                            .rt2 = src3.GetCode(),
-                            .imm = static_cast<unsigned>(src1 / 8),
-                            .l = 0,
-                            .v = 0b0,
-                            .opc = opc,
-                    },
+            return {AArch64EncLSRPO{
+                    .rt = src2.GetCode(),
+                    .rn = dst.GetCode(),
+                    .rt2 = src3.GetCode(),
+                    .imm = static_cast<unsigned>(src1 / 8),
+                    .l = 0,
+                    .v = 0b0,
+                    .opc = opc,
             }};
         }
 
@@ -56,15 +52,13 @@ namespace city
                 opsize++;
             }
 
-            return {AArch64Encoding{
-                    .lsrui{
-                            .rt = dst.GetCode(),
-                            .rm = src1.GetCode(),
-                            .imm = src2,
-                            .opc = 0b00,
-                            .v = 0b1,
-                            .size = opsize,
-                    },
+            return {AArch64EncLSRUI{
+                    .rt = dst.GetCode(),
+                    .rm = src1.GetCode(),
+                    .imm = src2,
+                    .opc = 0b00,
+                    .v = 0b1,
+                    .size = opsize,
             }};
         }
 

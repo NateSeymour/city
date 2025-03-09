@@ -12,6 +12,7 @@ namespace city
     public:
         [[nodiscard]] virtual std::size_t GetBinarySize() const noexcept = 0;
         virtual std::size_t AppendToBuffer(std::vector<std::uint8_t> &buffer) = 0;
+        virtual void SetPCRelativeTarget(std::size_t pc);
 
         virtual ~NativeInstruction() = default;
     };

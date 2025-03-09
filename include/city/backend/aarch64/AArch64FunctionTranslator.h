@@ -16,7 +16,9 @@ namespace city
     protected:
         [[nodiscard]] std::span<Register *> GetScratchRegisterBank(NativeType type) override;
 
-        void ProcessCondition(IRConditionalBlock &block) override;
+        [[nodiscard]] std::size_t GetCurrentInstructionIndex() const override;
+
+        void ResolvePCRelativeBranches() override;
 
         template<typename IRInstructionType, typename NativeInstructionType>
         void TranslateBinaryInstruction(IRInstructionType &inst)
@@ -67,6 +69,8 @@ namespace city
         void TranslateInstruction(SubInst &inst) override;
         void TranslateInstruction(CallInst &inst) override;
         void TranslateInstruction(RetInst &inst) override;
+
+        void TranslateBlock(IRConditionalBlock &block) override;
 
         void Load(Register &dst, ConstantDataContainer &src) override;
         void Load(Register &dst, StackAllocationContainer &src) override;

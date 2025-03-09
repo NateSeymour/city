@@ -31,10 +31,13 @@ namespace city
         GT = 0b1100,
         LE = 0b1101,
 
-        AL = 0b1111,
+        AL = 0b1110,
+        AN = 0b1111,
     };
 
-    extern std::map<BinaryCondition, AArch64Condition> const AArch64ConditionTranslationMap;
+    extern std::map<BinaryCondition, AArch64Condition> const aarch64_condition_translation_map;
+
+    [[nodiscard]] AArch64Condition aarch64_negate_condition(AArch64Condition condition);
 } // namespace city
 
 #endif // AARCH64CONDITION_H

@@ -40,6 +40,11 @@ void IRBlock::Apply(IRTranslator &translator)
     translator.TranslateBlock(*this);
 }
 
+bool IRBlock::IsEmpty() const noexcept
+{
+    return this->instructions_.empty();
+}
+
 std::vector<std::unique_ptr<IRInstruction>> const &IRBlock::GetInstructions() const noexcept
 {
     return this->instructions_;

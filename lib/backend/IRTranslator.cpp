@@ -195,22 +195,11 @@ std::size_t IRTranslator::GetStubIndex(std::string const &name) const
 
 void IRTranslator::TranslateBlock(IRBlock &block)
 {
+    this->block_insertion_points_[&block] = this->module_.pc_;
+
     for (auto &instruction : block.GetInstructions())
     {
         instruction->Apply(this);
-    }
-}
-
-void IRTranslator::TranslateBlock(IRConditionalBlock &block)
-{
-    // Process condition
-    this->ProcessCondition(block);
-
-    for (auto child : {&block.GetTrueBlock(), &block.GetElseBlock()})
-    {
-        child->Apply(*this);
-
-        // TODO: Cleanup
     }
 }
 

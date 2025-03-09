@@ -9,10 +9,8 @@
 
 namespace city
 {
-    class IRTranslator;
-    class IRBuilder;
-    class IRFunction;
     class IRConditionalBlock;
+    class IRFunction;
 
     /**
      * Represents a simple block of IR code. Implemented as a doubly-linked list.
@@ -24,6 +22,7 @@ namespace city
     class IRBlock
     {
         friend class IRTranslator;
+        friend class AArch64FunctionTranslator;
         friend class IRBuilder;
         friend class IRFunction;
 
@@ -64,11 +63,14 @@ namespace city
         virtual void Apply(IRTranslator &translator);
 
     public:
+        [[nodiscard]] bool IsEmpty() const noexcept;
+
         [[nodiscard]] IRBlock *GetSuccessor() const noexcept;
 
         [[nodiscard]] std::vector<std::unique_ptr<IRInstruction>> const &GetInstructions() const noexcept;
 
         explicit IRBlock(IRFunction &parent);
+        virtual ~IRBlock() = default;
     };
 } // namespace city
 

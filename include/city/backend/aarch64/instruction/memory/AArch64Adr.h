@@ -16,13 +16,11 @@ namespace city
             std::int32_t immlo = src1 & 0b11;
             std::int32_t immhi = src1 >> 2;
 
-            return {AArch64Encoding{
-                    .dppcr{
-                            .rd = dst.GetCode(),
-                            .immhi = static_cast<unsigned>(immhi),
-                            .immlo = static_cast<unsigned>(immlo),
-                            .op = 0b0,
-                    },
+            return {AArch64EncDPPCR{
+                    .rd = dst.GetCode(),
+                    .immhi = static_cast<unsigned>(immhi),
+                    .immlo = static_cast<unsigned>(immlo),
+                    .op = 0b0,
             }};
         }
 

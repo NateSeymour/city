@@ -34,13 +34,17 @@ std::span<Register *> AArch64FunctionTranslator::GetScratchRegisterBank(NativeTy
     throw std::runtime_error("unknown type");
 }
 
-void AArch64FunctionTranslator::ProcessCondition(IRConditionalBlock &block)
+std::size_t AArch64FunctionTranslator::GetCurrentInstructionIndex() const
 {
-    auto &lhstmp = this->LoadValueR(*block.GetLHS());
-    auto &rhstmp = this->LoadValueR(*block.GetRHS());
+    return this->function.text_.size() - 1;
+}
 
-    this->Insert(AArch64Cmp::R(lhstmp, rhstmp));
-    this->Insert(AArch64B::I(1, AArch64ConditionTranslationMap.at(block.GetCondition())));
+void AArch64FunctionTranslator::ResolvePCRelativeBranches()
+{
+    for (auto const [i, target] : this->pc_link_refs_)
+    {
+        this->function.text_[i].SetPCRelativeTarget(this->block_insertion_points_[target]);
+    }
 }
 
 void AArch64FunctionTranslator::TranslateInstruction(AddInst &inst)
@@ -145,6 +149,35 @@ void AArch64FunctionTranslator::TranslateInstruction(RetInst &inst)
     }
 
     this->Insert(AArch64Ret::Z());
+}
+
+void AArch64FunctionTranslator::TranslateBlock(IRConditionalBlock &block)
+{
+    // Condition
+    auto &lhstmp = this->LoadValueR(*block.GetLHS());
+    auto &rhstmp = this->LoadValueR(*block.GetRHS());
+
+    this->Insert(AArch64Cmp::R(lhstmp, rhstmp));
+
+    auto condition = aarch64_negate_condition(aarch64_condition_translation_map.at(block.GetCondition()));
+    this->Insert(AArch64B::I(static_cast<std::int32_t>(this->module_.pc_), condition));
+    this->pc_link_refs_[this->GetCurrentInstructionIndex()] = &block.GetElseBlock();
+
+    // TRUE block
+    block.GetTrueBlock().Apply(*this);
+
+    // TODO: cleanup
+
+    if (!block.GetElseBlock().IsEmpty())
+    {
+        this->Insert(AArch64B::I(static_cast<std::int32_t>(this->module_.pc_), AArch64Condition::AL));
+        this->pc_link_refs_[this->GetCurrentInstructionIndex()] = block.GetSuccessor();
+    }
+
+    // ELSE block
+    block.GetElseBlock().Apply(*this);
+
+    // TODO: cleanup
 }
 
 void AArch64FunctionTranslator::Load(Register &dst, ConstantDataContainer &src)
@@ -294,6 +327,8 @@ AArch64FunctionTranslator::AArch64FunctionTranslator(NativeModule &module, IRFun
 
     // Function Body
     this->TranslateAllIRBlocks();
+
+    this->AArch64FunctionTranslator::ResolvePCRelativeBranches();
 
     // Generate Prolog
     if (this->stack_depth_ > 0)

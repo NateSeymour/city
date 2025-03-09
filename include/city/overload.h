@@ -19,7 +19,7 @@ namespace city
         template<typename T>
         constexpr void operator()(T) const
         {
-            static_assert(always_false_v<T>, "Unsupported type");
+            // static_assert(always_false_v<T>, "Unsupported type");
         }
     };
 
