@@ -17,6 +17,7 @@
 #include "instruction/arithmetic/DivInst.h"
 #include "instruction/arithmetic/MulInst.h"
 #include "instruction/arithmetic/SubInst.h"
+#include "instruction/control/BranchInst.h"
 #include "instruction/control/CallInst.h"
 #include "instruction/control/RetInst.h"
 
@@ -107,10 +108,20 @@ namespace city
         }
 
         // Instructions - Control
+        BranchInst *InsertBranchInst(IRBlock &target);
         [[nodiscard]] CallInst *InsertCallInst(Function *function, std::vector<Value *> const &args = {});
         RetInst *InsertRetInst(Value *retval = nullptr);
 
         [[nodiscard]] IRConditionalBlock *CreateCondition(Value *lhs, BinaryCondition condition, Value *rhs);
+
+        // Instructions - Memory
+        Value *CreatePDerefInst(Value *pointer, Value *index, Type pointee_type);
+
+        template<typename PointeeT>
+        [[nodiscard]] Value *CreatePDerefInst(Value *pointer, Value *index)
+        {
+            return CreatePDerefInst(pointer, index, Type::Get<PointeeT>());
+        }
 
         // Constructors
         IRBuilder() = delete;
