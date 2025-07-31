@@ -11,8 +11,7 @@ namespace city
 {
     class JIT;
 
-    class Amd64;
-    class AArch64;
+    class Backend;
 
     class IRTranslator;
     class Amd64FunctionTranslator;
@@ -22,8 +21,7 @@ namespace city
     {
         friend class JIT;
 
-        friend class Amd64;
-        friend class AArch64;
+        friend class Backend;
 
         friend class IRTranslator;
         friend class Amd64FunctionTranslator;

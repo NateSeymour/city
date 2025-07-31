@@ -6,7 +6,6 @@ set(CMAKE_CXX_STANDARD 23)
 add_library(city
         include/city/ABI.h
         include/city/Assembly.h
-        include/city/backend/aarch64/AArch64.h
         include/city/backend/aarch64/instruction/AArch64Instruction.h
         include/city/backend/amd64/Amd64Function.h
         include/city/backend/amd64/Amd64RegisterBank.h
@@ -42,9 +41,7 @@ add_library(city
         include/city/type/Type.h
         include/city/value/Value.h
         lib/Assembly.cpp
-        lib/backend/aarch64/AArch64.cpp
         lib/backend/aarch64/instruction/AArch64Instruction.cpp
-        lib/backend/amd64/Amd64.cpp
         lib/backend/amd64/Amd64Function.cpp
         lib/backend/amd64/Amd64FunctionTranslator.cpp
         lib/container/Register.cpp

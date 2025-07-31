@@ -2,22 +2,11 @@
 
 using namespace city;
 
+NativeModule Backend::CompileToNative(IRModule &&ir_module)
+{
 #if defined(__x86_64__) || defined(_WIN64)
-
-#include <city/backend/amd64/Amd64.h>
-
-std::unique_ptr<Backend> Backend::CreateHostNative()
-{
-    return std::make_unique<Amd64>();
-}
-
+    return Backend::Compile<Amd64FunctionTranslator>(std::move(ir_module));
 #elif defined(__aarch64__)
-
-#include "city/backend/aarch64/AArch64.h"
-
-std::unique_ptr<Backend> Backend::CreateHostNative()
-{
-    return std::make_unique<AArch64>();
-}
-
+    return Backend::Compile<AArch64FunctionTranslator>(std::move(ir_module));
 #endif
+}
