@@ -21,12 +21,8 @@ namespace city
 
         [[nodiscard]] std::tuple<Register &, Amd64Access, std::optional<std::int32_t>> LoadValueRM(Value &value);
 
-        void TranslateInstruction(AddInst &inst) override;
-        void TranslateInstruction(DivInst &inst) override;
-        void TranslateInstruction(MulInst &inst) override;
-        void TranslateInstruction(SubInst &inst) override;
-        void TranslateInstruction(CallInst &inst) override;
-        void TranslateInstruction(RetInst &inst) override;
+        [[nodiscard]] std::size_t GetCurrentInstructionIndex() const override;
+        void ResolvePCRelativeBranches() override;
 
         template<typename IRInstructionType, typename NativeInstructionType>
         void TranslateBinaryInstruction(IRInstructionType &inst)
@@ -93,6 +89,21 @@ namespace city
             rhs.DecrementReadCount();
         }
 
+        void Insert(Amd64Instruction &&inst);
+        void InsertProlog(Amd64Instruction &&inst);
+
+    public:
+        Amd64Function function;
+
+        void TranslateInstruction(AddInst &inst) override;
+        void TranslateInstruction(DivInst &inst) override;
+        void TranslateInstruction(MulInst &inst) override;
+        void TranslateInstruction(SubInst &inst) override;
+        void TranslateInstruction(CallInst &inst) override;
+        void TranslateInstruction(RetInst &inst) override;
+
+        void TranslateBlock(IRConditionalBlock &block) override;
+
         void Load(Register &dst, ConstantDataContainer &src) override;
         void Load(Register &dst, StackAllocationContainer &src) override;
         void Load(Register &dst, StubContainer &src) override;
@@ -100,12 +111,6 @@ namespace city
 
         void Store(StackAllocationContainer &dst, Register &src) override;
         void Store(Register &dst, Register &src) override;
-
-        void Insert(Amd64Instruction &&inst);
-        void InsertProlog(Amd64Instruction &&inst);
-
-    public:
-        Amd64Function function;
 
         explicit Amd64FunctionTranslator(NativeModule &module, IRFunction &ir_function);
     };
