@@ -12,7 +12,7 @@ void JIT::InsertInterfaceModule(InterfaceModule &&module)
 
 void JIT::InsertIRModule(IRModule &&module)
 {
-    this->modules_.insert({module.GetName(), this->backend_->BuildIRModule(std::move(module))});
+    this->modules_.insert({module.GetName(), Backend::CompileToNative(std::move(module))});
 }
 
 void JIT::RemoveModule(std::string const &name)
@@ -82,9 +82,4 @@ Assembly JIT::Link() const
     assembly.text_.SetProtection(MemoryProtection::Read | MemoryProtection::Execute);
 
     return assembly;
-}
-
-JIT::JIT()
-{
-    this->backend_ = Backend::CreateHostNative();
 }

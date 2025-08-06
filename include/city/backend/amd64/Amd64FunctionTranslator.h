@@ -17,13 +17,6 @@ namespace city
         Amd64RegisterBank reg_;
 
     protected:
-        [[nodiscard]] std::span<Register *> GetScratchRegisterBank(NativeType type) override;
-
-        [[nodiscard]] std::tuple<Register &, Amd64Access, std::optional<std::int32_t>> LoadValueRM(Value &value);
-
-        [[nodiscard]] std::size_t GetCurrentInstructionIndex() const override;
-        void ResolvePCRelativeBranches() override;
-
         template<typename IRInstructionType, typename NativeInstructionType>
         void TranslateBinaryInstruction(IRInstructionType &inst)
         {
@@ -91,6 +84,13 @@ namespace city
 
         void Insert(Amd64Instruction &&inst);
         void InsertProlog(Amd64Instruction &&inst);
+
+        [[nodiscard]] std::span<Register *> GetScratchRegisterBank(NativeType type) override;
+
+        [[nodiscard]] std::tuple<Register &, Amd64Access, std::optional<std::int32_t>> LoadValueRM(Value &value);
+
+        [[nodiscard]] std::size_t GetCurrentInstructionIndex() const override;
+        void ResolvePCRelativeBranches() override;
 
     public:
         Amd64Function function;

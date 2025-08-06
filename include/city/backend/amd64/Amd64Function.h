@@ -4,17 +4,20 @@
 #include <vector>
 #include "city/Function.h"
 #include "instruction/Amd64Instruction.h"
+#include "city/ir/IRFunction.h"
 
 namespace city
 {
 
     class Amd64;
     class Amd64FunctionTranslator;
+    class Backend;
 
     class Amd64Function : public Function
     {
         friend class Amd64;
         friend class Amd64FunctionTranslator;
+        friend class Backend;
 
     protected:
         std::vector<Amd64Instruction> prolog_;

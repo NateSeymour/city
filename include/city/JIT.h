@@ -12,8 +12,6 @@ namespace city
 {
     class JIT
     {
-        std::unique_ptr<Backend> backend_;
-
         std::unordered_map<std::string, InterfaceModule> interfaces_;
         std::unordered_map<std::string, NativeModule> modules_;
 
@@ -42,8 +40,6 @@ namespace city
          * @return Linked Assembly of all stored Objects
          */
         [[nodiscard]] Assembly Link() const;
-
-        JIT();
     };
 } // namespace city
 

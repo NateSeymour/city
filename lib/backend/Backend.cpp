@@ -1,4 +1,6 @@
 #include <city/backend/Backend.h>
+#include <city/backend/aarch64/AArch64FunctionTranslator.h>
+#include <city/backend/amd64/Amd64FunctionTranslator.h>
 
 using namespace city;
 
