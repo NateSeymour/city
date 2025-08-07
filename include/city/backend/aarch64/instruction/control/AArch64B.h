@@ -13,9 +13,9 @@ namespace city
         {
             return {AArch64EncCBI{
                     .cond = static_cast<unsigned>(condition),
-                    .o1 = 0b0,
-                    .imm = static_cast<unsigned>(pc),
                     .o0 = 0b0,
+                    .imm = static_cast<unsigned>(pc),
+                    .o1 = 0b0,
             }};
         }
 
