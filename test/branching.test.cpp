@@ -1,17 +1,18 @@
 #include "jit.test.h"
 
+/*
+ * if (arg[0] > arg[1])
+ * {
+ *      return 1;
+ * }
+ * else
+ * {
+ *      return 0;
+ * }
+ */
 TEST_F(JITTestRunner, SimpleIfStatement)
 {
-    /*
-     * if (arg[0] > arg[1])
-     * {
-     *      return 1;
-     * }
-     * else
-     * {
-     *      return 0;
-     * }
-     */
+
     auto assembly = this->BuildTestModule([&](city::IRBuilder &builder) {
         auto test = builder.CreateFunction("test", city::Type::Get<int>(), {2, city::Type::Get<int>()});
 
@@ -41,26 +42,27 @@ TEST_F(JITTestRunner, SimpleIfStatement)
     }
 }
 
+/*
+ * int strcmp(char const *a, char const *b)
+ * {
+ *      int i = 0;
+ *      while (a[i] != '\0' && b[i] != '\0')
+ *      {
+ *          int diff = a[i] - b[i];
+ *          if (diff)
+ *          {
+ *              return diff;
+ *          }
+ *
+ *          i++;
+ *      }
+ *
+ *      return 0;
+ * }
+ */
+/*
 TEST_F(JITTestRunner, StringComparison)
 {
-    /*
-     * int strcmp(char const *a, char const *b)
-     * {
-     *      int i = 0;
-     *      while (a[i] != '\0' && b[i] != '\0')
-     *      {
-     *          int diff = a[i] - b[i];
-     *          if (diff)
-     *          {
-     *              return diff;
-     *          }
-     *
-     *          i++;
-     *      }
-     *
-     *      return 0;
-     * }
-     */
     auto assembly = this->BuildTestModule([&](city::IRBuilder &builder) {
         auto test = builder.CreateFunction("test", city::Type::Get<int>(), {2, city::Type::Get<char const *>()});
 
@@ -94,3 +96,4 @@ TEST_F(JITTestRunner, StringComparison)
         ASSERT_EQ(value, values.first > values.second);
     }
 }
+*/

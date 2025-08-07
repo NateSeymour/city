@@ -54,6 +54,15 @@ std::tuple<Register &, Amd64Access, std::optional<std::int32_t>> Amd64FunctionTr
     }
 }
 
+std::size_t Amd64FunctionTranslator::GetCurrentInstructionIndex() const
+{
+    return 0;
+}
+
+void Amd64FunctionTranslator::ResolvePCRelativeBranches() {}
+
+void Amd64FunctionTranslator::TranslateBlock(IRConditionalBlock &block) {}
+
 void Amd64FunctionTranslator::TranslateInstruction(AddInst &inst)
 {
     this->TranslateBinaryInstruction<AddInst, Amd64Add>(inst);
