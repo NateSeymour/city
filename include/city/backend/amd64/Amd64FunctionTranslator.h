@@ -96,6 +96,7 @@ namespace city
         Amd64Function function;
 
         void TranslateInstruction(AddInst &inst) override;
+        void TranslateInstruction(CmpInst &inst) override;
         void TranslateInstruction(DivInst &inst) override;
         void TranslateInstruction(MulInst &inst) override;
         void TranslateInstruction(SubInst &inst) override;

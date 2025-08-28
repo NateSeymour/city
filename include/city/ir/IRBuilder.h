@@ -14,6 +14,7 @@
 #include "city/type/Type.h"
 #include "city/value/Value.h"
 #include "instruction/arithmetic/AddInst.h"
+#include "instruction/arithmetic/CmpInst.h"
 #include "instruction/arithmetic/DivInst.h"
 #include "instruction/arithmetic/MulInst.h"
 #include "instruction/arithmetic/SubInst.h"
@@ -90,6 +91,11 @@ namespace city
         [[nodiscard]] AddInst *InsertAddInst(Value *lhs, Value *rhs)
         {
             return this->InsertBinaryInst<AddInst>(lhs, rhs);
+        }
+
+        [[nodiscard]] CmpInst *InsertCmpInst(Value *lhs, Value *rhs)
+        {
+            return this->InsertBinaryInst<CmpInst>(lhs, rhs);
         }
 
         [[nodiscard]] SubInst *InsertSubInst(Value *lhs, Value *rhs)

@@ -9,9 +9,8 @@ namespace city
     class IRConditionalBlock : public IRBlock
     {
     protected:
-        Value *lhs_ = nullptr;
+        Value *cmp_ = nullptr;
         BinaryCondition condition_;
-        Value *rhs_ = nullptr;
 
         /// Block to be executed if the condition evaluates TRUE.
         std::unique_ptr<IRBlock> true_block_;
@@ -24,13 +23,12 @@ namespace city
     public:
         [[nodiscard]] BinaryCondition GetCondition() const noexcept;
 
-        [[nodiscard]] Value *GetLHS() const noexcept;
-        [[nodiscard]] Value *GetRHS() const noexcept;
+        [[nodiscard]] Value *GetCMP() const noexcept;
 
         [[nodiscard]] IRBlock &GetTrueBlock() const;
         [[nodiscard]] IRBlock &GetElseBlock() const;
 
-        IRConditionalBlock(IRFunction &parent, Value *lhs, BinaryCondition condition, Value *rhs);
+        IRConditionalBlock(IRFunction &parent, Value *cmp, BinaryCondition condition);
     };
 } // namespace city
 

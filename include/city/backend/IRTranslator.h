@@ -14,6 +14,7 @@
 #include "city/ir/IRFunction.h"
 
 #include "city/ir/instruction/arithmetic/AddInst.h"
+#include "city/ir/instruction/arithmetic/CmpInst.h"
 #include "city/ir/instruction/arithmetic/DivInst.h"
 #include "city/ir/instruction/arithmetic/MulInst.h"
 #include "city/ir/instruction/arithmetic/SubInst.h"
@@ -110,6 +111,7 @@ namespace city
 
     public:
         virtual void TranslateInstruction(AddInst &inst) = 0;
+        virtual void TranslateInstruction(CmpInst &inst) = 0;
         virtual void TranslateInstruction(DivInst &inst) = 0;
         virtual void TranslateInstruction(MulInst &inst) = 0;
         virtual void TranslateInstruction(SubInst &inst) = 0;

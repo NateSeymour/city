@@ -13,14 +13,9 @@ BinaryCondition IRConditionalBlock::GetCondition() const noexcept
     return this->condition_;
 }
 
-Value *IRConditionalBlock::GetLHS() const noexcept
+Value *IRConditionalBlock::GetCMP() const noexcept
 {
-    return this->lhs_;
-}
-
-Value *IRConditionalBlock::GetRHS() const noexcept
-{
-    return this->rhs_;
+    return this->cmp_;
 }
 
 IRBlock &IRConditionalBlock::GetTrueBlock() const
@@ -33,7 +28,7 @@ IRBlock &IRConditionalBlock::GetElseBlock() const
     return *this->else_block_;
 }
 
-IRConditionalBlock::IRConditionalBlock(IRFunction &parent, Value *lhs, BinaryCondition condition, Value *rhs) : IRBlock(parent), lhs_(lhs), condition_(condition), rhs_(rhs)
+IRConditionalBlock::IRConditionalBlock(IRFunction &parent, Value *cmp, BinaryCondition condition) : IRBlock(parent), cmp_(cmp), condition_(condition)
 {
     this->true_block_ = std::make_unique<IRBlock>(parent);
     this->else_block_ = std::make_unique<IRBlock>(parent);

@@ -12,7 +12,6 @@
  */
 TEST_F(JITTestRunner, SimpleIfStatement)
 {
-
     auto assembly = this->BuildTestModule([&](city::IRBuilder &builder) {
         auto test = builder.CreateFunction("test", city::Type::Get<int>(), {2, city::Type::Get<int>()});
 

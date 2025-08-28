@@ -105,5 +105,7 @@ RetInst *IRBuilder::InsertRetInst(Value *retval)
 
 IRConditionalBlock *IRBuilder::CreateCondition(Value *lhs, BinaryCondition condition, Value *rhs)
 {
-    return &this->block_->InsertConditionalBlock(lhs, condition, rhs);
+    Value *cmp = this->InsertCmpInst(lhs, rhs);
+
+    return &this->block_->InsertConditionalBlock(cmp, condition);
 }

@@ -111,6 +111,8 @@ add_library(city
         lib/backend/aarch64/AArch64Condition.cpp
         include/city/ir/instruction/memory/PDerefInst.h
         include/city/ir/instruction/control/BranchInst.h
+        include/city/ir/instruction/arithmetic/CmpInst.h
+        lib/ir/instruction/arithmetic/CmpInst.cpp
 )
 target_include_directories(city PUBLIC include)
 

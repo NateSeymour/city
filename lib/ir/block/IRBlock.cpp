@@ -22,9 +22,9 @@ IRBlock &IRBlock::InsertBlock()
     return *this->successor_;
 }
 
-IRConditionalBlock &IRBlock::InsertConditionalBlock(Value *lhs, BinaryCondition condition, Value *rhs)
+IRConditionalBlock &IRBlock::InsertConditionalBlock(Value *cmp, BinaryCondition condition)
 {
-    auto new_block = std::make_shared<IRConditionalBlock>(this->parent_, lhs, condition, rhs);
+    auto new_block = std::make_shared<IRConditionalBlock>(this->parent_, cmp, condition);
 
     if (this->successor_ != nullptr)
     {

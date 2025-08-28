@@ -58,7 +58,7 @@ namespace city
          */
         [[nodiscard]] virtual IRBlock &InsertBlock();
 
-        [[nodiscard]] virtual IRConditionalBlock &InsertConditionalBlock(Value *lhs, BinaryCondition condition, Value *rhs);
+        [[nodiscard]] virtual IRConditionalBlock &InsertConditionalBlock(Value *cmp, BinaryCondition condition);
 
         virtual void Apply(IRTranslator &translator);
 

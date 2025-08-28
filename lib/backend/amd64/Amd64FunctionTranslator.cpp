@@ -61,11 +61,14 @@ std::size_t Amd64FunctionTranslator::GetCurrentInstructionIndex() const
 
 void Amd64FunctionTranslator::ResolvePCRelativeBranches() {}
 
-void Amd64FunctionTranslator::TranslateBlock(IRConditionalBlock &block) {}
-
 void Amd64FunctionTranslator::TranslateInstruction(AddInst &inst)
 {
     this->TranslateBinaryInstruction<AddInst, Amd64Add>(inst);
+}
+
+void Amd64FunctionTranslator::TranslateInstruction(CmpInst &inst)
+{
+    this->TranslateBinaryInstruction<CmpInst, Amd64Sub>(inst);
 }
 
 void Amd64FunctionTranslator::TranslateInstruction(DivInst &inst)
@@ -142,6 +145,18 @@ void Amd64FunctionTranslator::TranslateInstruction(RetInst &inst)
     }
 
     this->Insert(Amd64Ret::ZONear());
+}
+
+void Amd64FunctionTranslator::TranslateBlock(IRConditionalBlock &block)
+{
+    /*
+     * Plan:
+     * 1. Evaluate the comparison.
+     * 2. Persist all gps to the stack.
+     * 3. Build TRUE block.
+     * 4. Build FALSE block.
+     * 5. Build completion block.
+     */
 }
 
 void Amd64FunctionTranslator::Load(Register &dst, ConstantDataContainer &src)
