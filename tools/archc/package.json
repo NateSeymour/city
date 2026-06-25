@@ -1,0 +1,19 @@
+{
+  "name": "archc",
+  "version": "1.0.0",
+  "description": "Utility to compile architecture.txt files into C++ files used with city.",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "archc.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "command-line-args": "^6.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^26.0.1",
+    "prettier": "^3.8.4"
+  }
+}

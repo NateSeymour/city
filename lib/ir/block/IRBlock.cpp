@@ -1,6 +1,6 @@
 #include "city/ir/block/IRBlock.h"
-#include "city/backend/IRTranslator.h"
 #include "city/ir/block/IRConditionalBlock.h"
+#include "city/transform/IRTranslator.h"
 
 using namespace city;
 

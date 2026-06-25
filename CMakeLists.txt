@@ -113,6 +113,13 @@ add_library(city
         include/city/ir/instruction/control/BranchInst.h
         include/city/ir/instruction/arithmetic/CmpInst.h
         lib/ir/instruction/arithmetic/CmpInst.cpp
+        include/city/transform/Pipeline.h
+        include/city/Module.h
+        include/city/transform/dbg/DebugPrinter.cpp
+        include/city/transform/dbg/DebugPrinter.h
+        include/city/module/Module.h
+        include/city/module/Block.h
+        include/city/transform/aarch64/AArch64.h
 )
 target_include_directories(city PUBLIC include)
 

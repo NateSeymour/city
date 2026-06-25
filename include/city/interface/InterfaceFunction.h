@@ -1,7 +1,7 @@
 #ifndef CITY_INTERFACEFUNCTION_H
 #define CITY_INTERFACEFUNCTION_H
 
-#include <city/Function.h>
+#include <../module/Function.h>
 
 namespace city
 {

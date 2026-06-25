@@ -3,8 +3,8 @@
 
 #include <memory>
 #include <unordered_map>
+#include "../../lib/transform/Backend.h"
 #include "Assembly.h"
-#include "backend/Backend.h"
 #include "interface/InterfaceModule.h"
 #include "ir/IRModule.h"
 
