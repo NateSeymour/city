@@ -333,7 +333,7 @@ namespace city
     // Instruction Definitions
     ${Object.entries(architecture.instruction)
         .map(([inst, def]) => (
-`struct ${architecture.name}${inst.toUpperCase()}
+`struct ${architecture.name}${inst}
     {
         ${Object.entries(def.encoding)
             .map(([name, type]) => `${type} ${name};`)
@@ -342,7 +342,7 @@ namespace city
     
     using ${architecture.name}Instruction = std::variant<
         ${Object.keys(architecture.instruction)
-        .map(name => `${architecture.name}${name.toUpperCase()}`)
+        .map(name => `${architecture.name}${name}`)
         .join(',\n\t\t')}
     >;
     

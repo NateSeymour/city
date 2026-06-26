@@ -1,0 +1,40 @@
+%name IR
+%version 1
+
+#include <city/module/Block.h>
+#include <city/module/Value.h>
+
+encoding dynamic {
+    binop {
+        [city::Value &] lhs
+        [city::Value &] rhs
+    }
+
+    unop {
+        [city::Value &] value
+    }
+
+    writeop {
+        [std::string] name
+        [city::Value &] value
+    }
+
+    readop {
+        [std::string] name
+    }
+}
+
+instruction {
+    Add binop
+    Sub binop
+    Div binop
+    Mul binop
+    Cmp binop
+
+    Write writeop [volatile]
+    Read readop
+
+    Branch unop [branching, volatile]
+    Call unop [branching, volatile]
+    Ret unop [branching, volatile]
+}
