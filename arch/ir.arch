@@ -1,6 +1,7 @@
-%name CityIR
+%name IR
 %version 1
 
+#include <city/module/Block.h>
 #include <city/module/Value.h>
 
 encoding dynamic {
