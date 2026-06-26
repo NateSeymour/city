@@ -30,8 +30,6 @@ namespace city
 
         std::list<Block> children_;
 
-        std::vector<typename ArchitectureT::Instruction> instructions_;
-
     public:
         Block(Block &parent) : parent_(parent), level_(parent.level_ + 1) {}
         Block() : parent_(std::nullopt) {}

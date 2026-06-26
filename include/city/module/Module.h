@@ -7,8 +7,7 @@
 
 #include <string>
 #include <unordered_map>
-#include <vector>
-
+#include <list>
 #include "Function.h"
 
 namespace city
@@ -18,7 +17,8 @@ namespace city
     {
     protected:
         std::string name_;
-        std::unordered_map<std::string, Function<ArchitectureT>> functions_;
+        std::list<Function<ArchitectureT>> functions_;
+        std::unordered_map<std::string, std::reference_wrapper<Function<ArchitectureT>>> function_table_;
     };
 } // namespace city
 
