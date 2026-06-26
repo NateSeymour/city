@@ -306,7 +306,7 @@ const parseArchitectureFile = (path) => {
 const writeArchitectureFiles = (architecture) => {
     const outputDir = path.join(options.output, 'archc');
     if (!fs.existsSync(outputDir)) {
-        fs.mkdirSync(outputDir);
+        fs.mkdirSync(outputDir, { recursive: true });
     }
 
     const outputFile = path.join(outputDir, `${architecture.name}.h`);
@@ -322,6 +322,7 @@ const writeArchitectureFiles = (architecture) => {
 // Preprocessor Directives
 #include <variant>
 #include <vector>
+#include <city/module/Module.h>
 ${architecture.preprocessorDirective.join('\n')}
 
 namespace city

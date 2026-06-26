@@ -10,7 +10,6 @@
 
 namespace city
 {
-    class Backend;
 
     class IRModule
     {

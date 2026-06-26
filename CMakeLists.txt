@@ -3,125 +3,105 @@ project(city VERSION 0.4.4)
 
 set(CMAKE_CXX_STANDARD 23)
 
+add_custom_target(archc ALL node ${CMAKE_SOURCE_DIR}/tools/archc/archc.js --input ${CMAKE_SOURCE_DIR} --output ${CMAKE_BINARY_DIR}/include/city)
+
 add_library(city
         include/city/ABI.h
+        include/city/ABI.h
+        include/city/arch/aarch64/AArch64.h
+        include/city/arch/aarch64/AArch64Condition.h
+        include/city/arch/aarch64/AArch64Function.h
+        include/city/arch/aarch64/AArch64FunctionTranslator.h
+        include/city/arch/aarch64/AArch64RegisterBank.h
+        include/city/arch/aarch64/instruction/AArch64Instruction.h
+        include/city/arch/aarch64/instruction/arithmetic/AArch64Add.h
+        include/city/arch/aarch64/instruction/arithmetic/AArch64Cmp.h
+        include/city/arch/aarch64/instruction/arithmetic/AArch64Div.h
+        include/city/arch/aarch64/instruction/arithmetic/AArch64Mul.h
+        include/city/arch/aarch64/instruction/arithmetic/AArch64Sub.h
+        include/city/arch/aarch64/instruction/arithmetic/AArch64Sxt.h
+        include/city/arch/aarch64/instruction/control/AArch64B.h
+        include/city/arch/aarch64/instruction/control/AArch64Ret.h
+        include/city/arch/aarch64/instruction/memory/AArch64Adr.h
+        include/city/arch/aarch64/instruction/memory/AArch64Ldr.h
+        include/city/arch/aarch64/instruction/memory/AArch64Mov.h
+        include/city/arch/aarch64/instruction/memory/AArch64Str.h
+        include/city/arch/amd64/Amd64Function.h
+        include/city/arch/amd64/Amd64RegisterBank.h
+        include/city/arch/amd64/instruction/arithmetic/Amd64Cqo.h
+        include/city/arch/amd64/instruction/arithmetic/Amd64Div.h
+        include/city/arch/amd64/instruction/arithmetic/Amd64Mul.h
+        include/city/arch/amd64/instruction/arithmetic/Amd64Xor.h
+        include/city/arch/amd64/instruction/control/Amd64Leave.h
+        include/city/arch/amd64/instruction/memory/Amd64Lea.h
+        include/city/arch/amd64/instruction/memory/Amd64Mov.h
+        include/city/arch/amd64/instruction/memory/Amd64Pop.h
+        include/city/arch/amd64/instruction/memory/Amd64Push.h
+        include/city/arch/ir/block/IRBlock.h
+        include/city/arch/ir/block/IRConditionalBlock.h
+        include/city/arch/ir/IRBuilder.h
+        include/city/arch/ir/IRCondition.h
+        include/city/arch/ir/IRFunction.h
+        include/city/arch/ir/IRModule.h
         include/city/Assembly.h
-        include/city/backend/aarch64/instruction/AArch64Instruction.h
-        include/city/backend/amd64/Amd64Function.h
-        include/city/backend/amd64/Amd64RegisterBank.h
-        include/city/backend/amd64/instruction/arithmetic/Amd64Div.h
-        include/city/backend/amd64/instruction/arithmetic/Amd64Mul.h
-        include/city/backend/amd64/instruction/control/Amd64Leave.h
         include/city/ByteBuffer.h
-        include/city/container/ConstantDataContainer.h
-        include/city/container/Container.h
-        include/city/container/StackAllocationContainer.h
-        include/city/Function.h
         include/city/interface/InterfaceFunction.h
         include/city/interface/InterfaceModule.h
-        include/city/ir/block/IRBlock.h
-        include/city/ir/instruction/arithmetic/AddInst.h
-        include/city/ir/instruction/arithmetic/DivInst.h
-        include/city/ir/instruction/arithmetic/MulInst.h
-        include/city/ir/instruction/arithmetic/SubInst.h
-        include/city/ir/instruction/control/CallInst.h
-        include/city/ir/instruction/control/RetInst.h
-        include/city/ir/instruction/IRBinaryInstruction.h
-        include/city/ir/instruction/IRInstruction.h
-        include/city/ir/IRBuilder.h
-        include/city/ir/IRFunction.h
-        include/city/ir/IRModule.h
+        include/city/Interop.h
         include/city/JIT.h
+        include/city/module/Block.h
+        include/city/module/container/ConstantDataContainer.h
+        include/city/module/container/Container.h
+        include/city/module/container/Register.h
+        include/city/module/container/StackAllocationContainer.h
+        include/city/module/container/StubContainer.h
+        include/city/module/Function.h
+        include/city/module/Module.h
+        include/city/module/Module.h
+        include/city/module/Type.h
+        include/city/module/Value.h
         include/city/overload.h
         include/city/runtime/MacOS.h
         include/city/runtime/NativeMemoryHandle.h
         include/city/runtime/Runtime.h
         include/city/runtime/Windows.h
         include/city/Symbol.h
-        include/city/type/Type.h
-        include/city/value/Value.h
+        include/city/transform/dbg/DebugPrinter.h
+        include/city/transform/NativeModule.h
+        lib/arch/aarch64/AArch64Condition.cpp
+        lib/arch/aarch64/AArch64Function.cpp
+        lib/arch/aarch64/AArch64FunctionTranslator.cpp
+        lib/arch/aarch64/instruction/AArch64Instruction.cpp
+        lib/arch/amd64/Amd64Function.cpp
+        lib/arch/amd64/Amd64FunctionTranslator.cpp
+        lib/arch/amd64/instruction/Amd64Instruction.cpp
+        lib/arch/ir/block/IRBlock.cpp
+        lib/arch/ir/block/IRConditionalBlock.cpp
+        lib/arch/ir/IRBuilder.cpp
+        lib/arch/ir/IRFunction.cpp
+        lib/arch/ir/IRModule.cpp
         lib/Assembly.cpp
-        lib/backend/aarch64/instruction/AArch64Instruction.cpp
-        lib/backend/amd64/Amd64Function.cpp
-        lib/backend/amd64/Amd64FunctionTranslator.cpp
-        lib/container/Register.cpp
-        lib/backend/amd64/instruction/Amd64Instruction.cpp
-        lib/backend/Backend.cpp
-        lib/backend/NativeInstruction.cpp
         lib/container/ConstantDataContainer.cpp
         lib/container/Container.cpp
+        lib/container/Register.cpp
         lib/container/StackAllocationContainer.cpp
-        lib/Function.cpp
+        lib/container/StubContainer.cpp
         lib/interface/InterfaceFunction.cpp
         lib/interface/InterfaceModule.cpp
-        lib/ir/block/IRBlock.cpp
-        lib/ir/instruction/arithmetic/AddInst.cpp
-        lib/ir/instruction/arithmetic/DivInst.cpp
-        lib/ir/instruction/arithmetic/MulInst.cpp
-        lib/ir/instruction/arithmetic/SubInst.cpp
-        lib/ir/instruction/control/CallInst.cpp
-        lib/ir/instruction/control/RetInst.cpp
-        lib/ir/instruction/IRBinaryInstruction.cpp
-        lib/ir/instruction/IRInstruction.cpp
-        lib/ir/IRBuilder.cpp
-        lib/ir/IRFunction.cpp
-        lib/ir/IRModule.cpp
         lib/JIT.cpp
         lib/runtime/MacOS.cpp
         lib/runtime/NativeMemoryHandle.cpp
         lib/runtime/Windows.cpp
         lib/Symbol.cpp
-        lib/value/Value.cpp
-        include/city/backend/NativeModule.h
-        include/city/backend/aarch64/AArch64Function.h
-        include/city/backend/aarch64/AArch64FunctionTranslator.h
-        include/city/container/Register.h
-        include/city/backend/aarch64/AArch64RegisterBank.h
-        lib/backend/aarch64/AArch64FunctionTranslator.cpp
-        lib/backend/aarch64/AArch64Function.cpp
-        lib/backend/NativeModule.cpp
-        include/city/backend/aarch64/instruction/arithmetic/AArch64Add.h
-        lib/backend/IRTranslator.cpp
-        include/city/backend/aarch64/instruction/control/AArch64Ret.h
-        include/city/value/ConstantValue.h
+        lib/transform/Backend.cpp
+        lib/transform/IRTranslator.cpp
+        lib/transform/NativeInstruction.cpp
+        lib/transform/NativeModule.cpp
         lib/value/ConstantValue.cpp
-        include/city/backend/aarch64/instruction/memory/AArch64Mov.h
-        include/city/backend/aarch64/instruction/arithmetic/AArch64Div.h
-        include/city/backend/aarch64/instruction/arithmetic/AArch64Mul.h
-        include/city/container/StubContainer.h
-        lib/container/StubContainer.cpp
-        include/city/backend/amd64/instruction/memory/Amd64Lea.h
-        include/city/backend/amd64/instruction/memory/Amd64Pop.h
-        include/city/backend/amd64/instruction/memory/Amd64Push.h
-        include/city/backend/amd64/instruction/memory/Amd64Mov.h
-        include/city/backend/aarch64/instruction/arithmetic/AArch64Sub.h
-        include/city/backend/aarch64/instruction/memory/AArch64Adr.h
-        include/city/backend/aarch64/instruction/control/AArch64B.h
-        include/city/backend/aarch64/instruction/memory/AArch64Ldr.h
-        include/city/backend/aarch64/instruction/memory/AArch64Str.h
-        include/city/backend/amd64/instruction/arithmetic/Amd64Cqo.h
-        include/city/backend/amd64/instruction/arithmetic/Amd64Xor.h
-        include/city/backend/aarch64/instruction/arithmetic/AArch64Sxt.h
-        include/city/ir/block/IRConditionalBlock.h
-        lib/ir/block/IRConditionalBlock.cpp
-        include/city/ir/IRCondition.h
-        include/city/Interop.h
-        include/city/backend/aarch64/instruction/arithmetic/AArch64Cmp.h
-        include/city/backend/aarch64/AArch64Condition.h
-        lib/backend/aarch64/AArch64Condition.cpp
-        include/city/ir/instruction/memory/PDerefInst.h
-        include/city/ir/instruction/control/BranchInst.h
-        include/city/ir/instruction/arithmetic/CmpInst.h
-        lib/ir/instruction/arithmetic/CmpInst.cpp
-        include/city/transform/Pipeline.h
-        include/city/Module.h
-        include/city/transform/dbg/DebugPrinter.cpp
-        include/city/transform/dbg/DebugPrinter.h
-        include/city/module/Module.h
-        include/city/module/Block.h
-        include/city/transform/aarch64/AArch64.h
+        lib/value/Value.cpp
 )
 target_include_directories(city PUBLIC include)
+target_include_directories(city PUBLIC ${CMAKE_BINARY_DIR}/include)
 
 #if (MSVC)
 #    target_compile_options(city PRIVATE /W4 /WX)
@@ -140,12 +120,7 @@ if (CITY_ENABLE_TESTS)
     FetchContent_MakeAvailable(googletest)
 
     add_executable(city-test
-            test/module.test.cpp
-            test/arithmetic.test.cpp
-            test/jit.test.h
-            test/functional.test.cpp
-            test/jit.test.cpp
-            test/branching.test.cpp
+            test/arch/ir.test.cpp
     )
     target_link_libraries(city-test PRIVATE city GTest::gtest_main)
 endif ()
