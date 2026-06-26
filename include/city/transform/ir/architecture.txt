@@ -1,5 +1,5 @@
-name CityIR
-version 1
+%name CityIR
+%version 1
 
 #include <city/module/Value.h>
 

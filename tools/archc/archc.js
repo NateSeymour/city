@@ -23,16 +23,26 @@ const tokenize = (input) => {
     const tokens = [];
 
     const tokenTypes = {
-        kwName: /^name/,
-        kwVersion: /^version/,
+        kwName: /^%name/,
+        kwVersion: /^%version/,
+
         kwEncoding: /^encoding/,
         kwDynamic: /^dynamic/,
+        kwFixed: /^fixed/,
+
+        kwInstruction: /^instruction/,
+
+        kwRegister: /^register/,
+        kwBank: /^bank/,
+        kwVolatile: /^volatile/,
+
+        star: /^\*/,
 
         open: /^{/,
         close: /^}/,
 
         number: /^\d+/,
-        identifier: /^[a-zA-Z]([a-zA-Z\d:]+)?/,
+        identifier: /^[a-zA-Z]([a-zA-Z\d:_]+)?/,
 
         preprocessorDirective: /^#.+$/m,
     };
@@ -64,13 +74,233 @@ const tokenize = (input) => {
     return tokens;
 };
 
+class ArchitectureFileParser {
+    tokens = [];
+
+    architecture = {
+        name: '',
+        version: 0,
+        preprocessorDirective: [],
+        encoding: {
+            size: 0,
+            named: {},
+        },
+        instruction: [],
+        register: {},
+    };
+
+    lookahead() {
+        return this.tokens[0] || null;
+    }
+
+    consume(type) {
+        const token = this.tokens.shift() || null;
+
+        if (type && token.type !== type) {
+            console.error(`[ERROR] Unexpected token ${token.type} (expected ${type})`);
+            process.exit(1);
+        }
+
+        return token;
+    }
+
+    fail(message) {
+        console.error(`[ERROR] ${message}`);
+        console.error(`[ERRRO] Next token: ${JSON.stringify(this.lookahead())}`);
+
+        process.exit(1);
+    }
+
+    AnonymousEncodingDefinitionBlock() {
+        const properties = {};
+
+        this.consume('open');
+
+        while (this.lookahead().type !== 'close') {
+            const type = this.consume('identifier');
+            const name = this.consume('identifier');
+
+            properties[name.value] = type.value;
+        }
+
+        this.consume('close');
+
+        return properties;
+    }
+
+    EncodingBlock() {
+        this.consume('kwEncoding');
+
+        let lh = this.lookahead();
+        switch (lh.type) {
+            case 'kwDynamic': {
+                this.consume();
+
+                this.architecture.encoding.size = 'dynamic';
+
+                break;
+            }
+
+            case 'kwFixed': {
+                this.consume();
+
+                const size = this.consume('number');
+                this.architecture.encoding.size = Number(size.value);
+
+                break;
+            }
+        }
+
+        this.consume('open');
+
+        while (this.lookahead().type === 'identifier') {
+            const encodingName = this.consume('identifier');
+            this.architecture.encoding.named[encodingName.value] = this.AnonymousEncodingDefinitionBlock();
+        }
+
+        this.consume('close');
+    }
+
+    InstructionBlock() {
+        this.consume('kwInstruction');
+
+        this.consume('open');
+
+        while (this.lookahead().type === 'identifier') {
+            const instructionName = this.consume('identifier');
+
+            switch (this.lookahead().type) {
+                case 'identifier': {
+                    const encodingType = this.consume('identifier');
+
+                    this.architecture.instruction[instructionName.value] = {
+                        encoding: this.architecture.encoding.named[encodingType.value],
+                    };
+
+                    break;
+                }
+
+                case 'open': {
+                    this.architecture.instruction[instructionName.value] = {
+                        encoding: this.AnonymousEncodingDefinitionBlock(),
+                    };
+
+                    break;
+                }
+            }
+        }
+
+        this.consume('close');
+    }
+
+    RegisterBlock() {
+        this.consume('kwRegister');
+
+        this.consume('open');
+
+        while (this.lookahead().type === 'identifier') {
+            const registerNameOrPrefix = this.consume('identifier');
+            this.consume('star');
+
+            const type = this.consume('identifier');
+
+            this.consume('open');
+
+            while (this.lookahead().type === 'number') {
+                const number = this.consume('number');
+
+                const attributes = [];
+                while (this.lookahead().type === 'identifier' || this.lookahead().type === 'kwVolatile') {
+                    const attribute = this.consume();
+                    attributes.push(attribute.value);
+                }
+
+                this.architecture.register[`${registerNameOrPrefix.value}${number.value}`] = {
+                    type: type.value,
+                    attributes,
+                };
+            }
+
+            this.consume('close');
+        }
+
+        this.consume('close');
+    }
+
+    Statement() {
+        const lh = this.lookahead();
+        switch (lh.type) {
+            case 'kwName': {
+                this.consume();
+
+                const name = this.consume('identifier');
+                this.architecture.name = name.value;
+
+                return;
+            }
+
+            case 'kwVersion': {
+                this.consume();
+
+                const version = this.consume('number');
+                this.architecture.version = Number(version.value);
+
+                return;
+            }
+
+            case 'preprocessorDirective': {
+                const directive = this.consume();
+                this.architecture.preprocessorDirective.push(directive.value);
+
+                return;
+            }
+
+            case 'kwEncoding': {
+                this.EncodingBlock();
+
+                return;
+            }
+
+            case 'kwInstruction': {
+                this.InstructionBlock();
+
+                return;
+            }
+
+            case 'kwRegister': {
+                this.RegisterBlock();
+
+                return;
+            }
+
+            default: {
+                this.fail('unexpected token!');
+            }
+        }
+    }
+
+    Body() {
+        while (this.lookahead() != null) {
+            this.Statement();
+        }
+    }
+
+    parse() {
+        this.Body();
+
+        return this.architecture;
+    }
+
+    constructor(architecturePath) {
+        const rawArchitectureDefinition = fs.readFileSync(architecturePath, 'utf-8');
+        this.tokens = tokenize(rawArchitectureDefinition);
+    }
+}
+
 const parseArchitectureFile = (path) => {
-    const rawArchitectureDefinition = fs.readFileSync(path, 'utf-8');
-    const tokens = tokenize(rawArchitectureDefinition);
+    const parser = new ArchitectureFileParser(path);
 
-    const architecture = {};
-
-    return {};
+    return parser.parse();
 };
 
 const architectures = fs

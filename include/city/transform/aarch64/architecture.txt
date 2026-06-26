@@ -1,14 +1,10 @@
-name AArch64
-version 1
-
-types {
-    register uint5
-}
+%name AArch64
+%version 1
 
 encoding fixed 32 {}
 
 register {
-    r int64 {
+    r* std::int64_t {
         0   volatile
         1   volatile
         2   volatile
@@ -43,7 +39,7 @@ register {
         31  zero
     }
 
-    v f64 {
+    v* double {
         0   volatile
         1   volatile
         2   volatile
