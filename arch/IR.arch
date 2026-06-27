@@ -5,36 +5,57 @@
 #include <city/module/Value.h>
 
 encoding dynamic {
-    binop {
-        [city::Value &] lhs
-        [city::Value &] rhs
+    simple {}
+
+    binop(Value &lhs, Value &rhs) : lhs(lhs), rhs(rhs)
+    {
+        Value &lhs;
+        Value &rhs;
+
+        %{{
+            lhs.IncrementReadCount();
+            rhs.IncrementReadCount();
+        }}
     }
 
-    unop {
-        [city::Value &] value
+    unop(Value &value) : value(value)
+    {
+        Value &value;
+
+        %{{
+            value.IncrementReadCount();
+        }}
     }
 
-    writeop {
-        [std::string] name
-        [city::Value &] value
+    writeop(std::string_view name, Value &value) : name(name), value(value)
+    {
+        std::string name;
+        Value &value;
+
+        %{{
+            value.IncrementReadCount();
+        }}
     }
 
-    readop {
-        [std::string] name
+    readop(std::string_view name) : name(name)
+    {
+        std::string name;
     }
 }
 
 instruction {
-    Add binop
-    Sub binop
-    Div binop
-    Mul binop
-    Cmp binop
+    binop Add
+    binop Sub
+    binop Div
+    binop Mul
+    binop Cmp
 
-    Write writeop [volatile]
-    Read readop
+    writeop Write {volatile}
+    readop Read
 
-    Branch unop [branching, volatile]
-    Call unop [branching, volatile]
-    Ret unop [branching, volatile]
+    unop Branch {branching, volatile}
+    unop Call {branching, volatile}
+    unop Ret {branching, volatile}
+
+    simple Nop
 }

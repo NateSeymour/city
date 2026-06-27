@@ -9,8 +9,15 @@ using namespace city;
 
 TEST(IR, ConstructModule)
 {
-    Module<IR> module{"test"};
+    Module<IR> module{"ConstructModule"};
+}
 
-    auto &exit = module.CreateFunction("exit");
-    auto &block = exit.GetInsertionBlock();
+TEST(IR, Addition)
+{
+    Module<IR> module{"Addition"};
+
+    auto &add = module.CreateFunction("add", Type::Get<int>(), {Type::Get<int>(), Type::Get<int>()});
+    auto &arguments = add.GetArgumentValues();
+
+    auto &block = add.GetInsertionBlock();
 }

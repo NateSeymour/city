@@ -19,6 +19,7 @@ namespace city
 
         Type return_type_;
         std::vector<Type> argument_types_;
+        std::vector<std::reference_wrapper<Value>> argument_values_;
 
         Block<ArchitectureT> main_block_;
         std::reference_wrapper<Block<ArchitectureT>> insertion_block_ = std::ref(main_block_);
@@ -37,6 +38,11 @@ namespace city
         [[nodiscard]] std::vector<Type> const &GetArgumentTypes() const noexcept
         {
             return this->argument_types_;
+        }
+
+        [[nodiscard]] std::vector<std::reference_wrapper<Value>> const &GetArgumentValues() const noexcept
+        {
+            return this->argument_values_;
         }
 
         [[nodiscard]] Block<ArchitectureT> &GetInsertionBlock() noexcept
