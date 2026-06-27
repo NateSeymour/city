@@ -44,6 +44,8 @@ encoding dynamic {
 }
 
 instruction {
+    simple Nop
+
     binop Add
     binop Sub
     binop Div
@@ -56,6 +58,4 @@ instruction {
     unop Branch {branching, volatile}
     unop Call {branching, volatile}
     unop Ret {branching, volatile}
-
-    simple Nop
 }
