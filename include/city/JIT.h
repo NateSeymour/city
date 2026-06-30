@@ -1,45 +1,48 @@
 #ifndef CITY_COMPILER_H
 #define CITY_COMPILER_H
 
-#include <memory>
+#include <format>
+#include <ranges>
+#include <string>
 #include <unordered_map>
-#include "../../lib/transform/Backend.h"
-#include "Assembly.h"
-#include "interface/InterfaceModule.h"
-#include "ir/IRModule.h"
+
+#include "Interop.h"
+#include "Symbol.h"
+#include "module/Module.h"
+#include "runtime/NativeMemoryHandle.h"
 
 namespace city
 {
     class JIT
     {
-        std::unordered_map<std::string, InterfaceModule> interfaces_;
-        std::unordered_map<std::string, NativeModule> modules_;
+        SymbolTable symbol_table_;
+        std::unordered_map<std::string, NativeMemoryHandle> assemblies_;
 
     public:
-        /**
-         * Adds an interface module to the compiler.
-         * @param module Module to transfer to the compiler
-         */
-        void InsertInterfaceModule(InterfaceModule &&module);
+        void InsertInterface(std::string_view interface_name, SymbolTable const &symbols)
+        {
+            for (auto const &[name, symbol] : symbols)
+            {
+                this->symbol_table_[std::format("{}.{}", interface_name, name)] = symbol;
+            }
+        }
 
-        /**
-         * Adds an IR module to the compiler and compiles it directly to Object.
-         * @param module Module to transfer to the compiler
-         */
-        void InsertIRModule(IRModule &&module);
+        template<typename ArchitectureT, typename... PipelineStepTs>
+        void InsertModule(Module<ArchitectureT> &&module)
+        {
 
-        /**
-         * Removes a module (or corresponding object if already compiled) from the compiler.
-         * WARNING: May cause linker errors if other modules depend on the removed module.
-         * @param name Name of module to remove
-         */
-        void RemoveModule(std::string const &name);
+        }
 
-        /**
-         * Links all objects together (non-destructively) and returns the final linked Assembly.
-         * @return Linked Assembly of all stored Objects
-         */
-        [[nodiscard]] Assembly Link() const;
+        JIT(JIT &) = delete;
+        JIT(bool use_citystd = true)
+        {
+            if (use_citystd)
+            {
+                this->InsertInterface("__citystd", {
+
+                });
+            }
+        }
     };
 } // namespace city
 

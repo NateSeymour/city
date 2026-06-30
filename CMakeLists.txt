@@ -3,9 +3,29 @@ project(city VERSION 0.4.4)
 
 set(CMAKE_CXX_STANDARD 23)
 
-add_custom_target(archc ALL node ${CMAKE_SOURCE_DIR}/tools/archc/archc.js --input ${CMAKE_SOURCE_DIR} --output ${CMAKE_BINARY_DIR}/include/city)
+add_custom_command(
+        OUTPUT archc/IR.h
+        COMMAND node ${CMAKE_SOURCE_DIR}/tools/archc/archc.js --input ${CMAKE_SOURCE_DIR}/arch/IR.arch --outputDir ${CMAKE_BINARY_DIR}/include/city
+        DEPENDS ${CMAKE_SOURCE_DIR}/arch/IR.arch
+)
+
+add_custom_command(
+        OUTPUT archc/AArch64.h
+        COMMAND node ${CMAKE_SOURCE_DIR}/tools/archc/archc.js --input ${CMAKE_SOURCE_DIR}/arch/AArch64.arch --outputDir ${CMAKE_BINARY_DIR}/include/city
+        DEPENDS ${CMAKE_SOURCE_DIR}/arch/AArch64.arch
+)
+
+add_custom_command(
+        OUTPUT archc/Amd64.h
+        COMMAND node ${CMAKE_SOURCE_DIR}/tools/archc/archc.js --input ${CMAKE_SOURCE_DIR}/arch/Amd64.arch --outputDir ${CMAKE_BINARY_DIR}/include/city
+        DEPENDS ${CMAKE_SOURCE_DIR}/arch/Amd64.arch
+)
 
 add_library(city
+        archc/IR.h
+        archc/AArch64.h
+        archc/Amd64.h
+
         include/city/ABI.h
         include/city/ABI.h
         include/city/arch/aarch64/AArch64.h
